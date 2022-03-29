@@ -1,14 +1,19 @@
 package kr.seoul.snsX.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 public class Post extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "POST_ID")
     private Long id;
 
@@ -22,4 +27,6 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post")
     List<Comment> comments = new ArrayList<>();
+
+
 }
