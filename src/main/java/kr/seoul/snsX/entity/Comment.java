@@ -1,7 +1,5 @@
 package kr.seoul.snsX.entity;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import javax.persistence.*;
 
 @Entity

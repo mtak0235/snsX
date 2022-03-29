@@ -28,5 +28,5 @@ public class Image {
         this.originalFilename = originalFilename;
         this.uploadedFilename = uploadedFilename;
     }
-    
+
 }
