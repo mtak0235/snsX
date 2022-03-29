@@ -1,10 +1,13 @@
 package kr.seoul.snsX.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
 @Entity
+@Getter @Setter
 public class Comment extends BaseTimeEntity {
 
     @Id @GeneratedValue
