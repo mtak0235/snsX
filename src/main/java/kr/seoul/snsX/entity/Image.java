@@ -9,12 +9,12 @@ import javax.persistence.*;
 @Getter @Setter
 public class Image {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IMAGE_ID")
     private Long id;
 
     private String originalFilename;
-
     private String uploadedFilename;
 
     @ManyToOne
@@ -28,4 +28,5 @@ public class Image {
         this.originalFilename = originalFilename;
         this.uploadedFilename = uploadedFilename;
     }
+    
 }
