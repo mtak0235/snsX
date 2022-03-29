@@ -1,8 +1,12 @@
 package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.*;
+import kr.seoul.snsX.dto.PostSaveDto;
+import kr.seoul.snsX.dto.PostUpdateDto;
 import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.entity.Post;
+import kr.seoul.snsX.repository.ImageRepository;
+import kr.seoul.snsX.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,43 +37,37 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    private final PostRepository postRepository;
-    private final ImageRepository imageRepository;
-    private final EntityManager em;
 
     @GetMapping("/upload")
-    public String newPost(@ModelAttribute PostForm postForm) {
+    public String newPost(@ModelAttribute PostSaveDto postSaveDto) {
         return "post_form";
     }
 
-    @Transactional
     @PostMapping("/upload")
-    public String savePost(@ModelAttribute PostForm postForm, RedirectAttributes redirectAttributes) throws IOException {
-//        Image attachFile = postService.storeFile(postForm.getAttachFile());
-        List<Image> storeImageFiles = postService.storeFiles(postForm.getImageFiles());
+    public String savePost(@ModelAttribute PostSaveDto postSaveDto) throws IOException {
 
-//데이터베이스에 저장
-        Post post = new Post();
-        post.setAuthor(postForm.getAuthor());
-        post.setContent(postForm.getContent());
-//        post.setAttachFile(attachFile);
-        post.setImages(storeImageFiles);
-        postRepository.save(post);
-        for (Image storeImageFile : storeImageFiles) {
-            storeImageFile.setPost(post);
-            imageRepository.save(storeImageFile);
-        }
+        Long postId = postService.savePost(postSaveDto);
 
-
-        redirectAttributes.addAttribute("itemId", post.getId());
-
-//        return "redirect:/post/{postId}";
-        return "redirect:/post/upload";
+        return "redirect:/post/update/" + postId;
     }
 
+    @GetMapping("/update/{postId}")
+    public String post(@PathVariable Long postId, Model model) {
 
-//    @GetMapping("/post/{postId}")
-//    public post(@PathVariable Long id, Model model) {
-//
-//    }
+        Post post = postService.findPost(postId);
+        model.addAttribute("post", post);
+
+        return "post_update_form";
+    }
+
+    @PostMapping("/update/{postId}")
+    public String updatePost(@PathVariable Long postId,
+                             @ModelAttribute PostUpdateDto postUpdateDto) throws IOException {
+
+        postUpdateDto.setPostId(postId);
+        postService.updatePost(postUpdateDto);
+
+        return "redirect:/post/update/" + postId;
+    }
+
 }

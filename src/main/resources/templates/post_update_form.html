@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>게시글 수정</h2>
+    </div>
+
+    <h4 class="mb-3">상품 입력</h4>
+
+    <form th:action="@{/post/update/{identity} (identity=${post.id})}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <input type="text" class="form-control" id="content" name="postContent" th:placeholder="${post.content}">
+        </div>
+        <div class="mb-3">
+            <label for="author" class="form-label">작성자</label>
+            <textarea type="text" class="form-control" id="author" name="author" th:placeholder="${post.author}" readonly></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="imageFiles" class="form-label">upload files</label>
+            <input id="imageFiles" type="file" multiple="multiple" name="imageFiles">
+        </div>
+        <div class="col-12">
+            <a href="/" role="button" class="btn btn-secondary">수정 취소</a>
+            <button type="submit"  class="btn btn-primary">수정 완료</button>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
