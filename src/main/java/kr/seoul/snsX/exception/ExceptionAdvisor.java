@@ -1,7 +1,6 @@
 package kr.seoul.snsX.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
 @ControllerAdvice(annotations = Controller.class)
-public class ExceptionAdviser {
+public class ExceptionAdvisor {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler

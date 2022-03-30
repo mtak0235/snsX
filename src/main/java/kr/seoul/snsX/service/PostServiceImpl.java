@@ -6,7 +6,6 @@ import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.exception.FailImgSaveException;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
-import kr.seoul.snsX.file.FileDelete;
 import kr.seoul.snsX.file.FileStore;
 import kr.seoul.snsX.repository.ImageRepository;
 import kr.seoul.snsX.repository.PostRepository;
@@ -18,7 +17,6 @@ import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
