@@ -4,16 +4,17 @@ import kr.seoul.snsX.dto.PostSaveDto;
 import kr.seoul.snsX.dto.PostUpdateDto;
 import kr.seoul.snsX.entity.Post;
 
+import javax.persistence.EntityNotFoundException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public interface PostService {
 
     Post findPost(Long postId);
 
-    Long savePost(PostSaveDto saveDto) throws IOException;
+    Long uploadPost(PostSaveDto saveDto) throws IOException;
 
-    void updatePost(PostUpdateDto dto) throws IOException;
+    Long modifyPost(PostUpdateDto dto) throws IOException, EntityNotFoundException;
 
-    void removePost(Long pk);
-
+    void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException;
 }

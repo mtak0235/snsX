@@ -1,34 +1,20 @@
 package kr.seoul.snsX.controller;
 
-import kr.seoul.snsX.*;
 import kr.seoul.snsX.dto.PostSaveDto;
 import kr.seoul.snsX.dto.PostUpdateDto;
-import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.entity.Post;
-import kr.seoul.snsX.repository.ImageRepository;
+import kr.seoul.snsX.exception.ImageOverUploadedException;
 import kr.seoul.snsX.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.reactive.function.client.ReactorNettyHttpClientMapper;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
+import javax.persistence.EntityNotFoundException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Controller
 @Slf4j
@@ -38,16 +24,15 @@ public class PostController {
 
     private final PostService postService;
 
+
     @GetMapping("/upload")
     public String newPost(@ModelAttribute PostSaveDto postSaveDto) {
         return "post_form";
     }
 
     @PostMapping("/upload")
-    public String savePost(@ModelAttribute PostSaveDto postSaveDto) throws IOException {
-
-        Long postId = postService.savePost(postSaveDto);
-
+    public String savePost(@ModelAttribute PostSaveDto postSaveDto) throws IOException, ImageOverUploadedException {
+        Long postId = postService.uploadPost(postSaveDto);
         return "redirect:/post/update/" + postId;
     }
 
@@ -60,14 +45,22 @@ public class PostController {
         return "post_update_form";
     }
 
-    @PostMapping("/update/{postId}")
-    public String updatePost(@PathVariable Long postId,
-                             @ModelAttribute PostUpdateDto postUpdateDto) throws IOException {
+    @PostMapping("/update")
+    public String updatePost(@ModelAttribute PostUpdateDto postUpdateDto) throws EntityNotFoundException, IOException {
 
-        postUpdateDto.setPostId(postId);
-        postService.updatePost(postUpdateDto);
+        log.error(String.valueOf(postUpdateDto.getImageFiles().size()) + String.valueOf(postUpdateDto.getImageFiles() == null));
+        MultipartFile multipartFile = postUpdateDto.getImageFiles().get(0);
+        log.error(String.valueOf(multipartFile == null));
+        Long postId = postService.modifyPost(postUpdateDto);
 
         return "redirect:/post/update/" + postId;
     }
+
+    @PostMapping("/delete")
+    public String deletePost(@RequestParam Long postId) throws EntityNotFoundException, FileNotFoundException {
+        postService.removePost(postId);
+        return "redirect:/";
+    }
+
 
 }

@@ -13,7 +13,10 @@
 
     <h4 class="mb-3">상품 입력</h4>
 
-    <form th:action="@{/post/update/{identity} (identity=${post.id})}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/post/update}" method="post" enctype="multipart/form-data">
+
+        <input type="text" name="prevContent" th:value="${post.content} " th:hidden="true">
+        <input type="text" name="postId" th:value="${post.id} " th:hidden="true">
         <div class="mb-3">
             <label for="content" class="form-label">내용</label>
             <input type="text" class="form-control" id="content" name="postContent" th:placeholder="${post.content}">

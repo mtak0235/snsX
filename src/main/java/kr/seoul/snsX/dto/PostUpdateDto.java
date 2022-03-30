@@ -12,6 +12,8 @@ public class PostUpdateDto {
 
     private Long postId;
 
+    private String prevContent;
+
     private String postContent;
 
     private List<MultipartFile> imageFiles = new ArrayList<>();

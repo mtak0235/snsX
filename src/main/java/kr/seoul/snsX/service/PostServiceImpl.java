@@ -4,6 +4,8 @@ import kr.seoul.snsX.dto.PostSaveDto;
 import kr.seoul.snsX.dto.PostUpdateDto;
 import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.entity.Post;
+import kr.seoul.snsX.exception.FailImgSaveException;
+import kr.seoul.snsX.exception.ImageOverUploadedException;
 import kr.seoul.snsX.file.FileDelete;
 import kr.seoul.snsX.file.FileStore;
 import kr.seoul.snsX.repository.ImageRepository;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +27,6 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
     private final FileStore fileStore;
-    private final FileDelete fileDelete;
-    //private final BackupPostRepository backupPostRepository;
 
 
     @Override
@@ -36,7 +37,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Long savePost(PostSaveDto saveDto) throws IOException {
+    public Long uploadPost(PostSaveDto saveDto) throws IOException {
+        if (saveDto.getImageFiles().size() > 3) {
+            throw new ImageOverUploadedException("이미지 갯수 초과");
+        }
         List<Image> storeImageFiles = fileStore.storeFiles(saveDto.getImageFiles());
         Post post = new Post();
         post.setAuthor(saveDto.getAuthor());
@@ -52,24 +56,30 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void updatePost(PostUpdateDto dto) throws IOException {
-        Optional<Post> foundPost = postRepository.findById(dto.getPostId());
+    public Long modifyPost(PostUpdateDto dto) throws EntityNotFoundException, FileNotFoundException,
+            IllegalArgumentException, FailImgSaveException {
+        Post foundPost = postRepository.findById(dto.getPostId())
+                .orElseThrow(() -> new EntityNotFoundException());
+        if (dto.getPostContent().equals(""))
+            foundPost.setContent(dto.getPrevContent());
+        else
+            foundPost.setContent(dto.getPostContent());
 
-        Post post = foundPost.get();
-        post.setContent(dto.getPostContent());
-
-        fileDelete.deleteFiles(post.getImages());
-
-        post.setImages(fileStore.storeFiles(dto.getImageFiles()));
-        for (Image img : post.getImages()) {
-            img.setPost(post);
+        fileStore.deleteFiles(foundPost.getImages());
+//image table에서 이미지 row 삭제 안됨.
+        foundPost.setImages(fileStore.storeFiles(dto.getImageFiles()));
+        for (Image img : foundPost.getImages()) {
+            img.setPost(foundPost);
         }
+        return foundPost.getId();
     }
 
     @Override
-    public void removePost(Long pk) throws EntityNotFoundException {
-        Post findPost = postRepository.getById(pk);
-        //backupPostRepository.save(findPost);
-        postRepository.delete(findPost);
+    @Transactional
+    public void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException {
+        Post foundPost = postRepository.findById(pk)
+                .orElseThrow(() -> new EntityNotFoundException());
+        fileStore.deleteFiles(foundPost.getImages());
+        postRepository.delete(foundPost);
     }
 }

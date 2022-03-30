@@ -15,18 +15,6 @@ public class FileDelete {
     @Value("${file.dir}")
     private String fileDir;
 
-    public void deleteFiles(List<Image> files) {
-        for (Image img : files) {
-            String filePath = fileDir + img.getUploadedFilename();
-            File file = new File(filePath);
-            if (file.exists()) {
-                if (!file.delete()) {
-                    log.info("[File Delete] Failed to delete file: filepath -> {}", filePath);
-                } else {
-                    log.info("[File Delete] Deleted file: filepath -> {}", filePath);
-                }
-            }
-        }
-    }
+
 
 }

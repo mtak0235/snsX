@@ -21,10 +21,10 @@ public class Post extends BaseTimeEntity {
     @Lob
     private String content;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<Comment> comments = new ArrayList<>();
 
 
