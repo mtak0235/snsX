@@ -1,10 +1,10 @@
 package kr.seoul.snsX.controller;
 
-import kr.seoul.snsX.dto.PostSaveDto;
-import kr.seoul.snsX.dto.PostUpdateDto;
+import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
 import kr.seoul.snsX.service.PostService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -33,15 +34,14 @@ public class PostController {
     @PostMapping("/upload")
     public String savePost(@ModelAttribute PostSaveDto postSaveDto) throws IOException, ImageOverUploadedException {
         Long postId = postService.uploadPost(postSaveDto);
-        return "redirect:/post/update/" + postId;
+        return "redirect:/post/" + postId;
     }
 
     @GetMapping("/update/{postId}")
     public String post(@PathVariable Long postId, Model model) {
 
-        Post post = postService.findPost(postId);
+        PostResponseDto post = postService.findPost(postId);
         model.addAttribute("post", post);
-
         return "post_update_form";
     }
 
@@ -53,7 +53,7 @@ public class PostController {
         log.error(String.valueOf(multipartFile == null));
         Long postId = postService.modifyPost(postUpdateDto);
 
-        return "redirect:/post/update/" + postId;
+        return "redirect:/post/" + postId;
     }
 
     @PostMapping("/delete")
@@ -62,5 +62,21 @@ public class PostController {
         return "redirect:/";
     }
 
+    @GetMapping("/{postId}")
+    public String showPost(@PathVariable Long postId, Model model) {
+        PostResponseDto post = postService.findPost(postId);
+        List<CommentResponseDto> comments = post.getComments();
+        if (comments != null && !comments.isEmpty()) {
+            model.addAttribute("comments", comments);
+        }
+        model.addAttribute("user", post.getAuthor());
+        model.addAttribute("post", post);
+        return "post_result";
+    }
 
+    @PostMapping("/{postId}/comment")
+    public String saveComment(@PathVariable Long postId, @RequestBody CommentRequestDto requestDto) {
+        postService.addComment(postId, requestDto);
+        return "redirect:/post/" + postId;
+    }
 }

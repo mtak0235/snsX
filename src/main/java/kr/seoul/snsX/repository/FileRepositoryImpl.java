@@ -1,4 +1,4 @@
-package kr.seoul.snsX.file;
+package kr.seoul.snsX.repository;
 
 import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.exception.FailImgSaveException;
@@ -9,19 +9,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Slf4j
 @Component
-public class FileStore {
+public class FileRepositoryImpl implements FileRepository{
 
     @Value("${file.dir}")
     private String fileDir;
 
-    public void deleteFiles(List<Image> files) throws IllegalArgumentException, FileNotFoundException{
+    public void deleteFiles(List<Image> files) throws IllegalArgumentException, FileNotFoundException {
         for (Image img : files) {
             String filePath = fileDir + img.getUploadedFilename();
             File file = new File(filePath);
@@ -39,7 +38,7 @@ public class FileStore {
         }
     }
 
-    public String getFullPath(String filename) {
+    private String getFullPath(String filename) {
         return fileDir + filename;
     }
 
@@ -80,5 +79,4 @@ public class FileStore {
         int pos = originalFileName.lastIndexOf(".");
         return originalFileName.substring(pos + 1);
     }
-
 }
