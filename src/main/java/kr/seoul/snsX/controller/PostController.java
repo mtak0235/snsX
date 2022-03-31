@@ -75,7 +75,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/comment")
-    public String saveComment(@PathVariable Long postId, @RequestBody CommentRequestDto requestDto) {
+    public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto) {
         postService.addComment(postId, requestDto);
         return "redirect:/post/" + postId;
     }
