@@ -70,14 +70,6 @@ public class PostServiceImpl implements PostService {
         else
             prevPost.setContent(dto.getPostContent());
 
-        fileRepository.deleteFiles(prevPost.getImages());
-        for (Image img : prevPost.getImages()) {
-            imageRepository.delete(img);
-        }
-        prevPost.setImages(fileRepository.storeFiles(dto.getImageFiles()));
-        for (Image image : prevPost.getImages()) {
-            imageRepository.save(image);
-        }
         return prevPost.getId();
     }
 

@@ -79,4 +79,6 @@ public class PostController {
         postService.addComment(postId, requestDto);
         return "redirect:/post/" + postId;
     }
+
+//    @PostMapping("{postId}/comment/{commet")
 }

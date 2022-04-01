@@ -27,7 +27,7 @@
         </div>
         <div class="mb-3">
             <label for="imageFiles" class="form-label">upload files</label>
-            <input id="imageFiles" type="file" multiple="multiple" name="imageFiles">
+            <input id="imageFiles" type="file" multiple="multiple" name="imageFiles" th:value="${post.images}" th:hidden="true">
         </div>
         <div class="col-12">
             <a href="/" role="button" class="btn btn-secondary">수정 취소</a>
