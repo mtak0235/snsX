@@ -36,7 +36,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponseDto findPost(Long postId) {
         // 바로 get() 사용한 것 수정 요망
-        return new PostResponseDto(postRepository.findById(postId).get());
+        return new PostResponseDto(postRepository.findById(postId).get(), fileRepository.getFileDir());
     }
 
     @Override

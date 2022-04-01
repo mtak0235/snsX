@@ -13,4 +13,5 @@ public interface FileRepository {
 
     List<Image> storeFiles(List<MultipartFile> multipartFiles) throws FailImgSaveException, FileNotFoundException;
 
+    String getFileDir();
 }

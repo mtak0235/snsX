@@ -2,6 +2,7 @@ package kr.seoul.snsX.repository;
 
 import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.exception.FailImgSaveException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,11 @@ import java.util.UUID;
 
 @Slf4j
 @Component
+@Getter
 public class FileRepositoryImpl implements FileRepository{
 
     @Value("${file.dir}")
-    private String fileDir;
+    public String fileDir;
 
     public void deleteFiles(List<Image> files) throws IllegalArgumentException, FileNotFoundException {
         for (Image img : files) {

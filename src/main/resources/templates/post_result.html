@@ -13,6 +13,7 @@
 <!--    <span>title : </span><span th:text="*{title}"></span><br/>-->
     <span>context : </span><span th:text="*{content}"></span><br/>
     <span>author : </span><span th:text="*{author}"></span><br/>
+    <img th:each="imageFile : ${post.images}" th:src="|/post/images/${imageFile}|" width="300" height="300"/>
 </div>
 
 

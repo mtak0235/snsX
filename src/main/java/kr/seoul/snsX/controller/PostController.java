@@ -1,12 +1,12 @@
 package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.dto.*;
-import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
 import kr.seoul.snsX.service.PostService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 @Controller
@@ -22,6 +23,9 @@ import java.util.List;
 @RequestMapping("/post")
 @RequiredArgsConstructor
 public class PostController {
+
+    @Value("${file.dir}")
+    public String fileDir;
 
     private final PostService postService;
 
@@ -84,5 +88,13 @@ public class PostController {
     public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId) {
         postService.removeComment(postId, commentId);
         return "redirect:/post/" + postId;
+    }
+
+    @ResponseBody
+    @GetMapping("/images/{filename}")
+    public UrlResource downloadImage(@PathVariable String filename) throws
+            MalformedURLException {
+        log.info("filename = {}", filename);
+        return new UrlResource("file:" + fileDir + filename);
     }
 }
