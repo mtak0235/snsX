@@ -1,12 +1,16 @@
 package kr.seoul.snsX.service;
 
+import kr.seoul.snsX.dto.CommentRequestDto;
+import kr.seoul.snsX.dto.PostResponseDto;
 import kr.seoul.snsX.dto.PostSaveDto;
 import kr.seoul.snsX.dto.PostUpdateDto;
+import kr.seoul.snsX.entity.Comment;
 import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.exception.FailImgSaveException;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
-import kr.seoul.snsX.file.FileStore;
+import kr.seoul.snsX.repository.CommentRepository;
+import kr.seoul.snsX.repository.FileRepository;
 import kr.seoul.snsX.repository.ImageRepository;
 import kr.seoul.snsX.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +28,15 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
-    private final FileStore fileStore;
+    private final FileRepository fileRepository;
+    private final CommentRepository commentRepository;
 
 
     @Override
-    public Post findPost(Long postId) {
+    @Transactional
+    public PostResponseDto findPost(Long postId) {
         // 바로 get() 사용한 것 수정 요망
-        return postRepository.findById(postId).get();
+        return new PostResponseDto(postRepository.findById(postId).get());
     }
 
     @Override
@@ -39,7 +45,7 @@ public class PostServiceImpl implements PostService {
         if (saveDto.getImageFiles().size() > 3) {
             throw new ImageOverUploadedException("이미지 갯수 초과");
         }
-        List<Image> storeImageFiles = fileStore.storeFiles(saveDto.getImageFiles());
+        List<Image> storeImageFiles = fileRepository.storeFiles(saveDto.getImageFiles());
         Post post = new Post();
         post.setAuthor(saveDto.getAuthor());
         post.setContent(saveDto.getContent());
@@ -56,14 +62,15 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Long modifyPost(PostUpdateDto dto) throws EntityNotFoundException, FileNotFoundException,
             IllegalArgumentException, FailImgSaveException {
-        Post foundPost = postRepository.findById(dto.getPostId())
+        Post prevPost = postRepository.findById(dto.getPostId())
                 .orElseThrow(() -> new EntityNotFoundException());
-        if (dto.getPostContent().equals(""))
-            foundPost.setContent(dto.getPrevContent());
-        else
-            foundPost.setContent(dto.getPostContent());
 
-        return foundPost.getId();
+        if (dto.getPostContent().equals(""))
+            prevPost.setContent(dto.getPrevContent());
+        else
+            prevPost.setContent(dto.getPostContent());
+
+        return prevPost.getId();
     }
 
     @Override
@@ -71,7 +78,16 @@ public class PostServiceImpl implements PostService {
     public void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException {
         Post foundPost = postRepository.findById(pk)
                 .orElseThrow(() -> new EntityNotFoundException());
-        fileStore.deleteFiles(foundPost.getImages());
+        fileRepository.deleteFiles(foundPost.getImages());
         postRepository.delete(foundPost);
+    }
+
+    @Override
+    public void addComment(Long postId, CommentRequestDto requestDto) {
+        Post post = postRepository.findById(postId).orElseThrow(() ->
+                new IllegalArgumentException("댓글 쓰기 실패: 해당 게시무링 존재하지 않습니다." + postId));
+        requestDto.setPost(post);
+        Comment comment = requestDto.toEntity();
+        commentRepository.save(comment);
     }
 }
