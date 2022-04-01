@@ -30,6 +30,7 @@ public class PostServiceImpl implements PostService {
     private final ImageRepository imageRepository;
     private final FileRepository fileRepository;
     private final CommentRepository commentRepository;
+    private final HashTagService hashTagService;
 
 
     @Override
@@ -50,6 +51,7 @@ public class PostServiceImpl implements PostService {
         post.setAuthor(saveDto.getAuthor());
         post.setContent(saveDto.getContent());
         post.setImages(storeImageFiles);
+        post.setPostHashTags(hashTagService.storePostHashTags(post, 0));
         postRepository.save(post);
         for (Image storeImageFile : storeImageFiles) {
             storeImageFile.setPost(post);
@@ -69,7 +71,7 @@ public class PostServiceImpl implements PostService {
             prevPost.setContent(dto.getPrevContent());
         else
             prevPost.setContent(dto.getPostContent());
-
+        prevPost.setPostHashTags(hashTagService.storePostHashTags(prevPost, dto.getNumOfPostHashTag()));
         return prevPost.getId();
     }
 

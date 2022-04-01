@@ -49,7 +49,6 @@ public class PostController {
     public String updatePost(@ModelAttribute PostUpdateDto postUpdateDto) throws EntityNotFoundException, IOException {
 
         Long postId = postService.modifyPost(postUpdateDto);
-
         return "redirect:/post/" + postId;
     }
 

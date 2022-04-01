@@ -16,6 +16,7 @@ public class PostResponseDto {
     private List<Image> images;
     private List<CommentResponseDto> comments;
     private String createdDate, modifiedDate;
+    private Integer numOfPostHashTag;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -25,5 +26,6 @@ public class PostResponseDto {
         this.comments = post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList());
         this.createdDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
         this.modifiedDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+        this.numOfPostHashTag = post.getPostHashTags().size();
     }
 }
