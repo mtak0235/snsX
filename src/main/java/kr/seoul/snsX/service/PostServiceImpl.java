@@ -63,12 +63,6 @@ public class PostServiceImpl implements PostService {
         else
             foundPost.setContent(dto.getPostContent());
 
-        fileStore.deleteFiles(foundPost.getImages());
-//image table에서 이미지 row 삭제 안됨.
-        foundPost.setImages(fileStore.storeFiles(dto.getImageFiles()));
-        for (Image img : foundPost.getImages()) {
-            img.setPost(foundPost);
-        }
         return foundPost.getId();
     }
 
