@@ -90,4 +90,13 @@ public class PostServiceImpl implements PostService {
         Comment comment = requestDto.toEntity();
         commentRepository.save(comment);
     }
+
+    @Override
+    public void removeComment(Long postId, Long commentId) {
+        postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException());
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException());
+        commentRepository.delete(comment);
+    }
 }

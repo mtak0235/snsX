@@ -74,11 +74,15 @@ public class PostController {
         return "post_result";
     }
 
-    @PostMapping("/{postId}/comment")
+    @PostMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto) {
         postService.addComment(postId, requestDto);
         return "redirect:/post/" + postId;
     }
 
-//    @PostMapping("{postId}/comment/{commet")
+    @PostMapping("/remove-comment")
+    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId) {
+        postService.removeComment(postId, commentId);
+        return "redirect:/post/" + postId;
+    }
 }

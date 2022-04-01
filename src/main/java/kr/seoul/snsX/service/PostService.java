@@ -21,4 +21,6 @@ public interface PostService {
     void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException;
 
     void addComment(Long postId, CommentRequestDto requestDto);
+
+    void removeComment(Long postId, Long commentId);
 }
