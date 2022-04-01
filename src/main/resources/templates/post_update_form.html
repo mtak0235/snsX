@@ -13,10 +13,11 @@
 
     <h4 class="mb-3">상품 입력</h4>
 
-    <form th:action="@{/post/update}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/post/update}" method="post">
 
         <input type="text" name="prevContent" th:value="${post.content} " th:hidden="true">
         <input type="text" name="postId" th:value="${post.id} " th:hidden="true">
+        <input type="text" name="author" th:value="${post.author}" th:hidden="true">
         <div class="mb-3">
             <label for="content" class="form-label">내용</label>
             <input type="text" class="form-control" id="content" name="postContent" th:placeholder="${post.content}">
@@ -27,7 +28,7 @@
         </div>
         <div class="mb-3">
             <label for="imageFiles" class="form-label">upload files</label>
-            <input id="imageFiles" type="file" multiple="multiple" name="imageFiles">
+            <input id="imageFiles" type="file" multiple="multiple" name="imageFiles" th:value="${post.images}" th:hidden="true">
         </div>
         <div class="col-12">
             <a href="/" role="button" class="btn btn-secondary">수정 취소</a>
