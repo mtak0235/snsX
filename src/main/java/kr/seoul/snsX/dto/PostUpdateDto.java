@@ -17,5 +17,4 @@ public class PostUpdateDto {
 
     private String postContent;
 
-    private Integer numOfPostHashTag;
 }

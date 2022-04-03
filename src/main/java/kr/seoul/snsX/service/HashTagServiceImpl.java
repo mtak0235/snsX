@@ -25,7 +25,6 @@ public class HashTagServiceImpl implements HashTagService {
     private final HashTagRepository hashTagRepository;
     private final PostHashTagRepository postHashTagRepository;
 
-    @Transactional
     private HashTag createHashTag(String tagName) {
         HashTag hashTag = new HashTag();
         hashTag.setName(tagName);
@@ -45,7 +44,7 @@ public class HashTagServiceImpl implements HashTagService {
 
     @Override
     @Transactional
-    public List<HashTag> findHashTags(Set<String> tagNames) {
+    public List<HashTag> getHashTagList(Set<String> tagNames) {
         List<HashTag> foundHashTags = new ArrayList<>();
         for (String tagName : tagNames) {
             HashTag foundHashTag = hashTagRepository.findByName(tagName);
@@ -58,11 +57,11 @@ public class HashTagServiceImpl implements HashTagService {
 
     @Override
     @Transactional
-    public List<PostHashTag> storePostHashTags(Post post, Integer numOfPostHashTag) {
+    public List<PostHashTag> storePostHashTags(Post post) {
         List<PostHashTag> storedPostHashTags = new ArrayList<>();
-        if (numOfPostHashTag != 0)
+        if (post.getPostHashTags().size() != 0)
             postHashTagRepository.deleteByPostId(post.getId());
-        List<HashTag> foundHashTags = findHashTags(parsingHashTag(post.getContent()));
+        List<HashTag> foundHashTags = getHashTagList(parsingHashTag(post.getContent()));
         for (HashTag foundHashTag : foundHashTags) {
             PostHashTag postHashTag = new PostHashTag();
             postHashTag.setPost(post);

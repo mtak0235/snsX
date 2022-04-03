@@ -11,8 +11,8 @@ public interface HashTagService {
 
     Set<String> parsingHashTag(String content);
 
-    List<HashTag> findHashTags(Set<String> tagNames);
+    List<HashTag> getHashTagList(Set<String> tagNames);
 
-    List<PostHashTag> storePostHashTags(Post post, Integer numOfPostHashTag);
+    List<PostHashTag> storePostHashTags(Post post);
 
 }

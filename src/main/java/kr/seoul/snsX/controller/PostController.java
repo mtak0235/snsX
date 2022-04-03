@@ -10,7 +10,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
@@ -31,7 +30,7 @@ public class PostController {
 
 
     @GetMapping("/upload")
-    public String newPost(@ModelAttribute PostSaveDto postSaveDto) {
+    public String savePostForm(@ModelAttribute PostSaveDto postSaveDto) {
         return "post_form";
     }
 
@@ -42,16 +41,15 @@ public class PostController {
     }
 
     @GetMapping("/update/{postId}")
-    public String post(@PathVariable Long postId, Model model) {
+    public String updatePostForm(@PathVariable Long postId, Model model) {
 
-        PostResponseDto post = postService.findPost(postId);
+        PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
         return "post_update_form";
     }
 
     @PostMapping("/update")
     public String updatePost(@ModelAttribute PostUpdateDto postUpdateDto) throws EntityNotFoundException, IOException {
-
         Long postId = postService.modifyPost(postUpdateDto);
         return "redirect:/post/" + postId;
     }
@@ -63,8 +61,8 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public String showPost(@PathVariable Long postId, Model model) {
-        PostResponseDto post = postService.findPost(postId);
+    public String showPostForm(@PathVariable Long postId, Model model) {
+        PostResponseDto post = postService.getPost(postId);
         List<CommentResponseDto> comments = post.getComments();
         if (comments != null && !comments.isEmpty()) {
             model.addAttribute("comments", comments);
@@ -88,9 +86,7 @@ public class PostController {
 
     @ResponseBody
     @GetMapping("/images/{filename}")
-    public UrlResource downloadImage(@PathVariable String filename) throws
-            MalformedURLException {
-        log.info("filename = {}", filename);
+    public UrlResource showImageForm(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileDir + filename);
     }
 }

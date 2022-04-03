@@ -35,9 +35,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostResponseDto findPost(Long postId) {
+    public PostResponseDto getPost(Long postId) {
         // 바로 get() 사용한 것 수정 요망
-        return new PostResponseDto(postRepository.findById(postId).get(), fileRepository.getFileDir());
+        return new PostResponseDto(postRepository.findById(postId).get());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PostServiceImpl implements PostService {
         post.setAuthor(saveDto.getAuthor());
         post.setContent(saveDto.getContent());
         post.setImages(storeImageFiles);
-        post.setPostHashTags(hashTagService.storePostHashTags(post, 0));
+        post.setPostHashTags(hashTagService.storePostHashTags(post));
         postRepository.save(post);
         for (Image storeImageFile : storeImageFiles) {
             storeImageFile.setPost(post);
@@ -71,7 +71,7 @@ public class PostServiceImpl implements PostService {
             prevPost.setContent(dto.getPrevContent());
         else
             prevPost.setContent(dto.getPostContent());
-        prevPost.setPostHashTags(hashTagService.storePostHashTags(prevPost, dto.getNumOfPostHashTag()));
+        prevPost.setPostHashTags(hashTagService.storePostHashTags(prevPost));
         return prevPost.getId();
     }
 
