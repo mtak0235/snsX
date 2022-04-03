@@ -1,5 +1,6 @@
 package kr.seoul.snsX.dto;
 
+import kr.seoul.snsX.entity.PostHashTag;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,5 @@ public class PostUpdateDto {
 
     private String postContent;
 
-    private List<MultipartFile> imageFiles = new ArrayList<>();
-
+    private Integer numOfPostHashTag;
 }

@@ -52,11 +52,7 @@ public class PostController {
     @PostMapping("/update")
     public String updatePost(@ModelAttribute PostUpdateDto postUpdateDto) throws EntityNotFoundException, IOException {
 
-        log.error(String.valueOf(postUpdateDto.getImageFiles().size()) + String.valueOf(postUpdateDto.getImageFiles() == null));
-        MultipartFile multipartFile = postUpdateDto.getImageFiles().get(0);
-        log.error(String.valueOf(multipartFile == null));
         Long postId = postService.modifyPost(postUpdateDto);
-
         return "redirect:/post/" + postId;
     }
 
