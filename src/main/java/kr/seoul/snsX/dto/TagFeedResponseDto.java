@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class ResponseTagFeedDto {
+public class TagFeedResponseDto {
 
-    private Long postId;
+    private Long id;
 
     private String fileName;
 
-    public ResponseTagFeedDto(Long postId, String fileName) {
-        this.postId = postId;
+    public TagFeedResponseDto(Long id, String fileName) {
+        this.id = id;
         this.fileName = fileName;
     }
 }
