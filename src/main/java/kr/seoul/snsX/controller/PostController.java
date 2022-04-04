@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -24,9 +26,37 @@ import java.util.List;
 public class PostController {
 
     @Value("${file.dir}")
-    public String fileDir;
+    private String fileDir;
 
     private final PostService postService;
+
+
+    @GetMapping("/show")
+    public String showFeedForm() {
+//        FeedResponseDto feedResponseDto = postService.showPosts(lastPK, limit);
+//        FeedResponseDto feed = new FeedResponseDto();
+//        List<PostResponseDto> posts = new ArrayList<>();
+//        posts.add(postService.getPost(1L));
+//        posts.add(postService.getPost(2L));
+//        posts.add(postService.getPost(3L));
+//        feed.setPosts(posts);
+//        model.addAttribute("posts", feed);
+
+        return "list";
+    }
+
+
+    @GetMapping("/{postId}")
+    public String showPostForm(@PathVariable Long postId, Model model) {
+        PostResponseDto post = postService.getPost(postId);
+        List<CommentResponseDto> comments = post.getComments();
+        if (comments != null && !comments.isEmpty()) {
+            model.addAttribute("comments", comments);
+        }
+        model.addAttribute("user", post.getAuthor());
+        model.addAttribute("post", post);
+        return "post_result";
+    }
 
 
     @GetMapping("/upload")
@@ -60,18 +90,6 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/{postId}")
-    public String showPostForm(@PathVariable Long postId, Model model) {
-        PostResponseDto post = postService.getPost(postId);
-        List<CommentResponseDto> comments = post.getComments();
-        if (comments != null && !comments.isEmpty()) {
-            model.addAttribute("comments", comments);
-        }
-        model.addAttribute("user", post.getAuthor());
-        model.addAttribute("post", post);
-        return "post_result";
-    }
-
     @PostMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto) {
         postService.addComment(postId, requestDto);
@@ -89,4 +107,5 @@ public class PostController {
     public UrlResource showImageForm(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileDir + filename);
     }
+
 }
