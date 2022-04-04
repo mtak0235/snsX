@@ -89,4 +89,38 @@ public class PostController {
     public UrlResource showImageForm(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileDir + filename);
     }
+
+    @GetMapping("/search/{tag}")
+    public String searchByTag(@PathVariable String tag, Model model) {
+
+        List<TagFeedResponseDto> result = postService.getTagPosts(tag);
+
+        for (TagFeedResponseDto x : result) {
+            log.error("====================");
+            log.error(String.valueOf(x.getId()));
+            log.error(String.valueOf(x.getFileName()));
+        }
+
+        model.addAttribute("result", result);
+
+        return "tag_feed_form";
+    }
+
+//    @GetMapping("/{offset}/{limit}")
+//    public String showFeedForm(@PathVariable Long offset, @PathVariable Long limit, Model model) {
+//
+//        List<PostResponseDto> result = postService.showPosts(offset, limit);
+//
+//        int size = result.size();
+//        Long lastPk = 0L;
+//        if (size > 0) {
+//            lastPk = result.get(size - 1).getId();
+//        }
+//
+//        model.addAttribute("result", result);
+//        model.addAttribute("lastPk", lastPk);
+//
+//        return "feed_form";
+//    }
+
 }

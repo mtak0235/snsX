@@ -1,9 +1,6 @@
 package kr.seoul.snsX.service;
 
-import kr.seoul.snsX.dto.CommentRequestDto;
-import kr.seoul.snsX.dto.PostResponseDto;
-import kr.seoul.snsX.dto.PostSaveDto;
-import kr.seoul.snsX.dto.PostUpdateDto;
+import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.entity.Comment;
 import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.entity.Post;
@@ -14,14 +11,17 @@ import kr.seoul.snsX.repository.FileRepository;
 import kr.seoul.snsX.repository.ImageRepository;
 import kr.seoul.snsX.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -101,4 +101,27 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException());
         commentRepository.delete(comment);
     }
+
+    @Override
+    @Transactional
+    public List<PostResponseDto> showPosts(Long offset, Long limit) {
+
+        List<Post> posts = postRepository.findPosts(offset, limit);
+
+        List<PostResponseDto> result = new ArrayList<>();
+        for (Post p : posts) {
+            result.add(new PostResponseDto(p));
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<TagFeedResponseDto> getTagPosts(String tag) {
+
+        List<TagFeedResponseDto> result = postRepository.findPostIdAndFilenameByTagName(tag);
+
+        return result;
+    }
+
 }

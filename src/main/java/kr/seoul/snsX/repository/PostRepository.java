@@ -9,20 +9,24 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
+
     @Query(nativeQuery = true, value =
-            "SELECT " +
-                "p.post_id, i.filename" +
-            "FROM PostHashTag pht" +
-            "JOIN Post p" +
-            "ON p.post_id = pht.post_id" +
-            "JOIN" +
-                "(SELECT" +
-                    "post_id, ANY_VALUE(uploaded_filename) filename" +
-                "FROM image" +
-                "GROUP BY post_id) i" +
-            "ON i.post_id = pht.post_id" +
-            "JOIN HashTag h" +
-            "ON (h.hashtag_id = pht.hashtag_id AND h.name := tagName)"
+            "SELECT p.post_id as id, i.filename as fileName " +
+            "FROM post_hash_tag pht " +
+            "JOIN post p " +
+            "ON p.post_id = pht.post_id " +
+            "JOIN " +
+                "(SELECT " +
+                    "post_id, ANY_VALUE(uploaded_filename) filename " +
+                "FROM image " +
+                "GROUP BY post_id) i " +
+            "ON i.post_id = pht.post_id " +
+            "JOIN hash_tag h " +
+            "ON (h.hashtag_id = pht.hashtag_id AND h.name = :tagName)"
     )
     List<TagFeedResponseDto> findPostIdAndFilenameByTagName(@Param("tagName") String tagName);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM post p ORDER BY p.post_id DESC LIMIT :offset, :limit")
+    List<Post> findPosts(@Param("offset") Long offset, @Param("limit") Long limit);
+
 }
