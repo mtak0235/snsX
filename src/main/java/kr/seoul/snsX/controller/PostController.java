@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +29,19 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "list";
+    }
 
-    @GetMapping("/show")
-    public String showFeedForm() {
+    @GetMapping("/t")
+    public String ref() {
+        return "test";
+    }
+
+    @ResponseBody
+    @GetMapping("/show/{offset}/{limit}")
+    public FeedResponseDto showFeedForm(@PathVariable Long offset,@PathVariable Long limit) {
 //        FeedResponseDto feedResponseDto = postService.showPosts(lastPK, limit);
 //        FeedResponseDto feed = new FeedResponseDto();
 //        List<PostResponseDto> posts = new ArrayList<>();
@@ -41,8 +50,15 @@ public class PostController {
 //        posts.add(postService.getPost(3L));
 //        feed.setPosts(posts);
 //        model.addAttribute("posts", feed);
+        FeedResponseDto feedResponseDto = new FeedResponseDto();
+        feedResponseDto.setPosts(new ArrayList<>());
+        List<PostResponseDto> post = feedResponseDto.getPosts();
+        for (Long i = offset; i < offset + limit; i++) {
+            post.add(postService.getPost(i));
+        }
+        feedResponseDto.setLastPK(limit + 1);
 
-        return "list";
+        return feedResponseDto;
     }
 
 

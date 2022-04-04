@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>ListPage</title>
+    <title>Infinite Scroll | Lazy Load</title>
     <style>
         html {
             font-size: 20px;
@@ -61,20 +61,18 @@
 </head>
 <body>
 <header>
-    <h1>Post Feed List</h1>
+    <h1>Infinite Scroll | Lazy Load</h1>
     <h2>Loading images gradually as needed</h2>
 </header>
 <main>
     <!-- images will be loaded here with figure and figcaption -->
 </main>
 <footer>
-    <p>The Footer. &copy; 2022 snsX.</p>
+    <p>The Footer. &copy; 2019 Turkey Stuff Inc.</p>
 </footer>
 <script>
-    let offset = 1
-    let limit = 3
     const URL =
-        "http://localhost:8080/post/show/1/3";
+        "https://gist.githubusercontent.com/prof3ssorSt3v3/1944e7ba7ffb62fe771c51764f7977a4/raw/c58a342ab149fbbb9bb19c94e278d64702833270/infinite.json";
     document.addEventListener("DOMContentLoaded", () => {
         //set up the IntersectionObserver to load more images if the footer is visible.
         //URL - https://gist.githubusercontent.com/prof3ssorSt3v3/1944e7ba7ffb62fe771c51764f7977a4/raw/c58a342ab149fbbb9bb19c94e278d64702833270/infinite.json
@@ -101,13 +99,14 @@
             .then(response => response.json())
             .then(data => {
                 // data.items[].img, data.items[].name
-                data.posts.forEach(item => {
+                data.items.forEach(item => {
                     let fig = document.createElement("figure");
                     let fc = document.createElement("figcaption");
                     let img = document.createElement("img");
                     img.src = item.img;
-                    img.alt = item.author;
-                    fc.textContent = item.content;
+                    img.alt = item.name;
+                    console.log(item.img);
+                    fc.textContent = item.name;
                     fig.appendChild(img);
                     fig.appendChild(fc);
                     main.appendChild(fig);

@@ -17,12 +17,17 @@ public class PostResponseDto {
     private List<CommentResponseDto> comments;
     private String createdDate, modifiedDate;
 
+    private String name;
+    private String img;
+
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.author = post.getAuthor();
         this.content = post.getContent();
         this.images = post.getImages().stream().map(i -> i.getUploadedFilename()).collect(Collectors.toList());
         System.out.println("images = " + images);
+        this.img = "http://localhost:8080/post/images/" + post.getImages().get(0).getUploadedFilename();
+        this.name = this.author;
         this.comments = post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList());
         this.createdDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
         this.modifiedDate = post.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
