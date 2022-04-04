@@ -1,13 +1,11 @@
 package kr.seoul.snsX.service;
 
-import kr.seoul.snsX.dto.CommentRequestDto;
-import kr.seoul.snsX.dto.PostResponseDto;
-import kr.seoul.snsX.dto.PostSaveDto;
-import kr.seoul.snsX.dto.PostUpdateDto;
+import kr.seoul.snsX.dto.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 public interface PostService {
 
@@ -22,4 +20,9 @@ public interface PostService {
     void addComment(Long postId, CommentRequestDto requestDto);
 
     void removeComment(Long postId, Long commentId);
+
+    FeedResponseDto showPosts(Long offset, Long limit);
+
+    List<TagFeedResponseDto> getTagPosts(String tag);
+
 }

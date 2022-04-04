@@ -15,7 +15,6 @@ import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -25,54 +24,9 @@ import java.util.List;
 public class PostController {
 
     @Value("${file.dir}")
-    private String fileDir;
+    public String fileDir;
 
     private final PostService postService;
-
-    @GetMapping("/test")
-    public String test() {
-        return "list";
-    }
-
-    @GetMapping("/t")
-    public String ref() {
-        return "test";
-    }
-
-    @ResponseBody
-    @GetMapping("/show/{offset}/{limit}")
-    public FeedResponseDto showFeedForm(@PathVariable Long offset,@PathVariable Long limit) {
-//        FeedResponseDto feedResponseDto = postService.showPosts(lastPK, limit);
-//        FeedResponseDto feed = new FeedResponseDto();
-//        List<PostResponseDto> posts = new ArrayList<>();
-//        posts.add(postService.getPost(1L));
-//        posts.add(postService.getPost(2L));
-//        posts.add(postService.getPost(3L));
-//        feed.setPosts(posts);
-//        model.addAttribute("posts", feed);
-        FeedResponseDto feedResponseDto = new FeedResponseDto();
-        feedResponseDto.setPosts(new ArrayList<>());
-        List<PostResponseDto> post = feedResponseDto.getPosts();
-        for (Long i = offset; i < offset + limit; i++) {
-            post.add(postService.getPost(i));
-        }
-        feedResponseDto.setLastPK(limit + 1);
-
-        return feedResponseDto;
-    }
-
-
-    @GetMapping("/{postId}")
-    public String showPostForm(@PathVariable Long postId, Model model) {
-        PostResponseDto post = postService.getPost(postId);
-        List<CommentResponseDto> comments = post.getComments();
-        if (comments != null && !comments.isEmpty()) {
-            model.addAttribute("comments", comments);
-        }
-        model.addAttribute("user", post.getAuthor());
-        model.addAttribute("post", post);
-        return "post_result";
-    }
 
 
     @GetMapping("/upload")
@@ -106,6 +60,18 @@ public class PostController {
         return "redirect:/";
     }
 
+    @GetMapping("/{postId}")
+    public String showPostForm(@PathVariable Long postId, Model model) {
+        PostResponseDto post = postService.getPost(postId);
+        List<CommentResponseDto> comments = post.getComments();
+        if (comments != null && !comments.isEmpty()) {
+            model.addAttribute("comments", comments);
+        }
+        model.addAttribute("user", post.getAuthor());
+        model.addAttribute("post", post);
+        return "post_result";
+    }
+
     @PostMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto) {
         postService.addComment(postId, requestDto);
@@ -123,5 +89,4 @@ public class PostController {
     public UrlResource showImageForm(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileDir + filename);
     }
-
 }
