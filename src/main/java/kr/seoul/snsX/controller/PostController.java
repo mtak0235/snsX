@@ -29,6 +29,16 @@ public class PostController {
     private final PostService postService;
 
 
+    @GetMapping("/test")
+    public String test() {
+        return "list";
+    }
+
+    @GetMapping("/t")
+    public String ref() {
+        return "test";
+    }
+
     @GetMapping("/upload")
     public String savePostForm(@ModelAttribute PostSaveDto postSaveDto) {
         return "post_form";
@@ -89,4 +99,18 @@ public class PostController {
     public UrlResource showImageForm(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileDir + filename);
     }
+
+    @GetMapping("/search/{tag}")
+    public String searchByTag(@PathVariable String tag) {
+        List<TagFeedResponseDto> result = postService.getTagPosts(tag);
+        return "tag_feed_form";
+    }
+
+    @ResponseBody
+    @GetMapping("/show/{offset}/{limit}")
+    public FeedResponseDto showFeedForm(@PathVariable Long offset, @PathVariable Long limit) {
+        FeedResponseDto result = postService.showPosts(offset, limit);
+        return result;
+    }
+
 }
