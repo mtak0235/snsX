@@ -4,6 +4,7 @@ import kr.seoul.snsX.dto.TagFeedResponseDto;
 import kr.seoul.snsX.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(nativeQuery = true, value =
-            "SELECT p.post_id as id, i.filename as fileName " +
+            "SELECT p.post_id, i.filename " +
             "FROM post_hash_tag pht " +
             "JOIN post p " +
             "ON p.post_id = pht.post_id " +
@@ -24,7 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "JOIN hash_tag h " +
             "ON (h.hashtag_id = pht.hashtag_id AND h.name = :tagName)"
     )
-    List<TagFeedResponseDto> findPostIdAndFilenameByTagName(@Param("tagName") String tagName);
+    List<Object[]> findPostIdAndFilenameByTagName(@Param("tagName") String tagName);
 
     @Query(nativeQuery = true, value = "SELECT * FROM post p ORDER BY p.post_id DESC LIMIT :offset, :limit")
     List<Post> findPosts(@Param("offset") Long offset, @Param("limit") Long limit);

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,9 +120,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<TagFeedResponseDto> getTagPosts(String tag) {
 
-        List<TagFeedResponseDto> result = postRepository.findPostIdAndFilenameByTagName(tag);
-
-        return result;
+        List<Object[]> result = postRepository.findPostIdAndFilenameByTagName(tag);
+        List<TagFeedResponseDto> convertedResult = new ArrayList<>();
+        for (Object[] r : result) {
+            convertedResult.add(new TagFeedResponseDto(((BigInteger)r[0]).longValue(), (String)r[1]));
+        }
+        return convertedResult;
     }
 
 }
