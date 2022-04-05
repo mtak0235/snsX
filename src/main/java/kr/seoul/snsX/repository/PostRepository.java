@@ -25,7 +25,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     )
     List<Object[]> findPostIdAndFilenameByTagName(@Param("tagName") String tagName);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM post p ORDER BY p.post_id DESC LIMIT :offset, :limit")
+    @Query(nativeQuery = true, value = "SELECT * FROM post p JOIN (SELECT post_id FROM post ORDER BY post_id DESC LIMIT :offset, :limit) pp ON pp.post_id=p.post_id ORDER BY p.post_id DESC")
     List<Post> findPosts(@Param("offset") Long offset, @Param("limit") Long limit);
-
 }

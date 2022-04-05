@@ -116,13 +116,6 @@ public class PostServiceImpl implements PostService {
         FeedResponseDto feedResponseDto = new FeedResponseDto();
         feedResponseDto.setPosts(result);
 
-        int size = result.size();
-        Long lastPk = 0L;
-        if (size > 0) {
-            lastPk = result.get(size - 1).getId();
-        }
-        feedResponseDto.setLastPK(lastPk);
-
         return feedResponseDto;
     }
 
