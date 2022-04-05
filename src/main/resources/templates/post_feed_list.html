@@ -112,8 +112,9 @@
         crossorigin="anonymous"></script>
 
 <script th:inline="javascript">
-    let offset = 1;
+    let offset = 0;
     let limit = 3;
+    let isEnd =  false
     let URL =
         "http://localhost:8080/post/feed/" + offset + "/" + limit;
     document.addEventListener("DOMContentLoaded", () => {
@@ -127,40 +128,43 @@
         const observer = new IntersectionObserver(handleIntersect, options);
         observer.observe(document.querySelector("footer"));
         //an initial load of some data
-
         getData();
     });
     function handleIntersect(entries) {
         if (entries[0].isIntersecting) {
             console.warn("something is intersecting with the viewport");
-            URL =
-                "http://localhost:8080/post/feed/" + offset + "/" + limit;
+            URL = "http://localhost:8080/post/feed/" + offset + "/" + limit;
             getData();
         }
     }
     function getData() {
         let main = document.querySelector("main");
         console.log("fetch some JSON data");
-        fetch(URL)
-            .then(response => response.json())
-            .then(data => {
-                // data.items[].img, data.items[].name
-                data.posts.forEach(item => {
-                    let fig = document.createElement("figure");
-                    let fc = document.createElement("figcaption");
-                    let img = document.createElement("img");
-                    let link=document.createElement("a");
-                    link.href = "http://localhost:8080/post/" + item.id;
-                    img.src = item.img;
-                    img.alt = item.author;
-                    fc.textContent = item.content;
-                    link.appendChild(img);
-                    fig.appendChild(link);
-                    fig.appendChild(fc);
-                    main.appendChild(fig);
+        if (isEnd == false) {
+            fetch(URL)
+                .then(response => response.json())
+                .then(data => {
+                    // data.items[].img, data.items[].name
+                    data.posts.forEach(item => {
+                        let fig = document.createElement("figure");
+                        let fc = document.createElement("figcaption");
+                        let img = document.createElement("img");
+                        let link=document.createElement("a");
+                        link.href = "http://localhost:8080/post/" + item.id;
+                        img.src = item.img;
+                        img.alt = item.author;
+                        fc.textContent = item.content;
+                        link.appendChild(img);
+                        fig.appendChild(link);
+                        fig.appendChild(fc);
+                        main.appendChild(fig);
+                    });
+                    if (data.length == 0) {
+                        isEnd = true;
+                    }
+                    offset += data.length;
                 });
-                offset = data.lastPK;
-            });
+        }
     }
 </script>
 </body>

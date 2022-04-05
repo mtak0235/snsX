@@ -106,7 +106,7 @@ public class PostController {
         return result;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public String showFeedForm() {
         return "post_feed_list";
     }
