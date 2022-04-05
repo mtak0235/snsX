@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,16 +29,6 @@ public class PostController {
 
     private final PostService postService;
 
-
-    @GetMapping("/test")
-    public String test() {
-        return "list";
-    }
-
-    @GetMapping("/t")
-    public String ref() {
-        return "test";
-    }
 
     @GetMapping("/upload")
     public String savePostForm(@ModelAttribute PostSaveDto postSaveDto) {
@@ -100,15 +91,29 @@ public class PostController {
         return new UrlResource("file:" + fileDir + filename);
     }
 
-    @GetMapping("/search/{tag}")
-    public String searchByTag(@PathVariable String tag) {
-        List<TagFeedResponseDto> result = postService.getTagPosts(tag);
+    @GetMapping("/search")
+    public String searchByTagForm(HttpServletRequest request, Model model) {
+        String tag = request.getParameter("tag");
+        System.out.println("tag = " + tag);
+        model.addAttribute("tag", "%23" + tag);
         return "tag_feed_form";
     }
 
     @ResponseBody
-    @GetMapping("/show/{offset}/{limit}")
-    public FeedResponseDto showFeedForm(@PathVariable Long offset, @PathVariable Long limit) {
+    @GetMapping("/search/{tag}")
+    public List<TagFeedResponseDto> searchByTag(@PathVariable String tag) {
+        List<TagFeedResponseDto> result = postService.getTagPosts(tag);
+        return result;
+    }
+
+    @GetMapping("/")
+    public String showFeedForm() {
+        return "post_feed_list";
+    }
+
+    @ResponseBody
+    @GetMapping("/feed/{offset}/{limit}")
+    public FeedResponseDto showFeed(@PathVariable Long offset, @PathVariable Long limit) {
         FeedResponseDto result = postService.showPosts(offset, limit);
         return result;
     }
