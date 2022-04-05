@@ -146,10 +146,13 @@
                     let fig = document.createElement("figure");
                     let fc = document.createElement("figcaption");
                     let img = document.createElement("img");
+                    let link=document.createElement("a");
+                    link.href = "http://localhost:8080/post/" + item.id;
                     img.src = "http://localhost:8080/post/images/"+ item.fileName;
                     img.alt = item.id;
                     fc.textContent = item.id;
-                    fig.appendChild(img);
+                    link.appendChild(img);
+                    fig.appendChild(link);
                     fig.appendChild(fc);
                     main.appendChild(fig);
                 });
