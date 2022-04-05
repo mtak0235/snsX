@@ -114,7 +114,7 @@
 <script th:inline="javascript">
     let offset = 0;
     let limit = 3;
-    let isEnd =  false
+    let isEnd = false;
     let URL =
         "http://localhost:8080/post/feed/" + offset + "/" + limit;
     document.addEventListener("DOMContentLoaded", () => {
@@ -140,7 +140,7 @@
     function getData() {
         let main = document.querySelector("main");
         console.log("fetch some JSON data");
-        if (isEnd == false) {
+        if (isEnd === false) {
             fetch(URL)
                 .then(response => response.json())
                 .then(data => {
@@ -159,10 +159,10 @@
                         fig.appendChild(fc);
                         main.appendChild(fig);
                     });
-                    if (data.length == 0) {
+                    if (data.length === 0) {
                         isEnd = true;
                     }
-                    offset += data.length;
+                    offset += data.posts.length;
                 });
         }
     }
