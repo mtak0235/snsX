@@ -58,7 +58,7 @@ public class PostController {
     @PostMapping("/delete")
     public String deletePost(@RequestParam Long postId) throws EntityNotFoundException, FileNotFoundException {
         postService.removePost(postId);
-        return "redirect:/";
+        return "redirect:/post";
     }
 
     @GetMapping("/{postId}")
