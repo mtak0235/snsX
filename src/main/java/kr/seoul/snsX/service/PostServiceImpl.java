@@ -1,9 +1,6 @@
 package kr.seoul.snsX.service;
 
-import kr.seoul.snsX.dto.CommentRequestDto;
-import kr.seoul.snsX.dto.PostResponseDto;
-import kr.seoul.snsX.dto.PostSaveDto;
-import kr.seoul.snsX.dto.PostUpdateDto;
+import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.entity.Comment;
 import kr.seoul.snsX.entity.Image;
 import kr.seoul.snsX.entity.Post;
@@ -14,14 +11,18 @@ import kr.seoul.snsX.repository.FileRepository;
 import kr.seoul.snsX.repository.ImageRepository;
 import kr.seoul.snsX.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -87,7 +88,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void addComment(Long postId, CommentRequestDto requestDto) {
         Post post = postRepository.findById(postId).orElseThrow(() ->
-                new IllegalArgumentException("댓글 쓰기 실패: 해당 게시무링 존재하지 않습니다." + postId));
+                new EntityNotFoundException("댓글 쓰기 실패: 해당 게시물이 존재하지 않습니다." + postId));
         requestDto.setPost(post);
         Comment comment = requestDto.toEntity();
         commentRepository.save(comment);
@@ -101,4 +102,32 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException());
         commentRepository.delete(comment);
     }
+
+    @Override
+    @Transactional
+    public FeedResponseDto showPosts(Long offset, Long limit) {
+
+        List<Post> posts = postRepository.findPosts(offset, limit);
+
+        List<PostResponseDto> result = new ArrayList<>();
+        for (Post p : posts) {
+            result.add(new PostResponseDto(p));
+        }
+        FeedResponseDto feedResponseDto = new FeedResponseDto();
+        feedResponseDto.setPosts(result);
+
+        return feedResponseDto;
+    }
+
+    @Override
+    public List<TagFeedResponseDto> getTagPosts(String tag) {
+
+        List<Object[]> result = postRepository.findPostIdAndFilenameByTagName(tag);
+        List<TagFeedResponseDto> convertedResult = new ArrayList<>();
+        for (Object[] r : result) {
+            convertedResult.add(new TagFeedResponseDto(((BigInteger)r[0]).longValue(), (String)r[1]));
+        }
+        return convertedResult;
+    }
+
 }

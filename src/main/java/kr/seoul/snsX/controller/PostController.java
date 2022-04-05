@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -57,7 +58,7 @@ public class PostController {
     @PostMapping("/delete")
     public String deletePost(@RequestParam Long postId) throws EntityNotFoundException, FileNotFoundException {
         postService.removePost(postId);
-        return "redirect:/";
+        return "redirect:/post";
     }
 
     @GetMapping("/{postId}")
@@ -89,4 +90,32 @@ public class PostController {
     public UrlResource showImageForm(@PathVariable String filename) throws MalformedURLException {
         return new UrlResource("file:" + fileDir + filename);
     }
+
+    @GetMapping("/search")
+    public String searchByTagForm(HttpServletRequest request, Model model) {
+        String tag = request.getParameter("tag");
+        System.out.println("tag = " + tag);
+        model.addAttribute("tag", "%23" + tag);
+        return "tag_feed_form";
+    }
+
+    @ResponseBody
+    @GetMapping("/search/{tag}")
+    public List<TagFeedResponseDto> searchByTag(@PathVariable String tag) {
+        List<TagFeedResponseDto> result = postService.getTagPosts(tag);
+        return result;
+    }
+
+    @GetMapping
+    public String showFeedForm() {
+        return "post_feed_list";
+    }
+
+    @ResponseBody
+    @GetMapping("/feed/{offset}/{limit}")
+    public FeedResponseDto showFeed(@PathVariable Long offset, @PathVariable Long limit) {
+        FeedResponseDto result = postService.showPosts(offset, limit);
+        return result;
+    }
+
 }
