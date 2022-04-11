@@ -16,8 +16,6 @@ public class Post extends BaseTimeEntity {
     @Column(name = "POST_ID")
     private Long id;
 
-    private String author;
-
     @Lob
     private String content;
 
@@ -29,4 +27,8 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<PostHashTag> postHashTags = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ID")
+    Member member;
 }

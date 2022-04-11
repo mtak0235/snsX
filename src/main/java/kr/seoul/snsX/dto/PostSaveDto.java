@@ -11,7 +11,7 @@ import java.util.List;
 @Getter @Setter
 public class PostSaveDto {
     private Long postId;
-    private String author;
+    private Long memberId;
     private String content;
     private List<MultipartFile> imageFiles;
 }

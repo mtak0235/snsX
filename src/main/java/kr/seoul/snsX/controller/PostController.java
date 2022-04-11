@@ -29,9 +29,8 @@ public class PostController {
 
     private final PostService postService;
 
-
     @GetMapping("/upload")
-    public String savePostForm(@ModelAttribute PostSaveDto postSaveDto) {
+    public String savePostForm() {
         return "post_form";
     }
 
@@ -106,7 +105,7 @@ public class PostController {
         return result;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public String showFeedForm() {
         return "post_feed_list";
     }

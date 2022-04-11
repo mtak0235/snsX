@@ -15,14 +15,14 @@ import lombok.NoArgsConstructor;
 public class CommentRequestDto {
     private Long id;
     private String content;
-    private String commenter;
+//    private Long commenterId;
     private Post post;
 
     public Comment toEntity() {
         Comment comment = Comment.builder()
                 .id(id)
                 .content(content)
-                .author(commenter)
+//                .member(commenterId)
                 .post(post)
                 .build();
         return comment;

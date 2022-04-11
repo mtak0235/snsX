@@ -15,8 +15,6 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "COMMENT_ID")
     private Long id;
 
-    private String author;
-
     @Lob
     private String content;
 
@@ -24,4 +22,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "POST_ID")
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ID")
+    private Member member;
 }
