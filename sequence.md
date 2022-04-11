@@ -74,15 +74,17 @@ participant l as Log
 
 cli->>c: email, pw
 c->>s: removeUser(email, pw)
-s->>r: findUserByPw(email, pw)
+s->>r: findUserByPwAndEmail(email, pw)
 r->>s: User
 alt 유효하지 않은 비밀번호인 경우
 s->>c: throws inValidAccess("잘못된 접근입니다")
 c->>cli: throws inValidAccess("잘못된 접근입니다")
 end
-s->>r: deleteUser(pk)
+s->>r: user.setActive(false)
+s->>r: deletePost(List<Post>)
 r->>s: void
 s->>c: void
+c->>c: expire(cookie)
 c->>cli: void
 ```
 
