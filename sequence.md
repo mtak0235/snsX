@@ -168,12 +168,12 @@ participant l as Log
 cli->>c: nickName
 c->>s: searchUser(nickName)
 s->>r: findUserByNickName(nickName)
-r->>s: List<foundUserDto(pk)>
-s->>c: List<foundUserDto(pk)>
-c->>cli: List<foundUserDto(pk)>
+r->>s: List<userInfoDto(pk, nickName, thumbnailFileName)>
+s->>c: List<userInfoDto>
+c->>cli: List<userInfoDto>
 ```
 
-# searchLostUserId
+# searchLostUserEmail
 ```mermaid
 sequenceDiagram
 actor cli
@@ -183,15 +183,15 @@ participant r as repository
 participant l as Log
 
 cli->>c: nickName, phoneNumber
-c->>s: searchLostUserId(nickName, phoneNumber)
-s->>r: findUserIdByNickNameAndPhoneNumber(nickName, phoneNumber)
-r->>s: foundUserId
+c->>s: searchLostUserEmail(nickName, phoneNumber)
+s->>r: findUserEmailByNickNameAndPhoneNumber(nickName, phoneNumber)
+r->>s: email
 alt "입력된 정보가 유효하지 않은 경우"
-s->>c: throws inputDatainvalid("잘못된 정보입니다.")
-c->>cli: throws inputDatainvalid("잘못된 정보입니다.")
+s->>c: throws inputDataInvalid("잘못된 정보입니다.")
+c->>cli: throws inputDataInvalid("잘못된 정보입니다.")
 end
-s->>c: foundUserId
-c->>cli: foundUserId
+s->>c: email
+c->>cli: email
 ```
 
 # searchLostUserPw(보류)
