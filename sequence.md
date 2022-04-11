@@ -267,12 +267,16 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>+c: 글, 이미지, 작성자
-c->>+s: uploadPost(글, 이미지, 작성자)
+cli->>+c: 글, 이미지, userId
+c->>+s: uploadPost(글, 이미지, userId)
 s->>s: checkSize(이미지)
 alt 이미지 사이즈가 규격외라면
 s->>c: throw outOfSize()
 c->>cli: "이미지 업로드 용량을 초과했습니다"
+end
+loop:
+s->>r: createStoreFileName(originalFileName)
+r->>s: uploadedFileName
 end
 s->>r: saveImg(이미지)
 alt 이미지 잘 저장되면
@@ -437,7 +441,21 @@ c->>cli: void
 ```
 
 ### searchByTagForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
 
+cli->>c: tagName
+c->>s: searchUser(userId)
+s->>r: findNickNameAndProfileFileNameByUserId(userId)
+r->>s: Object[] (nickName, profileFileName)
+s->>c: userInfoDto(Object[])
+c->>cli: userInfoDto
+```
 
 
 ### searchByTag
