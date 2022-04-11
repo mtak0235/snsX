@@ -168,7 +168,7 @@ participant l as Log
 cli->>c: nickName
 c->>s: searchUser(nickName)
 s->>r: findUserByNickName(nickName)
-r->>s: List<userInfoDto(pk, nickName, thumbnailFileName)>
+r->>s: List<userInfoDto(pk, nickName, profileFileName)>
 s->>c: List<userInfoDto>
 c->>cli: List<userInfoDto>
 ```
@@ -210,6 +210,23 @@ r->>r: sendValidUrlToEmail(email)
 cli->>c: validUrl
 ```
 
+# searchUserPageForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: userId, offset, limit
+c->>s: searchUserPage(userId, offset, limit)
+s->>r: findUserPosts(userId, offset, limit)
+r->>s: List<Object[]> (post_id, thumbnailFileName)
+s->>c: List<thumbnailDto(post_id, thumbnailFileName)>
+c->>cli: List<thumbnailDto>
+```
+
 # searchUserPage
 ```mermaid
 sequenceDiagram
@@ -219,12 +236,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: pk
-c->>s: searchUserPage(pk)
-s->>r: findUserByPk(pk)
-r->>s: List<Object[]> (post_id, sumnail, nickName)
-s->>c: foundUserInfoDto (Map<post_id, sumnail>, nickName)
-c->>cli: foundUserInfoDto (Map<post_id, sumnail>, nickName)
+cli->>c: userId, offset, limit
+c->>s: searchUserPage(userId, offset, limit)
+s->>r: findUserPosts(userId, offset, limit)
+r->>s: List<Object[]> (post_id, thumbnailFileName)
+s->>c: List<thumbnailDto(post_id, thumbnailFileName)>
+c->>cli: List<thumbnailDto>
 ```
 
 
@@ -419,6 +436,10 @@ s->>c: void
 c->>cli: void
 ```
 
+### searchByTagForm
+
+
+
 ### searchByTag
 
 ```mermaid
@@ -429,12 +450,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: tag (String)
-c->>s: getTagPosts(tag)
-s->>r: findPostIdAndNameByTagName(tag)
+cli->>c: tagName
+c->>s: getTagPosts(tagName)
+s->>r: findPostIdAndNameByTagName(tagName)
 r->>s: List<Object[]>
-s->>c: List<ResponseTagFeedDto>
-c->>cli: List<ResponseTagFeedDto>, Tag
+s->>c: List<ThumbnailDto(post_id, thumbnailFileName)>
+c->>cli: List<ThumbnailDto>
 ```
 
 
@@ -505,7 +526,7 @@ participant l as Log
 # 매번 새로운 것을 보여줘야함
 cli->>c: offset,limit
 c->>s: showPosts(offset, limit)
-s->>r: getPosts(pk, limit)
+s->>r: findPosts(pk, limit)
 r->>s: List<Post>
 s->>c: FeedResponseDto
 c->>cli: FeedResponseDto
