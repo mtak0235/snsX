@@ -48,15 +48,15 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>+c: email, nickName, pw,phoneNumber
-c->>+s: registerUser(email, nickName, pw, phoneNumber)
+cli->>+c: MemberSignupDtp(email, nickName, pw,phoneNumber)
+c->>+s: registerUser(MemberSignupDtp)
 s->>r: saveUser(email, nickName, pw, phoneNumber)
-r->>s: Optional<User>
+r->>s: User
 alt 유저가 이미 존재하면
 s->>c: throws alreadyExist("회원가입에 실패했습니다")
 c->>cli: throws alreadyExist("회원가입에 실패했습니다")
 else
-s->>c: UserInfoDto
+s->>c: UserInfoDto(nickName, memberId)
 c->>cli: UserInfoDto
 end
 
