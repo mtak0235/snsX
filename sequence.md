@@ -219,12 +219,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: userId, offset, limit
-c->>s: searchUserPage(userId, offset, limit)
-s->>r: findUserPosts(userId, offset, limit)
-r->>s: List<Object[]> (post_id, thumbnailFileName)
-s->>c: List<thumbnailDto(post_id, thumbnailFileName)>
-c->>cli: List<thumbnailDto>
+cli->>c: userId
+c->>s: searchUser(userId)
+s->>r: findNickNameAndProfileFileNameByUserId(userId)
+r->>s: Object[] (nickName, profileFileName)
+s->>c: userInfoDto(Object[])
+c->>cli: userInfoDto
 ```
 
 # searchUserPage
