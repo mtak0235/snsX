@@ -550,8 +550,8 @@ cli->>c: offset,limit
 c->>s: showPosts(offset, limit)
 s->>r: findPosts(pk, limit)
 r->>s: List<Post>
-s->>c: FeedResponseDto
-c->>cli: FeedResponseDto
+s->>c: List<ThumbnailDto(postId, thumbnailFileName)>
+c->>cli: List<ThumbnailDto>
 ```
 
 # showFeedForm
