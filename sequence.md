@@ -363,7 +363,7 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>c: pk, prevContent, postContent
+cli->>c: PostUpdateDto(pk, prevContent, postContent)
 c->>s: modifyPost(PostUpdateDto)
 s->>r: findById(pk)
 alt 없는 post를 조회 요청하면
@@ -395,16 +395,23 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: postId, content, commenter
-c->>s: addComment(postId, content, commenter)
+cli->>c: postId, CommentRequestDto(content, commenter)
+c->>s: addComment(postId, CommentRequestDto)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
 r->>s: throw EntityNotFoundException()
 s->>c: throw EntityNotFoundException()
 c->cli: 400 에러
 end
-s->>r: saveComment(postId, content, commenter)
-r->>s: Comment(commentId, commenter, content)
+r->>s: Post
+s->>r: findMemberById(memberId)
+alt 게시물이 없으면
+r->>s: throw EntityNotFoundException()
+s->>c: throw EntityNotFoundException()
+c->cli: 400 에러
+r->>s: Member
+end
+s->>r: save(Comment)
 s->>c: void
 c->>cli: void
 ```
