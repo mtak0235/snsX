@@ -435,7 +435,7 @@ r->>s: throw EntityNotFoundException()
 s->>c: throw EntityNotFoundException()
 c->cli: 400 에러
 end
-s->>r: deleteComment(postId, commentId)
+s->>r: delete(postId, commentId)
 r->>s: void
 s->>c: void
 c->>cli: void
