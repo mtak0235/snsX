@@ -395,8 +395,8 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: postId, CommentRequestDto(content, commenter)
-c->>s: addComment(postId, CommentRequestDto)
+cli->>c: postId, memberId, CommentRequestDto(content)
+c->>s: addComment(postId, memberId, CommentRequestDto)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
 r->>s: throw EntityNotFoundException()
@@ -409,9 +409,10 @@ alt 게시물이 없으면
 r->>s: throw EntityNotFoundException()
 s->>c: throw EntityNotFoundException()
 c->cli: 400 에러
-r->>s: Member
 end
+r->>s: Member
 s->>r: save(Comment)
+r->>s: void
 s->>c: void
 c->>cli: void
 ```
