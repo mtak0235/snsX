@@ -451,11 +451,11 @@ participant r as repository
 participant l as Log
 
 cli->>c: tagName
-c->>s: getTagIdByTagName(tagName)
-s->>r: findTagByTagName(tagName)
-r->>s: Tag
-s->>c: tagId
-c->>cli: tagId
+c->>s: getTagByTagName(tagName)
+s->>r: findByName(tagName)
+r->>s: HashTag
+s->>c: TagResponseDto(HashTag)
+c->>cli: TagResponseDto
 ```
 
 
@@ -471,7 +471,7 @@ participant l as Log
 
 cli->>c: tagId, offset, limit
 c->>s: getTagPosts(tagId, offset, limit)
-s->>r: findPostIdAndNameByTagName(tagId, offset, limit)
+s->>r: findPostIdAndThumbnailFileNameByTagId(tagId, offset, limit)
 r->>s: List<Object[]>
 s->>c: List<ThumbnailDto(post_id, thumbnailFileName)>
 c->>cli: List<ThumbnailDto>
