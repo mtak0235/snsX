@@ -5,6 +5,6 @@ import kr.seoul.snsX.dto.UserInfoDto;
 
 
 public interface MemberService {
-    public UserInfoDto registerUser(MemberSignupDto memberSignupDto);
+    public UserInfoDto registerMember(MemberSignupDto memberSignupDto);
 
 }

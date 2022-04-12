@@ -1,6 +1,7 @@
 package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.dto.MemberSignupDto;
+import kr.seoul.snsX.dto.UserInfoDto;
 import kr.seoul.snsX.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -25,11 +28,14 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result) {
+    public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result
+    , HttpServletRequest request) {
         if (result.hasErrors()) {
             return "signup";
         }
-        memberService.registerUser(member);
+        UserInfoDto userInfo = memberService.registerMember(member);
+        HttpSession session = request.getSession();
+        session.setAttribute("userInfo", userInfo);
         return "redirect:/post";
     }
 }
