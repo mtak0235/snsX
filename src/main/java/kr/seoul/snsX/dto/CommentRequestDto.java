@@ -1,6 +1,7 @@
 package kr.seoul.snsX.dto;
 
 import kr.seoul.snsX.entity.Comment;
+import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,18 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CommentRequestDto {
-    private Long id;
     private String content;
-//    private Long commenterId;
-    private Post post;
 
-    public Comment toEntity() {
-        Comment comment = Comment.builder()
-                .id(id)
-                .content(content)
-//                .member(commenterId)
-                .post(post)
-                .build();
-        return comment;
-    }
 }

@@ -1,7 +1,7 @@
 package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.dto.MemberSignupDto;
-import kr.seoul.snsX.dto.UserInfoDto;
+import kr.seoul.snsX.dto.MemberInfoDto;
 import kr.seoul.snsX.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,7 +33,7 @@ public class MemberController {
         if (result.hasErrors()) {
             return "signup";
         }
-        UserInfoDto userInfo = memberService.registerMember(member);
+        MemberInfoDto userInfo = memberService.registerMember(member);
         HttpSession session = request.getSession();
         session.setAttribute("userInfo", userInfo);
         return "redirect:/post";

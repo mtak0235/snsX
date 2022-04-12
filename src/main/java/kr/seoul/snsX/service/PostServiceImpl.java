@@ -3,17 +3,16 @@ package kr.seoul.snsX.service;
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.entity.Comment;
 import kr.seoul.snsX.entity.Image;
+import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.exception.FailImgSaveException;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
-import kr.seoul.snsX.repository.CommentRepository;
-import kr.seoul.snsX.repository.FileRepository;
-import kr.seoul.snsX.repository.ImageRepository;
-import kr.seoul.snsX.repository.PostRepository;
+import kr.seoul.snsX.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
@@ -32,6 +31,7 @@ public class PostServiceImpl implements PostService {
     private final FileRepository fileRepository;
     private final CommentRepository commentRepository;
     private final HashTagService hashTagService;
+    private final MemberRepository memberRepository;
 
 
     @Override
@@ -47,12 +47,20 @@ public class PostServiceImpl implements PostService {
         if (saveDto.getImageFiles().size() > 3) {
             throw new ImageOverUploadedException("이미지 갯수 초과");
         }
-        List<Image> storeImageFiles = fileRepository.storeFiles(saveDto.getImageFiles());
+
+        List<Image> storeImageFiles = new ArrayList<>();
+        for (MultipartFile file : saveDto.getImageFiles()) {
+            Image image = new Image(file.getOriginalFilename(), fileRepository.createStoreFileName(file.getOriginalFilename()));
+            storeImageFiles.add(image);
+        }
+
+        fileRepository.storeFiles(saveDto.getImageFiles(), storeImageFiles);
         Post post = new Post();
-        post.setAuthor(saveDto.getAuthor());
+//        post.setAuthor(saveDto.getAuthor());
         post.setContent(saveDto.getContent());
         post.setImages(storeImageFiles);
         post.setPostHashTags(hashTagService.storePostHashTags(post));
+        post.setThumbnailFileName(storeImageFiles.get(0).getUploadedFilename());
         postRepository.save(post);
         for (Image storeImageFile : storeImageFiles) {
             storeImageFile.setPost(post);
@@ -86,11 +94,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void addComment(Long postId, CommentRequestDto requestDto) {
+    public void addComment(Long postId, Long memberId, CommentRequestDto requestDto) {
         Post post = postRepository.findById(postId).orElseThrow(() ->
                 new EntityNotFoundException("댓글 쓰기 실패: 해당 게시물이 존재하지 않습니다." + postId));
-        requestDto.setPost(post);
-        Comment comment = requestDto.toEntity();
+        Member commenter = memberRepository.findById(memberId).orElseThrow(()->
+                new EntityNotFoundException("댓글 쓰기 실패: 회원 번호가 올바르지 않습니다."));
+        Comment comment = new Comment();
+        comment.setPost(post);
+        comment.setMember(commenter);
+        comment.setContent(requestDto.getContent());
         commentRepository.save(comment);
     }
 
@@ -105,27 +117,23 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public FeedResponseDto showPosts(Long offset, Long limit) {
+    public List<ThumbnailDto> showPosts(Long offset, Long limit) {
 
         List<Post> posts = postRepository.findPosts(offset, limit);
-
-        List<PostResponseDto> result = new ArrayList<>();
+        List<ThumbnailDto> thumbnailDtos = new ArrayList<>();
         for (Post p : posts) {
-            result.add(new PostResponseDto(p));
+            thumbnailDtos.add(new ThumbnailDto(p.getId(), p.getThumbnailFileName()));
         }
-        FeedResponseDto feedResponseDto = new FeedResponseDto();
-        feedResponseDto.setPosts(result);
-
-        return feedResponseDto;
+        return thumbnailDtos;
     }
 
     @Override
-    public List<TagFeedResponseDto> getTagPosts(String tag) {
+    public List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit) {
 
-        List<Object[]> result = postRepository.findPostIdAndFilenameByTagName(tag);
-        List<TagFeedResponseDto> convertedResult = new ArrayList<>();
+        List<Object[]> result = postRepository.findPostIdAndThumbnailFileNameByTagId(tagId, offset, limit);
+        List<ThumbnailDto> convertedResult = new ArrayList<>();
         for (Object[] r : result) {
-            convertedResult.add(new TagFeedResponseDto(((BigInteger)r[0]).longValue(), (String)r[1]));
+            convertedResult.add(new ThumbnailDto(((BigInteger)r[0]).longValue(), (String)r[1]));
         }
         return convertedResult;
     }

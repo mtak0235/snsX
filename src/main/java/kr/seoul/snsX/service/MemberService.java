@@ -1,10 +1,10 @@
 package kr.seoul.snsX.service;
 
 import kr.seoul.snsX.dto.MemberSignupDto;
-import kr.seoul.snsX.dto.UserInfoDto;
+import kr.seoul.snsX.dto.MemberInfoDto;
 
 
 public interface MemberService {
-    public UserInfoDto registerMember(MemberSignupDto memberSignupDto);
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto);
 
 }

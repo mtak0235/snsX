@@ -17,12 +17,12 @@ public interface PostService {
 
     void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException;
 
-    void addComment(Long postId, CommentRequestDto requestDto);
+    void addComment(Long postId,Long memberId, CommentRequestDto requestDto);
 
     void removeComment(Long postId, Long commentId);
 
-    FeedResponseDto showPosts(Long offset, Long limit);
+    List<ThumbnailDto> showPosts(Long offset, Long limit);
 
-    List<TagFeedResponseDto> getTagPosts(String tag);
+    List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit);
 
 }

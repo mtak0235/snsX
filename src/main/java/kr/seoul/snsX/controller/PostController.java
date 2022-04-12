@@ -2,6 +2,7 @@ package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
+import kr.seoul.snsX.service.HashTagService;
 import kr.seoul.snsX.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -29,6 +29,7 @@ public class PostController {
     public String fileDir;
 
     private final PostService postService;
+    private final HashTagService hashTagService;
 
     @GetMapping("/upload")
     public String savePostForm() {
@@ -64,18 +65,13 @@ public class PostController {
     @GetMapping("/{postId}")
     public String showPostForm(@PathVariable Long postId, Model model) {
         PostResponseDto post = postService.getPost(postId);
-        List<CommentResponseDto> comments = post.getComments();
-        if (comments != null && !comments.isEmpty()) {
-            model.addAttribute("comments", comments);
-        }
-        model.addAttribute("user", post.getAuthor());
         model.addAttribute("post", post);
         return "post_result";
     }
 
     @PostMapping("/{postId}/save-comment")
-    public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto) {
-        postService.addComment(postId, requestDto);
+    public String saveComment(@PathVariable Long postId, @RequestParam Long memberId, @ModelAttribute CommentRequestDto requestDto) {
+        postService.addComment(postId, memberId, requestDto);
         return "redirect:/post/" + postId;
     }
 
@@ -95,19 +91,22 @@ public class PostController {
     public String searchByTagForm(HttpServletRequest request, Model model) {
         String tag = request.getParameter("tag");
         System.out.println("tag = " + tag);
-        model.addAttribute("tag", "%23" + tag);
+        String tagName = "#" + tag;
+        TagResponseDto tagResponseDto = hashTagService.getTagByTagName(tagName);
+        model.addAttribute("tag", tagResponseDto);
+
         return "tag_feed_form";
     }
 
     @ResponseBody
-    @GetMapping("/search/{tag}")
-    public List<TagFeedResponseDto> searchByTag(@PathVariable String tag) {
-        List<TagFeedResponseDto> result = postService.getTagPosts(tag);
+    @GetMapping("/search/{tagId}/{offset}/{limit}")
+    public List<ThumbnailDto> searchByTag(@PathVariable Long tagId, @PathVariable Long offset, @PathVariable Long limit) {
+        List<ThumbnailDto> result = postService.getTagPosts(tagId, offset, limit);
         return result;
     }
 
     @GetMapping("/")
-    public String showFeedForm(@SessionAttribute(name = "userInfo", required = false) UserInfoDto userInfo, Model model) {
+    public String showFeedForm(@SessionAttribute(name = "userInfo", required = false) MemberInfoDto userInfo, Model model) {
         if (userInfo  == null) {
             return "post_feed_form";
         }
@@ -117,8 +116,8 @@ public class PostController {
 
     @ResponseBody
     @GetMapping("/feed/{offset}/{limit}")
-    public FeedResponseDto showFeed(@PathVariable Long offset, @PathVariable Long limit) {
-        FeedResponseDto result = postService.showPosts(offset, limit);
+    public List<ThumbnailDto> showFeed(@PathVariable Long offset, @PathVariable Long limit) {
+        List<ThumbnailDto> result = postService.showPosts(offset, limit);
         return result;
     }
 
