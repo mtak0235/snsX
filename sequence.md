@@ -1,4 +1,4 @@
-# isValidUserEmail
+# isValidMemberEmail
 
 ```mermaid
 sequenceDiagram
@@ -18,7 +18,7 @@ c->>cli: boolean
 end
 ```
 
-# isValidUserNickName
+# isValidMemberNickName
 
 ```mermaid
 sequenceDiagram
@@ -49,20 +49,20 @@ participant r as repository
 participant l as Log
 
 cli->>+c: MemberSignupDtp(email, nickName, pw,phoneNumber)
-c->>+s: registerUser(MemberSignupDtp)
-s->>r: saveUser(email, nickName, pw, phoneNumber)
-r->>s: User
+c->>+s: registerMember(MemberSignupDtp)
+s->>r: saveMember(email, nickName, pw, phoneNumber)
+r->>s: Member
 alt 유저가 이미 존재하면
 s->>c: throws alreadyExist("회원가입에 실패했습니다")
 c->>cli: throws alreadyExist("회원가입에 실패했습니다")
 else
-s->>c: UserInfoDto(nickName, memberId)
-c->>cli: UserInfoDto
+s->>c: MemberInfoDto(nickName, memberId)
+c->>cli: MemberInfoDto
 end
 
 ```
 
-# deleteUser
+# deleteMember
 
 ```mermaid
 sequenceDiagram
@@ -73,14 +73,14 @@ participant r as repository
 participant l as Log
 
 cli->>c: email, pw
-c->>s: removeUser(email, pw)
-s->>r: findUserByPwAndEmail(email, pw)
-r->>s: User
+c->>s: removeMember(email, pw)
+s->>r: findMemberByPwAndEmail(email, pw)
+r->>s: Member
 alt 유효하지 않은 비밀번호인 경우
 s->>c: throws inValidAccess("잘못된 접근입니다")
 c->>cli: throws inValidAccess("잘못된 접근입니다")
 end
-s->>r: user.setActive(false)
+s->>r: member.setActive(false)
 s->>r: deletePost(List<Post>)
 r->>s: void
 s->>c: void
@@ -88,7 +88,7 @@ c->>c: expire(cookie)
 c->>cli: void
 ```
 
-# modifyUser(보류)
+# modifyMember(보류)
 
 ```mermaid
 sequenceDiagram
@@ -99,13 +99,13 @@ participant r as repository
 participant l as Log
 
 cli->>c: email
-c->>s: modifyUser(email)
-s->>r: findUserBy(email, pw)
-r->>s: User
+c->>s: modifyMember(email)
+s->>r: findMemberBy(email, pw)
+r->>s: Member
 
 ```
 
-# modifyUserPw(보류)
+# modifyMemberPw(보류)
 
 ```mermaid
 sequenceDiagram
@@ -116,7 +116,7 @@ participant r as repository
 participant l as Log
 
 cli->>c: email
-c->>s: modifyUser(email)
+c->>s: modifyMember(email)
 s->>s: sendValidUrlToEmail(email)
 cli->>c: validUrl
 ```
@@ -132,14 +132,14 @@ participant l as Log
 
 cli->>c: email, pw
 c->>s: login(email, pw)
-s->>r: findUserByEmail(email, pw)
-r->>s: User
-alt 존재하지 않는 user인 경우
+s->>r: findMemberByEmail(email, pw)
+r->>s: Member
+alt 존재하지 않는 member인 경우
 s->>c: throws failedlogin("로그인에 실패했습니다")
 c->>cli: throws failedlogin("로그인에 실패했습니다")
 end
-s->>c: UserInfoDto
-c->>cli: redirect:/main + UserInfoDto
+s->>c: MemberInfoDto
+c->>cli: redirect:/main + MemberInfoDto
 ```
 
 # logout(보류)
@@ -156,7 +156,7 @@ c->>s:
 c->>cli: redirect:/main
 ```
 
-# searchUser
+# searchMember
 ```mermaid
 sequenceDiagram
 actor cli
@@ -166,14 +166,14 @@ participant r as repository
 participant l as Log
 
 cli->>c: nickName
-c->>s: searchUser(nickName)
-s->>r: findUserByNickName(nickName)
-r->>s: List<userInfoDto(pk, nickName, profileFileName)>
-s->>c: List<userInfoDto>
-c->>cli: List<userInfoDto>
+c->>s: searchMember(nickName)
+s->>r: findMemberByNickName(nickName)
+r->>s: List<MemberInfoDto(pk, nickName, profileFileName)>
+s->>c: List<MemberInfoDto>
+c->>cli: List<MemberInfoDto>
 ```
 
-# searchLostUserEmail
+# searchLostMemberEmail
 ```mermaid
 sequenceDiagram
 actor cli
@@ -183,8 +183,8 @@ participant r as repository
 participant l as Log
 
 cli->>c: nickName, phoneNumber
-c->>s: searchLostUserEmail(nickName, phoneNumber)
-s->>r: findUserEmailByNickNameAndPhoneNumber(nickName, phoneNumber)
+c->>s: searchLostMemberEmail(nickName, phoneNumber)
+s->>r: findMemberEmailByNickNameAndPhoneNumber(nickName, phoneNumber)
 r->>s: email
 alt "입력된 정보가 유효하지 않은 경우"
 s->>c: throws inputDataInvalid("잘못된 정보입니다.")
@@ -194,7 +194,7 @@ s->>c: email
 c->>cli: email
 ```
 
-# searchLostUserPw(보류)
+# searchLostMemberPw(보류)
 ```mermaid
 sequenceDiagram
 actor cli
@@ -204,13 +204,13 @@ participant r as repository
 participant l as Log
 
 cli->>c: email
-c->>s: searchLostUserPw(email)
-s->>r: findUserPwByEmail(email)
+c->>s: searchLostMemberPw(email)
+s->>r: findMemberPwByEmail(email)
 r->>r: sendValidUrlToEmail(email)
 cli->>c: validUrl
 ```
 
-# searchUserPageForm
+# searchMemberPageForm
 ```mermaid
 sequenceDiagram
 actor cli
@@ -219,15 +219,15 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: userId
-c->>s: searchUser(userId)
-s->>r: findNickNameAndProfileFileNameByUserId(userId)
+cli->>c: memberId
+c->>s: searchMember(memberId)
+s->>r: findNickNameAndProfileFileNameById(memberId)
 r->>s: Object[] (nickName, profileFileName)
-s->>c: userInfoDto(Object[])
-c->>cli: userInfoDto
+s->>c: MemberInfoDto(Object[])
+c->>cli: MemberInfoDto
 ```
 
-# searchUserPage
+# searchMemberPage
 ```mermaid
 sequenceDiagram
 actor cli
@@ -236,9 +236,9 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: userId, offset, limit
-c->>s: searchUserPage(userId, offset, limit)
-s->>r: findUserPosts(userId, offset, limit)
+cli->>c: memberId, offset, limit
+c->>s: searchMemberPage(memberId, offset, limit)
+s->>r: findMemberPosts(memberId, offset, limit)
 r->>s: List<Object[]> (post_id, thumbnailFileName)
 s->>c: List<thumbnailDto(post_id, thumbnailFileName)>
 c->>cli: List<thumbnailDto>
@@ -257,7 +257,7 @@ participant l as Log
 ```
 
 
-### savePost
+# savePost
 ```mermaid
 sequenceDiagram
 actor cli
@@ -267,18 +267,18 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>+c: 글, 이미지, userId
-c->>+s: uploadPost(글, 이미지, userId)
+cli->>+c: PostSaveDto(글, 이미지, memberId)
+c->>+s: uploadPost(PostSaveDto)
 s->>s: checkSize(이미지)
 alt 이미지 사이즈가 규격외라면
 s->>c: throw outOfSize()
 c->>cli: "이미지 업로드 용량을 초과했습니다"
 end
-loop:
+loop: uploadedFileName을 가진 Image 객체 List 생성
 s->>r: createStoreFileName(originalFileName)
 r->>s: uploadedFileName
 end
-s->>r: saveImg(이미지)
+s->>r: storeFile(List<MultipartFile>, List<Image>)
 alt 이미지 잘 저장되면
 r->>s: List<파일 경로>
 s->>r: saveOnDB(글, 작성자, List<파일 경로>, List<태그>)
@@ -309,7 +309,7 @@ c->>cli: "save에 실패"
 end
 ```
 
-### delete post
+# delete post
 ```mermaid
 sequenceDiagram
 actor cli
@@ -337,7 +337,7 @@ s->>c: void
 c->>cli: void
 ```
 
-### updatePostForm
+# updatePostForm
 
 ```mermaid
 sequenceDiagram
@@ -359,7 +359,7 @@ s->>c: PostResponseDto
 c->>cli: PostResponseDto
 ```
 
-### updatePost
+# updatePost
 
 ```mermaid
 sequenceDiagram
@@ -392,7 +392,7 @@ s->>c: postId
 c->>cli: redirect:/post/postId
 ```
 
-### Add Comment
+# Add Comment
 
 ```mermaid
 sequenceDiagram
@@ -416,7 +416,7 @@ s->>c: void
 c->>cli: void
 ```
 
-### Remove Comment
+# Remove Comment
 
 ```mermaid
 sequenceDiagram
@@ -440,7 +440,7 @@ s->>c: void
 c->>cli: void
 ```
 
-### searchByTagForm
+# searchByTagForm
 ```mermaid
 sequenceDiagram
 actor cli
@@ -450,15 +450,15 @@ participant r as repository
 participant l as Log
 
 cli->>c: tagName
-c->>s: searchUser(userId)
-s->>r: findNickNameAndProfileFileNameByUserId(userId)
+c->>s: searchMember(memberId)
+s->>r: findNickNameAndProfileFileNameByMemberId(memberId)
 r->>s: Object[] (nickName, profileFileName)
-s->>c: userInfoDto(Object[])
-c->>cli: userInfoDto
+s->>c: memberInfoDto(Object[])
+c->>cli: memberInfoDto
 ```
 
 
-### searchByTag
+# searchByTag
 
 ```mermaid
 sequenceDiagram
@@ -478,7 +478,7 @@ c->>cli: List<ThumbnailDto>
 
 
 <!-- 부적절하다는 요청 -->
-### hide post
+# hide post
 ```mermaid
 sequenceDiagram
 actor op
@@ -498,7 +498,7 @@ r->>s: postId
 
 ```
 
-### restore post
+# restore post
 ```mermaid
 sequenceDiagram
 actor op
@@ -518,7 +518,7 @@ r->>s: postId
 ```
 
 
-### showPostForm
+# showPostForm
 ```mermaid
 sequenceDiagram
 actor op
@@ -533,7 +533,7 @@ s->>c: postResponseDto
 c->>op: PostResponseDto, List<Comment>, author
 ```
 
-### showFeed
+# showFeed
 ```mermaid
 sequenceDiagram
 actor cli
@@ -550,7 +550,7 @@ s->>c: FeedResponseDto
 c->>cli: FeedResponseDto
 ```
 
-### showFeedForm
+# showFeedForm
 ```mermaid
 sequenceDiagram
 actor cli
@@ -563,7 +563,7 @@ cli->>c: void
 c->>cli: void
 ```
 
-### Remove Post
+# Remove Post
 
 ```mermaid
 sequenceDiagram
