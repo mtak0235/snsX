@@ -451,11 +451,11 @@ participant r as repository
 participant l as Log
 
 cli->>c: tagName
-c->>s: searchMember(memberId)
-s->>r: findNickNameAndProfileFileNameByMemberId(memberId)
-r->>s: Object[] (nickName, profileFileName)
-s->>c: memberInfoDto(Object[])
-c->>cli: memberInfoDto
+c->>s: getTagIdByTagName(tagName)
+s->>r: findTagByTagName(tagName)
+r->>s: Tag
+s->>c: tagId
+c->>cli: tagId
 ```
 
 
@@ -469,12 +469,13 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: tagName
-c->>s: getTagPosts(tagName)
-s->>r: findPostIdAndNameByTagName(tagName)
+cli->>c: tagId, offset, limit
+c->>s: getTagPosts(tagId, offset, limit)
+s->>r: findPostIdAndNameByTagName(tagId, offset, limit)
 r->>s: List<Object[]>
 s->>c: List<ThumbnailDto(post_id, thumbnailFileName)>
 c->>cli: List<ThumbnailDto>
+
 ```
 
 
