@@ -480,7 +480,7 @@ c->>cli: List<ThumbnailDto>
 
 
 <!-- 부적절하다는 요청 -->
-# hide post
+# hide post(보류)
 ```mermaid
 sequenceDiagram
 actor op
@@ -500,7 +500,7 @@ r->>s: postId
 
 ```
 
-# restore post
+# restore post(보류)
 ```mermaid
 sequenceDiagram
 actor op
@@ -531,7 +531,9 @@ participant l as Log
 
 op->>c: postId
 c->>s: getPost(postId)
-s->>c: postResponseDto
+s->>r: findById(postId)
+r->>s: Post
+s->>c: postResponseDto(Post)
 c->>op: PostResponseDto, List<Comment>, author
 ```
 
