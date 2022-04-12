@@ -533,8 +533,8 @@ op->>c: postId
 c->>s: getPost(postId)
 s->>r: findById(postId)
 r->>s: Post
-s->>c: postResponseDto(Post)
-c->>op: PostResponseDto, List<Comment>, author
+s->>c: postResponseDto(Post's info)
+c->>op: PostResponseDto
 ```
 
 # showFeed
