@@ -279,15 +279,14 @@ s->>r: createStoreFileName(originalFileName)
 r->>s: uploadedFileName
 end
 s->>r: storeFile(List<MultipartFile>, List<Image>)
-alt 이미지 잘 저장되면
-r->>s: List<파일 경로>
-s->>r: saveOnDB(글, 작성자, List<파일 경로>, List<태그>)
-alt db 저장에 실패하면
-r->>s: throw failPostSave()
-s->>c: throw failPostSave()
-c->>cli: "save에 실패"
+alt: 이미지 저장에 실패하면
+r->>s: throw failImgSave();
+s->>c: throw failImgSave();
+c->>cli: throw failImgSave();
 end
-s->>hashTagService: storePostHashTags(prev)
+r->>s: void
+s->>r: save(Post(글, 작성자, List<파일 경로>, List<태그>))
+s->>hashTagService: storePostHashTags(Post)
 alt if numOfPostHashTag > 0
 hashTagService->>r: deleteByPostId(postId)
 end
@@ -297,16 +296,10 @@ loop foundHashTag exist
 hashTagService->>r: save(postHashTag) 
 end
 hashTagService->>s: List<PostHashTag>
-r->>s: id
+r->>s: getId(postId)
 s->>l: upload 성공
-s->>c: id
-c->>cli: "/" 
-else
-r->>s: throw failImgSave()
-s->>c: throw failImgSave()
-c->>cli: "save에 실패"
-
-end
+s->>c: postId
+c->>cli: "/"
 ```
 
 # delete post
