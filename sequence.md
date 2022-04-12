@@ -431,8 +431,8 @@ cli->>c: tag (String)
 c->>s: getTagPosts(tag)
 s->>r: findPostIdAndNameByTagName(tag)
 r->>s: List<Object[]>
-s->>c: List<ResponseTagFeedDto>
-c->>cli: List<ResponseTagFeedDto>, Tag
+s->>c: List<TagFeedResponseDto>
+c->>cli: List<TagFeedResponseDto>
 ```
 
 
