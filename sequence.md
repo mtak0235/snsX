@@ -250,23 +250,6 @@ r->>c: void
 c->>cli: redirect:/main
 ```
 
-# searchMember
-```mermaid
-sequenceDiagram
-actor cli
-participant c as controller
-participant s as service
-participant r as repository
-participant l as Log
-
-cli->>c: nickName
-c->>s: searchMember(nickName)
-s->>r: findMemberByNickName(nickName)
-r->>s: MemberInfoDto(pk, nickName, profileFileName)
-s->>c: MemberInfoDto
-c->>cli: MemberInfoDto
-```
-
 # searchLostMemberEmail
 ```mermaid
 sequenceDiagram
@@ -317,11 +300,11 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: memberId
-c->>s: searchMember(memberId)
-s->>r: findNickNameAndProfileFileNameById(memberId)
-r->>s: Object[] (nickName, profileFileName)
-s->>c: MemberInfoDto(Object[])
+cli->>c: nickName
+c->>s: searchMember(nickName)
+s->>r: findMemberByNickName(nickName)
+r->>s: MemberInfoDto(pk, nickName, profileFileName)
+s->>c: MemberInfoDto
 c->>cli: MemberInfoDto
 ```
 
