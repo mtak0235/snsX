@@ -19,4 +19,9 @@ public class MemberServiceImpl implements MemberService{
         Member savedMember = memberRepository.save(memberSignupDto.toEntity());
         return new UserInfoDto(savedMember);
     }
+
+    @Override
+    public String searchLostMemberEmail(String nickName, String phoneNumber) {
+        return null;
+    }
 }

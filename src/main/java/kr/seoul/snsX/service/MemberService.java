@@ -7,4 +7,5 @@ import kr.seoul.snsX.dto.UserInfoDto;
 public interface MemberService {
     public UserInfoDto registerUser(MemberSignupDto memberSignupDto);
 
+    public String searchLostMemberEmail(String nickName, String phoneNumber);
 }
