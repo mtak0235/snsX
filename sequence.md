@@ -48,8 +48,8 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>+c: MemberSignupDtp(email, nickName, pw,phoneNumber)
-c->>+s: registerMember(MemberSignupDtp)
+cli->>+c: MemberSignupDto(email, nickName, pw,phoneNumber)
+c->>+s: registerMember(MemberSignupDto)
 s->>r: save(email, nickName, pw, phoneNumber)
 r->>s: Member
 alt 유저가 이미 존재하면
@@ -93,6 +93,36 @@ c->>c: expire(cookie)
 c->>cli: void
 ```
 
+# settingMemberForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: cookie(key)
+c->>r: findEmailByKey(key)
+r->>c: email
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
+c->>cli: void
+```
+
+# modifyMemberForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+
+```
+
 # modifyMember
 
 ```mermaid
@@ -104,10 +134,16 @@ participant r as repository
 participant l as Log
 
 cli->>c: cookie(key)
+c->>r: findEmailByKey(key)
+r->>c: email
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
 c->>s: modifyMember(email)
 s->>r: findMemberBy(email, pw)
 r->>s: Member
-
+s->>c: MemberInfoDto(Member)
+c->>cli: redirect:/member/{memberId} + MemberInfoDto
 ```
 
 # modifyMemberPw(보류)
