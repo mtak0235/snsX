@@ -262,9 +262,9 @@ participant l as Log
 cli->>c: nickName
 c->>s: searchMember(nickName)
 s->>r: findMemberByNickName(nickName)
-r->>s: List<MemberInfoDto(pk, nickName, profileFileName)>
-s->>c: List<MemberInfoDto>
-c->>cli: List<MemberInfoDto>
+r->>s: MemberInfoDto(pk, nickName, profileFileName)
+s->>c: MemberInfoDto
+c->>cli: MemberInfoDto
 ```
 
 # searchLostMemberEmail
