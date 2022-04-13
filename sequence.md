@@ -325,19 +325,6 @@ s->>c: List<thumbnailDto(post_id, thumbnailFileName)>
 c->>cli: List<thumbnailDto>
 ```
 
-
-# modifyProfileImage(보류)
-```mermaid
-sequenceDiagram
-actor cli
-participant c as controller
-participant s as service
-participant r as repository
-participant l as Log
-
-```
-
-
 # savePost
 ```mermaid
 sequenceDiagram
@@ -348,7 +335,13 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>+c: PostSaveDto(글, 이미지, memberId)
+cli->>c: cookie(key), PostSaveDto(글, 이미지)
+c->>r: findMemberIdByKey(key)
+r->>c: memberId
+alt: Key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
+c->>c: setMemberId(memberId)
 c->>+s: uploadPost(PostSaveDto)
 s->>s: checkSize(이미지)
 alt 이미지 사이즈가 규격외라면
@@ -392,7 +385,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: postId
+cli->>c: cookie(key), postId
+c->>r: existsCookieByKey(key)
+r->>c: boolean
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
 c->>s: removePost(postId)
 s->>r: findById(postId)
 alt 게시물이 없으면
