@@ -485,7 +485,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: postId, memberId, CommentRequestDto(content)
+cli->>c: cookie(key), postId, CommentRequestDto(content)
+c->>r: findMemberIdByKey(key)
+r->>c: memberId
+alt: Key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
 c->>s: addComment(postId, memberId, CommentRequestDto)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
@@ -517,7 +522,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: postId, commentId
+cli->>c: cookie(key), postId, commentId
+c->>r: existsCookieByKey(key)
+r->>c: boolean
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
 c->>s: removeComment(postId, commentId)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
@@ -525,7 +535,7 @@ r->>s: throw EntityNotFoundException()
 s->>c: throw EntityNotFoundException()
 c->cli: 400 에러
 end
-s->>r: delete(postId, commentId)
+s->>r: delete(commentId)
 r->>s: void
 s->>c: void
 c->>cli: void
