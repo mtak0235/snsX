@@ -170,7 +170,6 @@ r->>c: email
 alt: key가 유효하지 않은 경우
 c->>cli: redirect:/member/login
 end
-c->>
 ```
 
 # modifyMember
