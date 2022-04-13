@@ -578,48 +578,6 @@ c->>cli: List<ThumbnailDto>
 
 ```
 
-
-<!-- 부적절하다는 요청 -->
-# hide post(보류)
-```mermaid
-sequenceDiagram
-actor op
-participant c as controller
-participant s as service
-participant r as repository
-participant l as Log
-
-op->>c: postId
-c->>s: hidePost(postId)
-s->>r: findById(postId)
-r->>r: activePost(invisible)
-r->>s: postId
-
-
-
-
-```
-
-# restore post(보류)
-```mermaid
-sequenceDiagram
-actor op
-participant c as controller
-participant s as service
-participant r as repository
-participant l as Log
-
-op->>c: postId
-c->>s: hidePost(postId)
-s->>r: findById(postId)
-r->>r: changeStatus(invisible)
-r->>s: postId
-
-
-
-```
-
-
 # showPostForm
 ```mermaid
 sequenceDiagram
@@ -677,10 +635,16 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: pk
-c->>s: removePost(pk)
-s->>r: removePost(pk)
-r->>r: findPostByIdInDB(pk)
+cli->>c: cookie(key), postId
+c->>r: existsCookieByKey(key)
+r->>c: boolean
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
+cli->>c: postId
+c->>s: removePost(postId)
+s->>r: removePost(postId)
+r->>r: findPostByIdInDB(postId)
 r->>r: insertPostInTrashcan(Post)
 alt 없는 post를 삭제 요청하면
 r->>s: throw EntityNotFoundException()
@@ -690,4 +654,37 @@ end
 r->>s: void
 s->>c: void
 c->>cli: void
+```
+
+<!-- 부적절하다는 요청 -->
+# hide post(보류)
+```mermaid
+sequenceDiagram
+actor op
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+op->>c: postId
+c->>s: hidePost(postId)
+s->>r: findById(postId)
+r->>r: activePost(invisible)
+r->>s: postId
+```
+
+# restore post(보류)
+```mermaid
+sequenceDiagram
+actor op
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+op->>c: postId
+c->>s: hidePost(postId)
+s->>r: findById(postId)
+r->>r: changeStatus(invisible)
+r->>s: postId
 ```
