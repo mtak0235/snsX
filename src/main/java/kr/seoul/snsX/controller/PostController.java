@@ -89,9 +89,7 @@ public class PostController {
 
     @GetMapping("/search")
     public String searchByTagForm(HttpServletRequest request, Model model) {
-        String tag = request.getParameter("tag");
-        System.out.println("tag = " + tag);
-        String tagName = "#" + tag;
+        String tagName = "#" + request.getParameter("tag");
         TagResponseDto tagResponseDto = hashTagService.getTagByTagName(tagName);
         model.addAttribute("tag", tagResponseDto);
 
