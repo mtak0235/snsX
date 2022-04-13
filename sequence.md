@@ -38,7 +38,7 @@ c->>cli: "이미 존재하는 nickName입니다"
 end
 ```
 
-# 회원 등록
+# memberUpload
 
 ```mermaid
 sequenceDiagram
@@ -57,7 +57,7 @@ s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 else
 s->>c: void
-c->>cli: redirect:/post/login
+c->>cli: redirect:/member/login
 end
 
 ```
