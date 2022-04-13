@@ -641,7 +641,6 @@ r->>c: boolean
 alt: key가 유효하지 않은 경우
 c->>cli: redirect:/member/login
 end
-cli->>c: postId
 c->>s: removePost(postId)
 s->>r: removePost(postId)
 r->>r: findPostByIdInDB(postId)
