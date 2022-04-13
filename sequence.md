@@ -288,7 +288,7 @@ s->>c: email
 c->>cli: email
 ```
 
-# searchLostMemberPw(보류)
+# searchLostMemberPw
 ```mermaid
 sequenceDiagram
 actor cli
@@ -299,9 +299,13 @@ participant l as Log
 
 cli->>c: email
 c->>s: searchLostMemberPw(email)
-s->>r: findMemberPwByEmail(email)
-r->>r: sendValidUrlToEmail(email)
-cli->>c: validUrl
+s->>r: findMemberByEmail(email)
+r->>s: Member
+s->>s: createTemporalPw()
+s->>r: sendTemporalPwToEmail(email, temporalPw)
+s->>r: setPw(temporalPw)
+s->>c: void
+c->>cli: redirection:/member/login
 ```
 
 # searchMemberPageForm
