@@ -219,17 +219,20 @@ participant l as Log
 
 cli->>c: email, pw
 c->>s: login(email, pw)
-s->>r: findMemberByEmail(email, pw)
+s->>r: findMemberByEmailAndPw(email, pw)
 r->>s: Member
 alt 존재하지 않는 member인 경우
 s->>c: throws failedlogin("로그인에 실패했습니다")
 c->>cli: throws failedlogin("로그인에 실패했습니다")
 end
 s->>c: MemberInfoDto
-c->>cli: redirect:/main + MemberInfoDto
+c->>r: createCookie(memberId)
+r->>c: key
+c->>c: addCookie(key)
+c->>cli: redirect:/main + MemberInfoDto + key
 ```
 
-# logout(보류)
+# logout
 ```mermaid
 sequenceDiagram
 actor cli
@@ -238,8 +241,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: email
-c->>s: 
+cli->>c: cookie(key)
+alt: 쿠키가 없는 경우
+c->>cli: redirect:/member/login
+end
+c->>r: delete(key)
+r->>c: void
 c->>cli: redirect:/main
 ```
 
