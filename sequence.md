@@ -1,4 +1,4 @@
-# isValidUserEmail
+# isValidMemberEmail
 
 ```mermaid
 sequenceDiagram
@@ -18,7 +18,7 @@ c->>cli: boolean
 end
 ```
 
-# isValidUserNickName
+# isValidMemberNickName
 
 ```mermaid
 sequenceDiagram
@@ -48,21 +48,21 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>+c: email, nickName, pw,phoneNumber
-c->>+s: registerMember(email, nickName, pw, phoneNumber)
-s->>r: save(email, nickName, pw, phoneNumber)
-r->>s: Optional<User>
+cli->>+c: MemberSignupDtp(email, nickName, pw,phoneNumber)
+c->>+s: registerMember(MemberSignupDtp)
+s->>r: saveMember(email, nickName, pw, phoneNumber)
+r->>s: Member
 alt 유저가 이미 존재하면
 s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 else
-s->>c: UserInfoDto
-c->>cli: UserInfoDto
+s->>c: MemberInfoDto(nickName, memberId)
+c->>cli: MemberInfoDto
 end
 
 ```
 
-# deleteUser
+# deleteMember
 
 ```mermaid
 sequenceDiagram
@@ -73,20 +73,22 @@ participant r as repository
 participant l as Log
 
 cli->>c: email, pw
-c->>s: removeUser(email, pw)
-s->>r: findUserByPw(email, pw)
-r->>s: User
+c->>s: removeMember(email, pw)
+s->>r: findMemberByPwAndEmail(email, pw)
+r->>s: Member
 alt 유효하지 않은 비밀번호인 경우
 s->>c: throws inValidAccess("잘못된 접근입니다")
 c->>cli: throws inValidAccess("잘못된 접근입니다")
 end
-s->>r: deleteUser(pk)
+s->>r: member.setActive(false)
+s->>r: deletePost(List<Post>)
 r->>s: void
 s->>c: void
+c->>c: expire(cookie)
 c->>cli: void
 ```
 
-# modifyUser(보류)
+# modifyMember(보류)
 
 ```mermaid
 sequenceDiagram
@@ -97,13 +99,13 @@ participant r as repository
 participant l as Log
 
 cli->>c: email
-c->>s: modifyUser(email)
-s->>r: findUserBy(email, pw)
-r->>s: User
+c->>s: modifyMember(email)
+s->>r: findMemberBy(email, pw)
+r->>s: Member
 
 ```
 
-# modifyUserPw(보류)
+# modifyMemberPw(보류)
 
 ```mermaid
 sequenceDiagram
@@ -114,7 +116,7 @@ participant r as repository
 participant l as Log
 
 cli->>c: email
-c->>s: modifyUser(email)
+c->>s: modifyMember(email)
 s->>s: sendValidUrlToEmail(email)
 cli->>c: validUrl
 ```
@@ -130,14 +132,14 @@ participant l as Log
 
 cli->>c: email, pw
 c->>s: login(email, pw)
-s->>r: findUserByEmail(email, pw)
-r->>s: User
-alt 존재하지 않는 user인 경우
+s->>r: findMemberByEmail(email, pw)
+r->>s: Member
+alt 존재하지 않는 member인 경우
 s->>c: throws failedlogin("로그인에 실패했습니다")
 c->>cli: throws failedlogin("로그인에 실패했습니다")
 end
-s->>c: UserInfoDto
-c->>cli: redirect:/main + UserInfoDto
+s->>c: MemberInfoDto
+c->>cli: redirect:/main + MemberInfoDto
 ```
 
 # logout(보류)
@@ -154,7 +156,7 @@ c->>s:
 c->>cli: redirect:/main
 ```
 
-# searchUser
+# searchMember
 ```mermaid
 sequenceDiagram
 actor cli
@@ -164,14 +166,14 @@ participant r as repository
 participant l as Log
 
 cli->>c: nickName
-c->>s: searchUser(nickName)
-s->>r: findUserByNickName(nickName)
-r->>s: List<foundUserDto(pk)>
-s->>c: List<foundUserDto(pk)>
-c->>cli: List<foundUserDto(pk)>
+c->>s: searchMember(nickName)
+s->>r: findMemberByNickName(nickName)
+r->>s: List<MemberInfoDto(pk, nickName, profileFileName)>
+s->>c: List<MemberInfoDto>
+c->>cli: List<MemberInfoDto>
 ```
 
-# searchLostUserId
+# searchLostMemberEmail
 ```mermaid
 sequenceDiagram
 actor cli
@@ -181,18 +183,18 @@ participant r as repository
 participant l as Log
 
 cli->>c: nickName, phoneNumber
-c->>s: searchLostUserId(nickName, phoneNumber)
-s->>r: findUserIdByNickNameAndPhoneNumber(nickName, phoneNumber)
-r->>s: foundUserId
+c->>s: searchLostMemberEmail(nickName, phoneNumber)
+s->>r: findMemberEmailByNickNameAndPhoneNumber(nickName, phoneNumber)
+r->>s: email
 alt "입력된 정보가 유효하지 않은 경우"
-s->>c: throws inputDatainvalid("잘못된 정보입니다.")
-c->>cli: throws inputDatainvalid("잘못된 정보입니다.")
+s->>c: throws inputDataInvalid("잘못된 정보입니다.")
+c->>cli: throws inputDataInvalid("잘못된 정보입니다.")
 end
-s->>c: foundUserId
-c->>cli: foundUserId
+s->>c: email
+c->>cli: email
 ```
 
-# searchLostUserPw(보류)
+# searchLostMemberPw(보류)
 ```mermaid
 sequenceDiagram
 actor cli
@@ -202,13 +204,13 @@ participant r as repository
 participant l as Log
 
 cli->>c: email
-c->>s: searchLostUserPw(email)
-s->>r: findUserPwByEmail(email)
+c->>s: searchLostMemberPw(email)
+s->>r: findMemberPwByEmail(email)
 r->>r: sendValidUrlToEmail(email)
 cli->>c: validUrl
 ```
 
-# searchUserPage
+# searchMemberPageForm
 ```mermaid
 sequenceDiagram
 actor cli
@@ -217,12 +219,29 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: pk
-c->>s: searchUserPage(pk)
-s->>r: findUserByPk(pk)
-r->>s: List<Object[]> (post_id, sumnail, nickName)
-s->>c: foundUserInfoDto (Map<post_id, sumnail>, nickName)
-c->>cli: foundUserInfoDto (Map<post_id, sumnail>, nickName)
+cli->>c: memberId
+c->>s: searchMember(memberId)
+s->>r: findNickNameAndProfileFileNameById(memberId)
+r->>s: Object[] (nickName, profileFileName)
+s->>c: MemberInfoDto(Object[])
+c->>cli: MemberInfoDto
+```
+
+# searchMemberPage
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: memberId, offset, limit
+c->>s: searchMemberPage(memberId, offset, limit)
+s->>r: findMemberPosts(memberId, offset, limit)
+r->>s: List<Object[]> (post_id, thumbnailFileName)
+s->>c: List<thumbnailDto(post_id, thumbnailFileName)>
+c->>cli: List<thumbnailDto>
 ```
 
 
@@ -238,7 +257,7 @@ participant l as Log
 ```
 
 
-### savePost
+# savePost
 ```mermaid
 sequenceDiagram
 actor cli
@@ -248,23 +267,26 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>+c: 글, 이미지, 작성자
-c->>+s: uploadPost(글, 이미지, 작성자)
+cli->>+c: PostSaveDto(글, 이미지, memberId)
+c->>+s: uploadPost(PostSaveDto)
 s->>s: checkSize(이미지)
 alt 이미지 사이즈가 규격외라면
 s->>c: throw outOfSize()
 c->>cli: "이미지 업로드 용량을 초과했습니다"
 end
-s->>r: saveImg(이미지)
-alt 이미지 잘 저장되면
-r->>s: List<파일 경로>
-s->>r: saveOnDB(글, 작성자, List<파일 경로>, List<태그>)
-alt db 저장에 실패하면
-r->>s: throw failPostSave()
-s->>c: throw failPostSave()
-c->>cli: "save에 실패"
+loop: uploadedFileName을 가진 Image 객체 List 생성
+s->>r: createStoreFileName(originalFileName)
+r->>s: uploadedFileName
 end
-s->>hashTagService: storePostHashTags(prev)
+s->>r: storeFile(List<MultipartFile>, List<Image>)
+alt: 이미지 저장에 실패하면
+r->>s: throw failImgSave();
+s->>c: throw failImgSave();
+c->>cli: throw failImgSave();
+end
+r->>s: void
+s->>r: save(Post(글, 작성자, List<파일 경로>, List<태그>))
+s->>hashTagService: storePostHashTags(Post)
 alt if numOfPostHashTag > 0
 hashTagService->>r: deleteByPostId(postId)
 end
@@ -274,19 +296,13 @@ loop foundHashTag exist
 hashTagService->>r: save(postHashTag) 
 end
 hashTagService->>s: List<PostHashTag>
-r->>s: id
+r->>s: getId(postId)
 s->>l: upload 성공
-s->>c: id
-c->>cli: "/" 
-else
-r->>s: throw failImgSave()
-s->>c: throw failImgSave()
-c->>cli: "save에 실패"
-
-end
+s->>c: postId
+c->>cli: "/"
 ```
 
-### delete post
+# delete post
 ```mermaid
 sequenceDiagram
 actor cli
@@ -314,7 +330,7 @@ s->>c: void
 c->>cli: void
 ```
 
-### updatePostForm
+# updatePostForm
 
 ```mermaid
 sequenceDiagram
@@ -336,7 +352,7 @@ s->>c: PostResponseDto
 c->>cli: PostResponseDto
 ```
 
-### updatePost
+# updatePost
 
 ```mermaid
 sequenceDiagram
@@ -347,7 +363,7 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>c: pk, prevContent, postContent
+cli->>c: PostUpdateDto(pk, prevContent, postContent)
 c->>s: modifyPost(PostUpdateDto)
 s->>r: findById(pk)
 alt 없는 post를 조회 요청하면
@@ -369,7 +385,7 @@ s->>c: postId
 c->>cli: redirect:/post/postId
 ```
 
-### Add Comment
+# Add Comment
 
 ```mermaid
 sequenceDiagram
@@ -379,21 +395,29 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: postId, content, commenter
-c->>s: addComment(postId, content, commenter)
+cli->>c: postId, memberId, CommentRequestDto(content)
+c->>s: addComment(postId, memberId, CommentRequestDto)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
 r->>s: throw EntityNotFoundException()
 s->>c: throw EntityNotFoundException()
 c->cli: 400 에러
 end
-s->>r: saveComment(postId, content, commenter)
-r->>s: Comment(commentId, commenter, content)
+r->>s: Post
+s->>r: findMemberById(memberId)
+alt 게시물이 없으면
+r->>s: throw EntityNotFoundException()
+s->>c: throw EntityNotFoundException()
+c->cli: 400 에러
+end
+r->>s: Member
+s->>r: save(Comment)
+r->>s: void
 s->>c: void
 c->>cli: void
 ```
 
-### Remove Comment
+# Remove Comment
 
 ```mermaid
 sequenceDiagram
@@ -411,13 +435,31 @@ r->>s: throw EntityNotFoundException()
 s->>c: throw EntityNotFoundException()
 c->cli: 400 에러
 end
-s->>r: deleteComment(postId, commentId)
+s->>r: delete(postId, commentId)
 r->>s: void
 s->>c: void
 c->>cli: void
 ```
 
-### searchByTag
+# searchByTagForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: tagName
+c->>s: getTagByTagName(tagName)
+s->>r: findByName(tagName)
+r->>s: HashTag
+s->>c: TagResponseDto(HashTag)
+c->>cli: TagResponseDto
+```
+
+
+# searchByTag
 
 ```mermaid
 sequenceDiagram
@@ -427,17 +469,18 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: tag (String)
-c->>s: getTagPosts(tag)
-s->>r: findPostIdAndNameByTagName(tag)
+cli->>c: tagId, offset, limit
+c->>s: getTagPosts(tagId, offset, limit)
+s->>r: findPostIdAndThumbnailFileNameByTagId(tagId, offset, limit)
 r->>s: List<Object[]>
-s->>c: List<TagFeedResponseDto>
-c->>cli: List<TagFeedResponseDto>
+s->>c: List<ThumbnailDto(post_id, thumbnailFileName)>
+c->>cli: List<ThumbnailDto>
+
 ```
 
 
 <!-- 부적절하다는 요청 -->
-### hide post
+# hide post(보류)
 ```mermaid
 sequenceDiagram
 actor op
@@ -457,7 +500,7 @@ r->>s: postId
 
 ```
 
-### restore post
+# restore post(보류)
 ```mermaid
 sequenceDiagram
 actor op
@@ -477,7 +520,7 @@ r->>s: postId
 ```
 
 
-### showPostForm
+# showPostForm
 ```mermaid
 sequenceDiagram
 actor op
@@ -488,11 +531,13 @@ participant l as Log
 
 op->>c: postId
 c->>s: getPost(postId)
-s->>c: postResponseDto
-c->>op: PostResponseDto, List<Comment>, author
+s->>r: findById(postId)
+r->>s: Post
+s->>c: postResponseDto(Post's info)
+c->>op: PostResponseDto
 ```
 
-### showFeed
+# showFeed
 ```mermaid
 sequenceDiagram
 actor cli
@@ -503,13 +548,13 @@ participant l as Log
 # 매번 새로운 것을 보여줘야함
 cli->>c: offset,limit
 c->>s: showPosts(offset, limit)
-s->>r: getPosts(pk, limit)
+s->>r: findPosts(pk, limit)
 r->>s: List<Post>
-s->>c: FeedResponseDto
-c->>cli: FeedResponseDto
+s->>c: List<ThumbnailDto(postId, thumbnailFileName)>
+c->>cli: List<ThumbnailDto>
 ```
 
-### showFeedForm
+# showFeedForm
 ```mermaid
 sequenceDiagram
 actor cli
@@ -522,7 +567,7 @@ cli->>c: void
 c->>cli: void
 ```
 
-### Remove Post
+# Remove Post
 
 ```mermaid
 sequenceDiagram
