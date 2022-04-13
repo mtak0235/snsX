@@ -41,4 +41,7 @@ public class MemberController {
         String email = memberService.searchLostMemberEmail(nickName, phoneNumber);
         return "";
     }
+
+    @GetMapping("/login")
+    public
 }

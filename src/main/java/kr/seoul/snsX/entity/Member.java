@@ -21,6 +21,7 @@ public class Member extends BaseTimeEntity{
     private String pw;
     private String phoneNumber;
     private String nickName;
+    private String profileFileName;
 
     @OneToMany
     private List<Post> posts = new ArrayList<>();

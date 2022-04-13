@@ -8,6 +8,7 @@ import lombok.Setter;
 public class MemberInfoDto {
     private String nickName;
     private Long memberId;
+    private String profileImage;
 
     public MemberInfoDto(Member member) {
         this.nickName = member.getNickName();
