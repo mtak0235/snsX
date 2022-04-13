@@ -103,11 +103,55 @@ participant r as repository
 participant l as Log
 
 cli->>c: cookie(key)
-c->>r: findEmailByKey(key)
-r->>c: email
+c->>r: existsCookieByKey(key)
+r->>c: boolean
 alt: key가 유효하지 않은 경우
 c->>cli: redirect:/member/login
 end
+c->>cli: void
+```
+
+# isValidPwForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: cookie(key)
+c->>r: existsCookieByKey(key)
+r->>c: boolean
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
+c->>cli: void
+```
+
+# isValidPw
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: cookie(key), pw
+c->>r: findMemberIdByKey(key)
+r->>c: memberId
+alt: Key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
+c->>s: isValidPw(memberId, pw)
+s->>r: existsMemberByMemberIdAndPw(memberId, pw)
+r->>s: boolean
+alt: pw가 유효하지 않은 경우
+s->>c: throw EntityNotFoundException()
+c->>cli: throw EntityNotFoundException()
+end
+s->>c: void
 c->>cli: void
 ```
 
@@ -120,7 +164,13 @@ participant s as service
 participant r as repository
 participant l as Log
 
-
+cli->>c: cookie(key), memberId
+c->>r: findEmailByKey(key)
+r->>c: email
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
+c->>
 ```
 
 # modifyMember
