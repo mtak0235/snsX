@@ -5,10 +5,7 @@ import kr.seoul.snsX.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -31,5 +28,11 @@ public class MemberController {
         }
         memberService.registerUser(member);
         return "redirect:/post";
+    }
+
+    @PostMapping("/searchLost")
+    public String searchLost(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber) {
+        String email = memberService.searchLostMemberEmail(nickName, phoneNumber);
+        return "";
     }
 }

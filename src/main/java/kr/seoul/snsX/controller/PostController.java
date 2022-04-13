@@ -67,7 +67,7 @@ public class PostController {
         if (comments != null && !comments.isEmpty()) {
             model.addAttribute("comments", comments);
         }
-        model.addAttribute("user", post.getAuthor());
+        model.addAttribute("user", post.getUser().getNickName());
         model.addAttribute("post", post);
         return "post_result";
     }
