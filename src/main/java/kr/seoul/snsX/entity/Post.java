@@ -16,6 +16,8 @@ public class Post extends BaseTimeEntity {
     @Column(name = "POST_ID")
     private Long id;
 
+    private String thumbnailFileName;
+
     @Lob
     private String content;
 

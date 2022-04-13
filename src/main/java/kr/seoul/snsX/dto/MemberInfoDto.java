@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class UserInfoDto {
+public class MemberInfoDto {
     private String nickName;
     private Long memberId;
 
-    public UserInfoDto(Member member) {
+    public MemberInfoDto(Member member) {
         this.nickName = member.getNickName();
         this.memberId = member.getId();
     }

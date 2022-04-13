@@ -1,5 +1,6 @@
 package kr.seoul.snsX.service;
 
+import kr.seoul.snsX.dto.TagResponseDto;
 import kr.seoul.snsX.entity.HashTag;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.entity.PostHashTag;
@@ -15,4 +16,5 @@ public interface HashTagService {
 
     List<PostHashTag> storePostHashTags(Post post);
 
+    TagResponseDto getTagByTagName(String tagName);
 }

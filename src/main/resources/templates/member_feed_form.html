@@ -72,7 +72,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" th:href="@{/post/upload}">게시글 작성하기</a>
+                        <a class="nav-link active" aria-current="page" href="/post/upload">게시글 작성하기</a>
                     </li>
                     <!--                    <li class="nav-item">-->
                     <!--                        <a class="nav-link" href="#">Link</a>-->
@@ -94,7 +94,7 @@
                 </ul>
                 <form class="d-flex" th:action="@{/post/search}">
                     <input name="tag" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <input class="btn btn-outline-success" type="submit" th:value="Search"/>
+                    <input class="btn btn-outline-success" type="submit"th:value="Search"/>
                 </form>
             </div>
         </div>
@@ -112,10 +112,14 @@
         crossorigin="anonymous"></script>
 
 <script th:inline="javascript">
+    let offset = 0;
+    let limit = 3;
+    let isEnd = false;
     let URL =
-        "http://localhost:8080/post/search/" +[[${tag.tagId}]];
+        "http://localhost:8080/post/feed/" + offset + "/" + limit;
     document.addEventListener("DOMContentLoaded", () => {
         //set up the IntersectionObserver to load more images if the footer is visible.
+        //URL - https://gist.githubusercontent.com/prof3ssorSt3v3/1944e7ba7ffb62fe771c51764f7977a4/raw/c58a342ab149fbbb9bb19c94e278d64702833270/infinite.json
         let options = {
             root: null,
             rootMargins: "0px",
@@ -124,39 +128,43 @@
         const observer = new IntersectionObserver(handleIntersect, options);
         observer.observe(document.querySelector("footer"));
         //an initial load of some data
-
-        getData();
+        // getData();
     });
     function handleIntersect(entries) {
         if (entries[0].isIntersecting) {
             console.warn("something is intersecting with the viewport");
+            URL = "http://localhost:8080/post/feed/" + offset + "/" + limit;
             getData();
         }
     }
     function getData() {
         let main = document.querySelector("main");
         console.log("fetch some JSON data");
-        fetch(URL)
-            .then(response => response.json())
-            .then(data => {
-                // data.items[].img, data.items[].name
-                console.log(data);
-                data.forEach(item => {
-                    let fig = document.createElement("figure");
-                    let fc = document.createElement("figcaption");
-                    let img = document.createElement("img");
-                    let link=document.createElement("a");
-                    link.href = "http://localhost:8080/post/" + item.id;
-                    img.src = "http://localhost:8080/post/images/"+ item.fileName;
-                    img.alt = item.id;
-                    fc.textContent = item.id;
-                    link.appendChild(img);
-                    fig.appendChild(link);
-                    fig.appendChild(fc);
-                    main.appendChild(fig);
+        if (isEnd === false) {
+            fetch(URL)
+                .then(response => response.json())
+                .then(data => {
+                    // data.items[].img, data.items[].name
+                    data.posts.forEach(item => {
+                        let fig = document.createElement("figure");
+                        let fc = document.createElement("figcaption");
+                        let img = document.createElement("img");
+                        let link=document.createElement("a");
+                        link.href = "http://localhost:8080/post/" + item.id;
+                        img.src = item.img;
+                        img.alt = item.author;
+                        fc.textContent = item.content;
+                        link.appendChild(img);
+                        fig.appendChild(link);
+                        fig.appendChild(fc);
+                        main.appendChild(fig);
+                    });
+                    if (data.posts.length === 0) {
+                        isEnd = true;
+                    }
+                    offset += data.posts.length;
                 });
-                offset = data.lastPK;
-            });
+        }
     }
 </script>
 </body>

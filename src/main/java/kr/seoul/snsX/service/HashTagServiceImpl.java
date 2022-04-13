@@ -1,5 +1,6 @@
 package kr.seoul.snsX.service;
 
+import kr.seoul.snsX.dto.TagResponseDto;
 import kr.seoul.snsX.entity.HashTag;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.entity.PostHashTag;
@@ -70,6 +71,11 @@ public class HashTagServiceImpl implements HashTagService {
             storedPostHashTags.add(postHashTag);
         }
         return storedPostHashTags;
+    }
+
+    @Override
+    public TagResponseDto getTagByTagName(String tagName) {
+        return new TagResponseDto(hashTagRepository.findByName(tagName));
     }
 
 }
