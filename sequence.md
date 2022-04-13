@@ -50,14 +50,14 @@ participant l as Log
 
 cli->>+c: MemberSignupDtp(email, nickName, pw,phoneNumber)
 c->>+s: registerMember(MemberSignupDtp)
-s->>r: saveMember(email, nickName, pw, phoneNumber)
+s->>r: save(email, nickName, pw, phoneNumber)
 r->>s: Member
 alt 유저가 이미 존재하면
 s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 else
-s->>c: MemberInfoDto(nickName, memberId)
-c->>cli: MemberInfoDto
+s->>c: void
+c->>cli: redirect:/post/login
 end
 
 ```
