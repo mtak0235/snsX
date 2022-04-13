@@ -72,7 +72,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: email, pw
+cli->>c: cookie(key), pw
+c->>r: findEmailByKey(key)
+r->>c: email
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
 c->>s: removeMember(email, pw)
 s->>r: findMemberByPwAndEmail(email, pw)
 r->>s: Member
@@ -88,7 +93,7 @@ c->>c: expire(cookie)
 c->>cli: void
 ```
 
-# modifyMember(보류)
+# modifyMember
 
 ```mermaid
 sequenceDiagram
@@ -98,7 +103,7 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: email
+cli->>c: cookie(key)
 c->>s: modifyMember(email)
 s->>r: findMemberBy(email, pw)
 r->>s: Member
