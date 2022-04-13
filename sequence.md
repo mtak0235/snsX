@@ -418,7 +418,13 @@ participant c as controller
 participant s as service
 participant r as repository
 participant l as Log
-cli->>c: postId
+
+cli->>c: cookie(key), postId
+c->>r: existsCookieByKey(key)
+r->>c: boolean
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
 c->>s: getPostToModify(postId)
 s->>r: getPost(postId)
 alt 없는 post를 수정 요청하면
@@ -442,7 +448,12 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>c: PostUpdateDto(pk, prevContent, postContent)
+cli->>c: cookie(key), PostUpdateDto(pk, prevContent, postContent)
+c->>r: existsCookieByKey(key)
+r->>c: boolean
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
 c->>s: modifyPost(PostUpdateDto)
 s->>r: findById(pk)
 alt 없는 post를 조회 요청하면
