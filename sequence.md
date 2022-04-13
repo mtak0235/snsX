@@ -164,12 +164,21 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), memberId
-c->>r: findEmailByKey(key)
-r->>c: email
+cli->>c: cookie(key)
+c->>r: findMemberIdByKey(key)
+r->>c: memberId
 alt: key가 유효하지 않은 경우
 c->>cli: redirect:/member/login
 end
+c->>s: getMemberById(memberId)
+s->>r: findMemberById(memberId)
+r->>s: Member
+alt: 회원이 존재하지 않는 경우
+s->>c: throw EntityNotFoundException()
+c->>cli: throw EntityNotFoundException()
+end
+s->>c: MemberInfoDto(Member)
+c->>cli: MemberInfoDto
 ```
 
 # modifyMember
@@ -182,33 +191,21 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key)
-c->>r: findEmailByKey(key)
-r->>c: email
+cli->>c: cookie(key), MemberUpdateDto(nickName, phoneNumber, email, pw)
+c->>r: findMemberIdByKey(key)
+r->>c: memberId
 alt: key가 유효하지 않은 경우
 c->>cli: redirect:/member/login
 end
-c->>s: modifyMember(email)
-s->>r: findMemberBy(email, pw)
+c->>s: modifyMember(memberId, MemberUpdateDto)
+s->>r: findMemberById(memberId)
 r->>s: Member
+alt: 회원이 존재하지 않는 경우
+s->>c: throw EntityNotFoundException()
+c->>cli: throw EntityNotFoundException()
+end
 s->>c: MemberInfoDto(Member)
 c->>cli: redirect:/member/{memberId} + MemberInfoDto
-```
-
-# modifyMemberPw(보류)
-
-```mermaid
-sequenceDiagram
-actor cli
-participant c as controller
-participant s as service
-participant r as repository
-participant l as Log
-
-cli->>c: email
-c->>s: modifyMember(email)
-s->>s: sendValidUrlToEmail(email)
-cli->>c: validUrl
 ```
 
 # login
