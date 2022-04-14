@@ -222,14 +222,11 @@ c->>s: login(email, pw)
 s->>r: findMemberByEmailAndPw(email, pw)
 r->>s: Member
 alt 존재하지 않는 member인 경우
-s->>c: throws failedlogin("로그인에 실패했습니다")
-c->>cli: throws failedlogin("로그인에 실패했습니다")
+s->>c: throws failedLogin("로그인에 실패했습니다")
+c->>cli: throws failedLogin("로그인에 실패했습니다")
 end
 s->>c: MemberInfoDto
-c->>r: createCookie(memberId)
-r->>c: key
-c->>c: addCookie(key)
-c->>cli: redirect:/main + MemberInfoDto + key
+c->>cli: redirect:/main + MemberInfoDto
 ```
 
 # logout
@@ -625,36 +622,6 @@ cli->>c: void
 c->>cli: void
 ```
 
-# Remove Post
-
-```mermaid
-sequenceDiagram
-actor cli
-participant c as controller
-participant s as service
-participant r as repository
-participant l as Log
-
-cli->>c: cookie(key), postId
-c->>r: existsCookieByKey(key)
-r->>c: boolean
-alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
-end
-c->>s: removePost(postId)
-s->>r: removePost(postId)
-r->>r: findPostByIdInDB(postId)
-r->>r: insertPostInTrashcan(Post)
-alt 없는 post를 삭제 요청하면
-r->>s: throw EntityNotFoundException()
-s->>c: throw EntityNotFoundException()
-c->cli: 400 에러
-end
-r->>s: void
-s->>c: void
-c->>cli: void
-```
-
 <!-- 부적절하다는 요청 -->
 # hide post(보류)
 ```mermaid
@@ -686,4 +653,34 @@ c->>s: hidePost(postId)
 s->>r: findById(postId)
 r->>r: changeStatus(invisible)
 r->>s: postId
+```
+
+# Remove Post(backup 넣은 경우)
+
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: cookie(key), postId
+c->>r: existsCookieByKey(key)
+r->>c: boolean
+alt: key가 유효하지 않은 경우
+c->>cli: redirect:/member/login
+end
+c->>s: removePost(postId)
+s->>r: removePost(postId)
+r->>r: findPostByIdInDB(postId)
+r->>r: insertPostInTrashcan(Post)
+alt 없는 post를 삭제 요청하면
+r->>s: throw EntityNotFoundException()
+s->>c: throw EntityNotFoundException()
+c->cli: 400 에러
+end
+r->>s: void
+s->>c: void
+c->>cli: void
 ```
