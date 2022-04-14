@@ -1,13 +1,17 @@
 package kr.seoul.snsX.controller;
 
+import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
+import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -26,7 +30,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result
-    , HttpServletRequest request) {
+            , HttpServletRequest request) {
         if (result.hasErrors()) {
             return "signup";
         }
@@ -43,5 +47,23 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public
+    public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto) {
+        return "signin";
+    }
+
+    @PostMapping("/login")
+    public String login(HttpServletRequest request, @ModelAttribute MemberLoginDto memberLoginDto, Model model) throws failedLogin {
+        MemberInfoDto memberInfoDto = memberService.login(memberLoginDto);
+        model.addAttribute("member", memberInfoDto);
+        HttpSession session = request.getSession();
+        session.setAttribute("member", memberInfoDto);
+        session.setAttribute("first", 1);
+        session.setAttribute("second", 2);
+        return "post_feed_list";
+    }
+
+//    @GetMapping("/logout")
+//    public String logout(HttpServletRequest request) {
+//
+//    }
 }

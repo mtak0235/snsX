@@ -1,9 +1,11 @@
 package kr.seoul.snsX.service;
 
+import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
 import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.exception.AlreadyExistException;
+import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,14 @@ public class MemberServiceImpl implements MemberService{
         }
         Member savedMember = memberRepository.save(memberSignupDto.toEntity());
         return new MemberInfoDto(savedMember);
+    }
+
+    @Override
+    public MemberInfoDto login(MemberLoginDto memberLoginDto) throws failedLogin {
+        Member member = memberRepository.findMemberByEmailAndPw(memberLoginDto.getEmail(), memberLoginDto.getPw());
+        if (member == null)
+            throw new failedLogin();
+        return new MemberInfoDto(member);
     }
 
     @Override
