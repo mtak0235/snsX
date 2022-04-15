@@ -58,6 +58,7 @@ c->>cli: void
 
 # memberSignupForm
 ```mermaid
+sequenceDiagram
 actor cli
 participant c as controller
 participant s as service
