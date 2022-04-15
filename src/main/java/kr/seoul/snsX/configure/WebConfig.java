@@ -2,9 +2,11 @@ package kr.seoul.snsX.configure;
 
 import kr.seoul.snsX.interceptor.LogInterceptor;
 import kr.seoul.snsX.interceptor.LoginCheckInterceptor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -17,8 +19,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/", "/members/add", "/login", "/logout",
-                        "/css/**", "/*.ico", "/error"
+                        "/", "/post/[0-9]+", "/post/images/**", "/post/search/**", "/post/feed/**",
+                        "/member_feed/**", "/member/isValidEmail", "/member/isValidNickName",
+                        "/member/signup", "/member/searchLostMemberEmail", "/member/searchLostMemberPw"
                 );
     }
 }

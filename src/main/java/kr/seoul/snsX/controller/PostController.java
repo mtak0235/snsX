@@ -110,7 +110,7 @@ public class PostController {
             return "post_feed_form";
         }
         model.addAttribute("member", userInfo);
-        return "member_feed_list";
+        return "member_feed_form";
     }
 
     @ResponseBody
