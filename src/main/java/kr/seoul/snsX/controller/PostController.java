@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -105,11 +106,11 @@ public class PostController {
 
     @GetMapping("/")
     public String showFeedForm(@SessionAttribute(name = "userInfo", required = false) MemberInfoDto userInfo, Model model) {
-        if (userInfo  == null) {
+        if (userInfo == null) {
             return "post_feed_form";
         }
         model.addAttribute("member", userInfo);
-        return "member_feed_list";
+        return "member_feed_form";
     }
 
     @ResponseBody
@@ -119,4 +120,11 @@ public class PostController {
         return result;
     }
 
+    @GetMapping("/member_feed/{memberId}")
+    public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
+        HttpSession session = request.getSession(false);
+        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute("memberInfo");
+        model.addAttribute("member", memberInfo);
+        return "member_feed_form";
+    }
 }

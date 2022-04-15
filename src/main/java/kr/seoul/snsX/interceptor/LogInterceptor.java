@@ -16,12 +16,11 @@ public class LogInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse
             response, Object handler) throws Exception {
-
+        log.info("firsttttt");
         String requestURI = request.getRequestURI();
 
         String uuid = UUID.randomUUID().toString();
         request.setAttribute(LOG_ID, uuid);
-
 //@RequestMapping: HandlerMethod
 //정적 리소스: ResourceHttpRequestHandler
         if (handler instanceof HandlerMethod) {
@@ -36,6 +35,7 @@ public class LogInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse
             response, Object handler, ModelAndView modelAndView) throws Exception {
         log.info("postHandle [{}]", modelAndView);
+        log.info("fourthhh");
     }
 
     @Override
@@ -47,5 +47,6 @@ public class LogInterceptor implements HandlerInterceptor {
         if (ex != null) {
             log.error("afterCompletion error!!", ex);
         }
+        log.info("fifthhhhhhhhh");
     }
 }

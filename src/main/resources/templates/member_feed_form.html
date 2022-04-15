@@ -74,9 +74,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/post/upload">게시글 작성하기</a>
                     </li>
-                    <!--                    <li class="nav-item">-->
-                    <!--                        <a class="nav-link" href="#">Link</a>-->
-                    <!--                    </li>-->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">[[${member.nickName}]]</a>
+                    </li>
                     <!--                    <li class="nav-item dropdown">-->
                     <!--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
                     <!--                            Dropdown-->
@@ -145,24 +145,24 @@
                 .then(response => response.json())
                 .then(data => {
                     // data.items[].img, data.items[].name
-                    data.posts.forEach(item => {
+                    data.forEach(item => {
                         let fig = document.createElement("figure");
                         let fc = document.createElement("figcaption");
                         let img = document.createElement("img");
                         let link=document.createElement("a");
-                        link.href = "http://localhost:8080/post/" + item.id;
-                        img.src = item.img;
-                        img.alt = item.author;
-                        fc.textContent = item.content;
+                        link.href = "http://localhost:8080/post/images/" + item.thumbnailFileName;
+                        img.src = item.thumbnailFileName;
+                        img.alt = item.postId;
+                        fc.textContent = item.postId;
                         link.appendChild(img);
                         fig.appendChild(link);
                         fig.appendChild(fc);
                         main.appendChild(fig);
                     });
-                    if (data.posts.length === 0) {
+                    if (data.length === 0) {
                         isEnd = true;
                     }
-                    offset += data.posts.length;
+                    offset += data.length;
                 });
         }
     }

@@ -52,14 +52,12 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute MemberLoginDto memberLoginDto, Model model) throws failedLogin {
+    public String login(HttpServletRequest request, @ModelAttribute MemberLoginDto memberLoginDto) throws failedLogin {
         MemberInfoDto memberInfoDto = memberService.login(memberLoginDto);
-        model.addAttribute("member", memberInfoDto);
         HttpSession session = request.getSession();
-        session.setAttribute("member", memberInfoDto);
-        session.setAttribute("first", 1);
-        session.setAttribute("second", 2);
-        return "post_feed_list";
+        session.setAttribute("memberInfo", memberInfoDto);
+
+        return "redirect:/post/member_feed/"+ memberInfoDto.getMemberId();
     }
 
 //    @GetMapping("/logout")
