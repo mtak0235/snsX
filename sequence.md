@@ -14,7 +14,7 @@ c->>+s: isValidEmail(email)
 s->>ca: isUsableEmail(email)
 ca->>s: boolean
 alt: 이미 점유중인 email인 경우
-s->>c: false
+s->>c: throws alreadyExist("이미 존재하는 email입니다")
 c->>cli: false
 end
 s->>r: existsByEmail(email)
@@ -43,7 +43,7 @@ c->>+s: isValidNickName(nickName)
 s->>ca: isUsableNickName(nickName)
 ca->>s: boolean
 alt: 이미 점유중인 nickName인 경우
-s->>c: false
+s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
 c->>cli: false
 end
 s->>r: existsByNickName(nickName)
@@ -88,21 +88,9 @@ alt: 이미 점유중인 email인 경우
 s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 end
-s->>r: existsByEmail(email)
-r->>s: boolean
-alt email이 존재하는 경우
-s->>c: throws alreadyExist("이미 존재하는 회원입니다")
-c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
-end
 s->>ca: isUsableNickName(nickName)
 ca->>s: boolean
 alt: 이미 점유중인 nickName인 경우
-s->>c: throws alreadyExist("이미 존재하는 회원입니다")
-c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
-end
-s->>r: existsByNickName(nickName)
-r->>s: boolean
-alt nickName이 존재하는 경우
 s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 end
