@@ -12,10 +12,13 @@ participant l as Log
 cli->>+c: email
 c->>+s: isValidEmail(email)
 s->>ca: isUsableEmail(email)
-ca->>s: boolean
+ca->>s: uuid
 alt: 이미 점유중인 email인 경우
 s->>c: throws alreadyExist("이미 존재하는 email입니다")
 c->>cli: false
+else
+s->>c: Cookie(uuid)
+c->>cli: Cookie
 end
 s->>r: existsByEmail(email)
 r->>s: boolean
@@ -23,8 +26,10 @@ alt email이 존재하는 경우
 s->>c: throws alreadyExist("이미 존재하는 email입니다")
 c->>cli: void
 end
-s->>c: void
-c->>cli: void
+s->>ca: createCache(email)
+ca->>s: uuid
+s->>c: Cookie(uuid)
+c->>cli: Cookie
 ```
 
 # isValidMemberNickName
@@ -41,10 +46,13 @@ participant l as Log
 cli->>+c: nickName
 c->>+s: isValidNickName(nickName)
 s->>ca: isUsableNickName(nickName)
-ca->>s: boolean
+ca->>s: uuid
 alt: 이미 점유중인 nickName인 경우
 s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
 c->>cli: false
+else
+s->>c: Cookie(uuid)
+c->>cli: Cookie
 end
 s->>r: existsByNickName(nickName)
 r->>s: boolean
@@ -52,8 +60,10 @@ alt nickName이 존재하는 경우
 s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
 c->>cli: void
 end
-s->>c: void
-c->>cli: void
+s->>ca: createCache(nickName)
+ca->>s: uuid
+s->>c: Cookie(uuid)
+c->>cli: Cookie
 ```
 
 # memberSignupForm
@@ -100,6 +110,8 @@ alt 유저가 이미 존재하면
 s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 else
+s->>ca: expireEmail(email)
+s->>ca: expireNickName(nickName)
 s->>c: void
 c->>cli: redirect:/member/login
 end
