@@ -1,4 +1,4 @@
-# isValidMemberEmail
+# occupyMemberEmail
 
 ```mermaid
 sequenceDiagram
@@ -10,13 +10,18 @@ participant r as repository
 participant l as Log
 
 cli->>+c: email
-c->>+s: isValidEmail(email)
-s->>ca: isUsableEmail(email)
-ca->>s: uuid
-alt: 이미 점유중인 email인 경우
+c->>+s: occupyEmail(email)
+s->>ca: isEmailExists(email)
+ca->>s: boolean
+alt: 존재하면
+s->>ca: isEmailOutOfDate(email)
+ca->>s: boolean
+alt: 선점이 불가능한 경우
 s->>c: throws alreadyExist("이미 존재하는 email입니다")
 c->>cli: false
-else
+end
+s->>ca: createCache(email)
+ca->>s: uuid
 s->>c: Cookie(uuid)
 c->>cli: Cookie
 end
@@ -24,7 +29,7 @@ s->>r: existsByEmail(email)
 r->>s: boolean
 alt email이 존재하는 경우
 s->>c: throws alreadyExist("이미 존재하는 email입니다")
-c->>cli: void
+c->>cli: throws alreadyExist("이미 존재하는 email입니다")
 end
 s->>ca: createCache(email)
 ca->>s: uuid
@@ -32,7 +37,7 @@ s->>c: Cookie(uuid)
 c->>cli: Cookie
 ```
 
-# isValidMemberNickName
+# occupyMemberNickName
 
 ```mermaid
 sequenceDiagram
@@ -44,13 +49,18 @@ participant r as repository
 participant l as Log
 
 cli->>+c: nickName
-c->>+s: isValidNickName(nickName)
-s->>ca: isUsableNickName(nickName)
-ca->>s: uuid
-alt: 이미 점유중인 nickName인 경우
+c->>+s: occupyNickName(nickName)
+s->>ca: isNickNameExists(nickName)
+ca->>s: boolean
+alt: 존재하면
+s->>ca: isNickNameOutOfDate(nickName)
+ca->>s: boolean
+alt: 선점이 불가능한 경우
 s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
 c->>cli: false
-else
+end
+s->>ca: createCache(nickName)
+ca->>s: uuid
 s->>c: Cookie(uuid)
 c->>cli: Cookie
 end
@@ -58,7 +68,7 @@ s->>r: existsByNickName(nickName)
 r->>s: boolean
 alt nickName이 존재하는 경우
 s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
-c->>cli: void
+c->>cli: throws alreadyExist("이미 존재하는 nickName입니다")
 end
 s->>ca: createCache(nickName)
 ca->>s: uuid
