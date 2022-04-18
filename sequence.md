@@ -127,6 +127,7 @@ end
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -157,6 +158,7 @@ c->>cli: void
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -175,6 +177,7 @@ c->>cli: void
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -193,6 +196,7 @@ c->>cli: void
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -219,6 +223,7 @@ c->>cli: void
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -246,6 +251,7 @@ c->>cli: MemberInfoDto
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -293,6 +299,7 @@ c->>cli: redirect:/main + MemberInfoDto
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -386,6 +393,7 @@ c->>cli: List<thumbnailDto>
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant hashTagService
@@ -437,6 +445,7 @@ c->>cli: "/"
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -471,6 +480,7 @@ c->>cli: void
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -499,6 +509,7 @@ c->>cli: PostResponseDto
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant hashTagService
@@ -537,6 +548,7 @@ c->>cli: redirect:/post/postId
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
@@ -574,6 +586,7 @@ c->>cli: void
 ```mermaid
 sequenceDiagram
 actor cli
+participant i as interceptor
 participant c as controller
 participant s as service
 participant r as repository
