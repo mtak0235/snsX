@@ -133,8 +133,13 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), pw
-c->>r: findEmailByKey(key)
+cli->>i: cookie(key), pw
+i->>i: preHandle(key)
+alt: key가 유효하지 않은 경우
+i->>cli: redirect:/member/login
+end
+i->>c: memberId, pw
+c->>r: findEmailById(memberId)
 r->>c: email
 alt: key가 유효하지 않은 경우
 c->>cli: redirect:/member/login
@@ -164,13 +169,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key)
-c->>r: existsCookieByKey(key)
-r->>c: boolean
+cli->>i: cookie(key)
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
-c->>cli: void
+i->>cli: void
 ```
 
 # isValidPwForm
@@ -183,13 +187,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key)
-c->>r: existsCookieByKey(key)
-r->>c: boolean
+cli->>i: cookie(key)
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
-c->>cli: void
+i->>cli: void
 ```
 
 # isValidPw
@@ -202,12 +205,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), pw
-c->>r: findMemberIdByKey(key)
-r->>c: memberId
-alt: Key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+cli->>i: cookie(key), pw
+i->>i: preHandle(key)
+alt: key가 유효하지 않은 경우
+i->>cli: redirect:/member/login
 end
+i->>c: memberId, pw
 c->>s: isValidPw(memberId, pw)
 s->>r: existsMemberByMemberIdAndPw(memberId, pw)
 r->>s: boolean
@@ -229,12 +232,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key)
-c->>r: findMemberIdByKey(key)
-r->>c: memberId
+cli->>i: cookie(key)
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
+i->>c: memberId
 c->>s: getMemberById(memberId)
 s->>r: findMemberById(memberId)
 r->>s: Member
@@ -257,12 +260,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), MemberUpdateDto(nickName, phoneNumber, email, pw)
-c->>r: findMemberIdByKey(key)
-r->>c: memberId
+cli->>i: cookie(key), MemberUpdateDto(nickName, phoneNumber, email, pw)
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
+i->>c: memberId, MemberUpdateDto(nickName, phoneNumber, email, pw)
 c->>s: modifyMember(memberId, MemberUpdateDto)
 s->>r: findMemberById(memberId)
 r->>s: Member
@@ -305,13 +308,9 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key)
-alt: 쿠키가 없는 경우
-c->>cli: redirect:/member/login
-end
-c->>r: delete(key)
-r->>c: void
-c->>cli: redirect:/main
+cli->>i: cookie(key)
+i->>i: preHandle(key) : expire(key)
+i->>cli: redirect:/
 ```
 
 # searchLostMemberEmail
@@ -400,12 +399,12 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), PostSaveDto(글, 이미지)
-c->>r: findMemberIdByKey(key)
-r->>c: memberId
-alt: Key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+cli->>i: cookie(key), PostSaveDto(글, 이미지)
+i->>i: preHandle(key)
+alt: key가 유효하지 않은 경우
+i->>cli: redirect:/member/login
 end
+i->>c: memberId, PostSaveDto(글, 이미지)
 c->>c: setMemberId(memberId)
 c->>+s: uploadPost(PostSaveDto)
 s->>s: checkSize(이미지)
@@ -451,12 +450,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), postId
-c->>r: existsCookieByKey(key)
-r->>c: boolean
+cli->>i: cookie(key), postId
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
+i->>c: postId
 c->>s: removePost(postId)
 s->>r: findById(postId)
 alt 게시물이 없으면
@@ -486,12 +485,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), postId
-c->>r: existsCookieByKey(key)
-r->>c: boolean
+cli->>i: cookie(key), postId
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
+i->>c: postId
 c->>s: getPostToModify(postId)
 s->>r: getPost(postId)
 alt 없는 post를 수정 요청하면
@@ -516,12 +515,12 @@ participant hashTagService
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), PostUpdateDto(pk, prevContent, postContent)
-c->>r: existsCookieByKey(key)
-r->>c: boolean
+cli->>i: cookie(key), PostUpdateDto(pk, prevContent, postContent)
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
+i->>c: PostUpdateDto
 c->>s: modifyPost(PostUpdateDto)
 s->>r: findById(pk)
 alt 없는 post를 조회 요청하면
@@ -554,12 +553,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), postId, CommentRequestDto(content)
-c->>r: findMemberIdByKey(key)
-r->>c: memberId
-alt: Key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+cli->>i: cookie(key), postId, CommentRequestDto(content)
+i->>i: preHandle(key)
+alt: key가 유효하지 않은 경우
+i->>cli: redirect:/member/login
 end
+i->>c: memberId, postId, CommentRequestDto
 c->>s: addComment(postId, memberId, CommentRequestDto)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
@@ -592,12 +591,12 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: cookie(key), postId, commentId
-c->>r: existsCookieByKey(key)
-r->>c: boolean
+cli->>i: cookie(key), postId, commentId
+i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
+i->>cli: redirect:/member/login
 end
+i->>c: postId, commentId
 c->>s: removeComment(postId, commentId)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
