@@ -9,9 +9,9 @@ participant ca as cache
 participant r as repository
 participant l as Log
 
-cli->>+c: email
-c->>+s: occupyEmail(email)
-s->>ca: isEmailValid(email)
+cli->>+c: email, uuid
+c->>+s: occupyEmail(email, uuid)
+s->>ca: isUsableEmail(email, uuid)
 ca->>s: uuid, boolean
 alt: boolean이 true면
 alt: uuid가 null이 아니면
@@ -45,9 +45,9 @@ participant ca as cache
 participant r as repository
 participant l as Log
 
-cli->>+c: nickName
-c->>+s: occupyNickName(nickName)
-s->>ca: isNickNameValid(nickName)
+cli->>+c: nickName, uuid
+c->>+s: occupyNickName(nickName, uuid)
+s->>ca: isUsableNickName(nickName, uuid)
 ca->>s: uuid, boolean
 alt: boolean이 true면
 alt: uuid가 null이 아니면
