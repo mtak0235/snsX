@@ -94,17 +94,17 @@ participant ca as cache
 participant r as repository
 participant l as Log
 
-cli->>+c: MemberSignupDto(email, nickName, pw,phoneNumber)
-c->>+s: registerMember(MemberSignupDto)
-s->>ca: isUsableEmail(email)
-ca->>s: boolean
-alt: 이미 점유중인 email인 경우
+cli->>+c: MemberSignupDto(email, nickName, pw,phoneNumber), uuid
+c->>+s: registerMember(MemberSignupDto, uuid)
+s->>ca: isUsableEmail(email, uuid)
+ca->>s: uuid, boolean
+alt: uuid가 null이면
 s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 end
-s->>ca: isUsableNickName(nickName)
-ca->>s: boolean
-alt: 이미 점유중인 nickName인 경우
+s->>ca: isUsableNickName(nickName, uuid)
+ca->>s: uuid, boolean
+alt: uuid가 null이면
 s->>c: throws alreadyExist("이미 존재하는 회원입니다")
 c->>cli: throws alreadyExist("이미 존재하는 회원입니다")
 end
