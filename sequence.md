@@ -47,19 +47,16 @@ participant l as Log
 
 cli->>+c: nickName
 c->>+s: occupyNickName(nickName)
-s->>ca: isNickNameExists(nickName)
-ca->>s: boolean
-alt: 존재하면
-s->>ca: isNickNameOutOfDate(nickName)
-ca->>s: boolean
-alt: 선점이 불가능한 경우
+s->>ca: isNickNameValid(nickName)
+ca->>s: uuid, boolean
+alt: boolean이 true면
+alt: uuid가 null이 아니면
+s->>c: Cookie(uuid)
+c->>cli: Cookie
+else
 s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
 c->>cli: false
 end
-s->>ca: createCache(nickName)
-ca->>s: uuid
-s->>c: Cookie(uuid)
-c->>cli: Cookie
 end
 s->>r: existsByNickName(nickName)
 r->>s: boolean
