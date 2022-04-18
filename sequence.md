@@ -13,18 +13,18 @@ cli->>+c: email
 c->>+s: occupyEmail(email)
 s->>ca: isEmailValid(email)
 ca->>s: uuid, boolean
+alt: boolean이 true면
 alt: uuid가 null이 아니면
 s->>c: Cookie(uuid)
 c->>cli: Cookie
 else
-alt: boolean이 true면
 s->>c: throws alreadyExist("이미 존재하는 email입니다")
 c->>cli: false
 end
 end
 s->>r: existsByEmail(email)
 r->>s: boolean
-alt email이 존재하는 경우
+alt: email이 존재하는 경우
 s->>c: throws alreadyExist("이미 존재하는 email입니다")
 c->>cli: throws alreadyExist("이미 존재하는 email입니다")
 end
