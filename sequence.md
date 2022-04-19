@@ -313,6 +313,19 @@ i->>i: preHandle(key) : expire(key)
 i->>cli: redirect:/
 ```
 
+# searchLostMemberEmailForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: void
+c->>cli: void
+```
+
 # searchLostMemberEmail
 ```mermaid
 sequenceDiagram
@@ -332,6 +345,19 @@ c->>cli: throws inputDataInvalid("잘못된 정보입니다.")
 end
 s->>c: email
 c->>cli: email
+```
+
+# searchLostMemberPwForm
+```mermaid
+sequenceDiagram
+actor cli
+participant c as controller
+participant s as service
+participant r as repository
+participant l as Log
+
+cli->>c: void
+c->>cli: void
 ```
 
 # searchLostMemberPw
