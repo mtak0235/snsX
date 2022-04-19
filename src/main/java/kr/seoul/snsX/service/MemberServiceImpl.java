@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws failedLogin {
         List<Member> memberByEmailAndPw = memberRepository.findMemberByEmailAndPw(memberLoginDto.getEmail(), memberLoginDto.getPw());
-        if (memberByEmailAndPw == null)
+        if (memberByEmailAndPw.size() == 0)
             throw new failedLogin();
         return new MemberInfoDto(memberByEmailAndPw.get(0));
     }
