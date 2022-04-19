@@ -25,14 +25,7 @@ public class SignupCache {
         }
     }
 
-    private Map<String, Occupant> setCache(boolean flag) {
-        if (!flag)
-            return this.usedEmail;
-        return this.usedNickName;
-    }
-
-    public MemberSignupCacheDto isUsable(String key, String uuid, boolean flag) {
-        Map<String, Occupant> cache = setCache(flag);
+    private MemberSignupCacheDto isUsable(Map<String, Occupant> cache, String key, String uuid) {
         if (!cache.containsKey(key)) {
             return new MemberSignupCacheDto(null, false);
         }
@@ -48,15 +41,37 @@ public class SignupCache {
         return new MemberSignupCacheDto(uuid, true);
     }
 
-    public String createCache(String key, boolean flag) {
-        Map<String, Occupant> cache = setCache(flag);
+    public MemberSignupCacheDto isUsableEmail(String email, String uuid) {
+        return isUsable(this.usedEmail, email, uuid);
+    }
+
+    public MemberSignupCacheDto isUsableNickName(String nickName, String uuid) {
+        return isUsable(this.usedNickName, nickName, uuid);
+    }
+
+    private String createCache(Map<String, Occupant> cache, String key) {
         String uuid = UUID.randomUUID().toString();
         cache.put(key, new Occupant(uuid, LocalDateTime.now().plusDays(1L)));
         return uuid;
     }
 
-    public void expireKey(String key, boolean flag) {
-        Map<String, Occupant> cache = setCache(flag);
+    public String createEmailCache(String email) {
+        return createCache(this.usedEmail, email);
+    }
+
+    public String createNickNameCache(String nickName) {
+        return createCache(this.usedNickName, nickName);
+    }
+
+    private void expireKey(Map<String, Occupant> cache, String key) {
         cache.remove(key);
+    }
+
+    public void expireEmail(String email) {
+        expireKey(this.usedEmail, email);
+    }
+
+    public void expireNickName(String nickName) {
+        expireKey(this.usedNickName, nickName);
     }
 }
