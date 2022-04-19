@@ -295,7 +295,7 @@ s->>c: throws failedLogin("로그인에 실패했습니다")
 c->>cli: throws failedLogin("로그인에 실패했습니다")
 end
 s->>c: MemberInfoDto
-c->>cli: redirect:/main + MemberInfoDto
+c->>cli: redirect:/post/memver_feed/{memberId}+ MemberInfoDto
 ```
 
 # logout
@@ -308,9 +308,9 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>i: cookie(key)
-i->>i: preHandle(key) : expire(key)
-i->>cli: redirect:/
+cli->>c: cookie(key)
+c->>c: deleteUserSession
+i->>cli: redirect:/member/login
 ```
 
 # searchLostMemberEmail

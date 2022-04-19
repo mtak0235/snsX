@@ -62,8 +62,12 @@ public class MemberController {
         return "redirect:/post/member_feed/"+ memberInfoDto.getMemberId();
     }
 
-//    @GetMapping("/logout")
-//    public String logout(HttpServletRequest request) {
-//
-//    }
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/member/login";
+    }
 }
