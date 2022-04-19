@@ -5,13 +5,12 @@ import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
 import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.service.MemberService;
+import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -35,9 +34,9 @@ public class MemberController {
             return "signup";
         }
         MemberInfoDto userInfo = memberService.registerMember(member);
-        HttpSession session = request.getSession();
-        session.setAttribute("userInfo", userInfo);
-        return "redirect:/post";
+//        HttpSession session = request.getSession();
+//        session.setAttribute("userInfo", userInfo);
+        return "redirect:/member/login";
     }
 
     @PostMapping("/searchLost")
@@ -48,14 +47,17 @@ public class MemberController {
 
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto) {
-        return "signin";
+        return "login";
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute MemberLoginDto memberLoginDto) throws failedLogin {
+    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto) throws failedLogin {
         MemberInfoDto memberInfoDto = memberService.login(memberLoginDto);
+        if (memberInfoDto == null) {
+            return "login";
+        }
         HttpSession session = request.getSession();
-        session.setAttribute("memberInfo", memberInfoDto);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, memberInfoDto);
 
         return "redirect:/post/member_feed/"+ memberInfoDto.getMemberId();
     }

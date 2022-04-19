@@ -10,6 +10,8 @@ import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
@@ -27,10 +29,10 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws failedLogin {
-        Member member = memberRepository.findMemberByEmailAndPw(memberLoginDto.getEmail(), memberLoginDto.getPw());
-        if (member == null)
+        List<Member> memberByEmailAndPw = memberRepository.findMemberByEmailAndPw(memberLoginDto.getEmail(), memberLoginDto.getPw());
+        if (memberByEmailAndPw == null)
             throw new failedLogin();
-        return new MemberInfoDto(member);
+        return new MemberInfoDto(memberByEmailAndPw.get(0));
     }
 
     @Override

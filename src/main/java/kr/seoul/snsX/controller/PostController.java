@@ -4,6 +4,7 @@ import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
 import kr.seoul.snsX.service.HashTagService;
 import kr.seoul.snsX.service.PostService;
+import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +106,7 @@ public class PostController {
     }
 
     @GetMapping("/")
-    public String showFeedForm(@SessionAttribute(name = "userInfo", required = false) MemberInfoDto userInfo, Model model) {
+    public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
         if (userInfo == null) {
             return "post_feed_form";
         }
@@ -123,7 +124,7 @@ public class PostController {
     @GetMapping("/member_feed/{memberId}")
     public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
         HttpSession session = request.getSession(false);
-        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute("memberInfo");
+        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
         model.addAttribute("member", memberInfo);
         return "member_feed_form";
     }
