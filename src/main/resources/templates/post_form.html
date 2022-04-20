@@ -32,10 +32,6 @@
     <h4 class="mb-3">상품 입력</h4>
 
     <form th:action="@{/post/upload}" method="post" enctype="multipart/form-data">
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">@</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" name="author" aria-describedby="basic-addon1">
-        </div>
         <div class="input-group">
             <span class="input-group-text">content</span>
             <textarea class="form-control" aria-label="With textarea" name="content"></textarea>

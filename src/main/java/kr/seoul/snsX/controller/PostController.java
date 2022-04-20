@@ -39,7 +39,8 @@ public class PostController {
     }
 
     @PostMapping("/upload")
-    public String savePost(@ModelAttribute PostSaveDto postSaveDto) throws IOException, ImageOverUploadedException {
+    public String savePost(@ModelAttribute PostSaveDto postSaveDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) throws IOException, ImageOverUploadedException {
+        postSaveDto.setMemberId(memberInfoDto.getMemberId());
         Long postId = postService.uploadPost(postSaveDto);
         return "redirect:/post/" + postId;
     }

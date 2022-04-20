@@ -1,12 +1,14 @@
 package kr.seoul.snsX.controller;
 
+
 import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
-import kr.seoul.snsX.exception.failedLogin;
+import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.service.MemberService;
 import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+@Slf4j
 @Controller
 @RequestMapping("/member")
 @RequiredArgsConstructor
@@ -51,7 +54,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto) throws failedLogin {
+    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto) throws FailedLoginException {
         MemberInfoDto memberInfoDto = memberService.login(memberLoginDto);
         if (memberInfoDto == null) {
             return "login";
@@ -59,15 +62,35 @@ public class MemberController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, memberInfoDto);
 
-        return "redirect:/post/member_feed/"+ memberInfoDto.getMemberId();
+        return "redirect:/post/member_feed/" + memberInfoDto.getMemberId();
     }
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request) {
+        expireUserSession(request);
+        return "redirect:/member/login";
+    }
+
+    private void expireUserSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
+    }
+
+    @GetMapping("/setting")
+    public String setting() {
+        return "setting";
+    }
+
+    @GetMapping("/withdraw")
+    public String withdrawForm() {
+        return "pw_verify";
+    }
+    @PostMapping("/withdraw")
+    public String withdraw(HttpServletRequest request, @RequestParam(name = "password") String password) {
+        memberService.removeMember(password, ((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId());
+        expireUserSession(request);
         return "redirect:/member/login";
     }
 }

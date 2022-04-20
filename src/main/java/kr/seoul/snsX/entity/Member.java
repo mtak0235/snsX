@@ -23,7 +23,15 @@ public class Member extends BaseTimeEntity{
     private String nickName;
     private String profileFileName;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @OneToMany
     private List<Post> posts = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        this.status = this.status == null ? Status.ACTIVE : this.status;
+    }
 
 }
