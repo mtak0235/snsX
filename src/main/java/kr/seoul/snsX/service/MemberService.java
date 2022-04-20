@@ -12,5 +12,5 @@ public interface MemberService {
 
     public String searchLostMemberEmail(String nickName, String phoneNumber);
 
-    void removeMember(String password, Long memberId);
+    public void removeMember(String password, Long memberId);
 }

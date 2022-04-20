@@ -86,6 +86,7 @@ public class MemberController {
     public String withdrawForm() {
         return "pw_verify";
     }
+
     @PostMapping("/withdraw")
     public String withdraw(HttpServletRequest request, @RequestParam(name = "password") String password) {
         memberService.removeMember(password, ((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId());

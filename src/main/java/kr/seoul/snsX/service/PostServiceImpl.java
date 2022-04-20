@@ -36,7 +36,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostResponseDto getPost(Long postId) {
+    public PostResponseDto getPost(Long postId) throws EntityNotFoundException{
         // 바로 get() 사용한 것 수정 요망
         Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시물 입니다."));
         return new PostResponseDto(post);

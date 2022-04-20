@@ -13,6 +13,7 @@ import kr.seoul.snsX.repository.MemberRepository;
 import kr.seoul.snsX.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -26,6 +27,7 @@ public class MemberServiceImpl implements MemberService{
     private final PostRepository postRepository;
 
     @Override
+    @Transactional
     public MemberInfoDto registerMember(MemberSignupDto memberSignupDto) throws AlreadyExistException{
         if (memberRepository.existsMemberByEmail(memberSignupDto.getEmail())) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
@@ -35,6 +37,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws FailedLoginException {
         List<Member> memberByEmailAndPw = memberRepository.findMemberByEmailAndPw(memberLoginDto.getEmail(), memberLoginDto.getPw());
         if (memberByEmailAndPw.size() == 0)
@@ -43,11 +46,13 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional
     public String searchLostMemberEmail(String nickName, String phoneNumber) {
         return null;
     }
 
     @Override
+    @Transactional
     public void removeMember(String password, Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 입니다."));
