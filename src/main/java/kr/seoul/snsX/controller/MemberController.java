@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
 
 @Slf4j
 @Controller
@@ -88,7 +89,7 @@ public class MemberController {
     }
 
     @PostMapping("/withdraw")
-    public String withdraw(HttpServletRequest request, @RequestParam(name = "password") String password) {
+    public String withdraw(HttpServletRequest request, @RequestParam(name = "password") String password) throws FileNotFoundException {
         memberService.removeMember(password, ((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId());
         expireUserSession(request);
         return "redirect:/member/login";

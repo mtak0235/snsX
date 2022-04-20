@@ -9,22 +9,24 @@ import kr.seoul.snsX.entity.Status;
 import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.exception.FailedLoginException;
+import kr.seoul.snsX.repository.FileRepository;
 import kr.seoul.snsX.repository.MemberRepository;
 import kr.seoul.snsX.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityNotFoundException;
+import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
+    private final PostService postService;
     private final PostRepository postRepository;
+    private final FileRepository fileRepository;
 
     @Override
     @Transactional
@@ -53,13 +55,15 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public void removeMember(String password, Long memberId) {
+    public void removeMember(String password, Long memberId) throws FileNotFoundException {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 입니다."));
         if (!member.getPw().equals(password))
             throw new InvalidException("틀린 비밀번호 입니다.");
         member.setStatus(Status.INACTIVE);
         List<Post> posts = member.getPosts();
-        postRepository.deleteAll(posts);
+        for (Post post : posts) {
+            postService.removePost(post.getId());
+        }
     }
 }
