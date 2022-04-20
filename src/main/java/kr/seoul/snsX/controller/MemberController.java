@@ -29,29 +29,29 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result
-            , HttpServletRequest request) {
+            , HttpServletRequest request, @CookieValue(name = "uuid", required = false) String uuid) {
         if (result.hasErrors()) {
             return "signup";
         }
-        MemberInfoDto userInfo = memberService.registerMember(member);
+        MemberInfoDto userInfo = memberService.registerMember(member, uuid);
         HttpSession session = request.getSession();
         session.setAttribute("userInfo", userInfo);
         return "redirect:/post";
     }
 
     @PostMapping("/signup/checkEmail")
-    public String occupyMemberEmail(@RequestParam(name = "email") String email, @CookieValue(name = "emailUuid", required = false) String emailUuid, HttpServletResponse response) throws AlreadyExistException {
-        String uuid = memberService.occupyEmail(email, emailUuid);
-        if (emailUuid == null)
-            response.addCookie(new Cookie("emailUuid", uuid));
+    public String occupyMemberEmail(@RequestParam(name = "email") String email, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) throws AlreadyExistException {
+        String createdUuid = memberService.occupyEmail(email, uuid);
+        if (uuid == null)
+            response.addCookie(new Cookie("uuid", createdUuid));
         return "";
     }
 
     @PostMapping("/signup/checkNickName")
-    public String occupyMemberNickName(@RequestParam(name = "nickName") String nickName, @CookieValue(name = "nickNameUuid", required = false) String nickNameUuid, HttpServletResponse response) throws AlreadyExistException {
-        String uuid = memberService.occupyNickName(nickName, nickNameUuid);
-        if (nickNameUuid == null)
-            response.addCookie(new Cookie("nickNameUuid", uuid));
+    public String occupyMemberNickName(@RequestParam(name = "nickName") String nickName, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) throws AlreadyExistException {
+        String createdUuid = memberService.occupyNickName(nickName, uuid);
+        if (uuid == null)
+            response.addCookie(new Cookie("uuid", createdUuid));
         return "";
     }
 

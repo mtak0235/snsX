@@ -52,7 +52,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto) throws AlreadyExistException{
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException{
         if (memberRepository.existsMemberByEmail(memberSignupDto.getEmail())) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
         }

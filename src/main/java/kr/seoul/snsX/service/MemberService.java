@@ -11,7 +11,7 @@ public interface MemberService {
 
     public String occupyNickName(String nickName, String uuid);
 
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto);
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid);
 
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws failedLogin;
 
