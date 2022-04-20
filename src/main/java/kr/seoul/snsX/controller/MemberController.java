@@ -54,15 +54,14 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto) throws FailedLoginException {
+    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto, @RequestParam(defaultValue = "/") String redirectURL) throws FailedLoginException {
         MemberInfoDto memberInfoDto = memberService.login(memberLoginDto);
         if (memberInfoDto == null) {
             return "login";
         }
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, memberInfoDto);
-
-        return "redirect:/post/member_feed/" + memberInfoDto.getMemberId();
+        return "redirect:" + redirectURL;
     }
 
     @PostMapping("/logout")
