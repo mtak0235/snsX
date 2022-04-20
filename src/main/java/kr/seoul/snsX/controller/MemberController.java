@@ -3,6 +3,7 @@ package kr.seoul.snsX.controller;
 import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
+import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import javax.validation.Valid;
 
 @Controller
@@ -38,6 +37,14 @@ public class MemberController {
         HttpSession session = request.getSession();
         session.setAttribute("userInfo", userInfo);
         return "redirect:/post";
+    }
+
+    @PostMapping("/signup/checkEmail")
+    public String occupyMemberEmail(@RequestParam(name = "email") String email, @CookieValue(name = "emailUuid", required = false) String emailUuid, HttpServletResponse response) throws AlreadyExistException {
+        String uuid = memberService.occupyEmail(email, emailUuid);
+        if (emailUuid == null)
+            response.addCookie(new Cookie("emailUuid", uuid));
+        return "";
     }
 
     @PostMapping("/searchLost")

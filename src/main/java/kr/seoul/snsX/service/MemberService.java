@@ -7,6 +7,8 @@ import kr.seoul.snsX.exception.failedLogin;
 
 
 public interface MemberService {
+    public String occupyEmail(String email, String uuid);
+
     public MemberInfoDto registerMember(MemberSignupDto memberSignupDto);
 
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws failedLogin;

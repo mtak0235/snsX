@@ -1,9 +1,11 @@
 package kr.seoul.snsX.service;
 
 import kr.seoul.snsX.dto.MemberLoginDto;
+import kr.seoul.snsX.dto.MemberSignupCacheDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
 import kr.seoul.snsX.entity.Member;
+import kr.seoul.snsX.entity.SignupCache;
 import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.repository.MemberRepository;
@@ -15,6 +17,23 @@ import org.springframework.stereotype.Service;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
+    private final SignupCache signupCache;
+
+    @Override
+    public String occupyEmail(String email, String uuid) throws AlreadyExistException {
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(email, uuid);
+        if (memberSignupCacheDto.isFlag()) {
+            if (memberSignupCacheDto.getUuid() == null) {
+                throw new AlreadyExistException("이미 존재하는 email입니다");
+            } else {
+                return memberSignupCacheDto.getUuid();
+            }
+        }
+        if (!memberRepository.existsMemberByEmail(email)) {
+            throw new AlreadyExistException("이미 존재하는 email입니다");
+        }
+        return signupCache.createEmailCache(email);
+    }
 
     @Override
     public MemberInfoDto registerMember(MemberSignupDto memberSignupDto) throws AlreadyExistException{
