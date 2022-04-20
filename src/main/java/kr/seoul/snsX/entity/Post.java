@@ -1,5 +1,6 @@
 package kr.seoul.snsX.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,4 +36,14 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     Member member;
+
+    @Builder
+    public Post(String thumbnailFileName, String content, List<Image> images, List<Comment> comments, List<PostHashTag> postHashTags, Member member) {
+        this.thumbnailFileName = thumbnailFileName;
+        this.content = content;
+        this.images = images;
+        this.comments = comments;
+        this.postHashTags = postHashTags;
+        this.member = member;
+    }
 }

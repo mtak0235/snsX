@@ -15,6 +15,8 @@ public class PostResponseDto extends ThumbnailDto{
     private List<String> images;
     private List<CommentResponseDto> comments;
     private String createdDate, modifiedDate;
+    private String thumbnailFileName;
+    private Long postId;
 
     public PostResponseDto(Post post) {
         this.postId = post.getId();

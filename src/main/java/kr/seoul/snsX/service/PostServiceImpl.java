@@ -38,35 +38,38 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponseDto getPost(Long postId) {
         // 바로 get() 사용한 것 수정 요망
-        return new PostResponseDto(postRepository.findById(postId).get());
+        Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시물 입니다."));
+        return new PostResponseDto(post);
     }
 
     @Override
     @Transactional
-    public Long uploadPost(PostSaveDto saveDto) throws IOException {
-        if (saveDto.getImageFiles().size() > 3) {
-            throw new ImageOverUploadedException("이미지 갯수 초과");
-        }
-
+    public Long uploadPost(PostSaveDto saveDto) throws IOException, ImageOverUploadedException {
+        checkImageSize(saveDto);
         List<Image> storeImageFiles = new ArrayList<>();
         for (MultipartFile file : saveDto.getImageFiles()) {
             Image image = new Image(file.getOriginalFilename(), fileRepository.createStoreFileName(file.getOriginalFilename()));
             storeImageFiles.add(image);
         }
-
         fileRepository.storeFiles(saveDto.getImageFiles(), storeImageFiles);
         Post post = new Post();
-//        post.setAuthor(saveDto.getAuthor());
         post.setContent(saveDto.getContent());
         post.setImages(storeImageFiles);
         post.setPostHashTags(hashTagService.storePostHashTags(post));
         post.setThumbnailFileName(storeImageFiles.get(0).getUploadedFilename());
+        post.setMember(memberRepository.getById(saveDto.getMemberId()));
         postRepository.save(post);
         for (Image storeImageFile : storeImageFiles) {
             storeImageFile.setPost(post);
             imageRepository.save(storeImageFile);
         }
         return post.getId();
+    }
+
+    private void checkImageSize(PostSaveDto saveDto)throws ImageOverUploadedException {
+        if (saveDto.getImageFiles().size() > 3) {
+            throw new ImageOverUploadedException("이미지 갯수 초과");
+        }
     }
 
     @Override

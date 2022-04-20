@@ -36,22 +36,22 @@
                 <li class="list-group-item">[[*{content}]]</li>
             </ul>
             <div class="card-footer">
-                <p class="card-text">@ [[*{author}]]</p>
+                <p class="card-text">@ [[*{member.nickName}]]</p>
             </div>
         </div>
     </div>
 
     <div class="col-12 input-group-append">
-        <a role="button" th:href="@{/post/update/{identity} (identity=${post.id})}" class="btn btn-primary">글 수정</a>
+        <a role="button" th:href="@{/post/update/{identity} (identity=${post.postId})}" class="btn btn-primary">글 수정</a>
         <form th:action="@{/post/delete}" method="post">
-            <input type="text" name="postId" th:value="${post.id}" th:hidden="true"/>
+            <input type="text" name="postId" th:value="${post.postId}" th:hidden="true"/>
             <button class="btn btn-primary" id="delete-btn">삭제</button>
         </form>
     </div>
 </div>
 
 <div class="container">
-    <form id="comment" th:action="@{/post/{identity}/save-comment (identity=${post.id})}" method="post">
+    <form id="comment" th:action="@{/post/{identity}/save-comment (identity=${post.postId})}" method="post">
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">@</span>
             <input type="text" name="commenter" class="form-control" placeholder="Username" aria-label="Username"
@@ -63,7 +63,7 @@
                       placeholder="댓글을 입력해주세요.."></textarea>
         </div>
         <br/>
-        <input type="text" name="id" th:value="${post.id}" th:hidden="true">
+        <input type="text" name="id" th:value="${post.postId}" th:hidden="true">
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="submit">등록</button>
         </div>
@@ -89,7 +89,7 @@
     <!--    </div>-->
 
 </div>
-<div class="container" th:each="comment : ${comments}">
+<div class="container" th:each="comment : ${post.comments}">
     <div class="card py-5" style="width: 25rem;">
         <div class="card card-body" style="width: 25rem;">
             <ul class="list-group list-group-flush">
@@ -103,7 +103,7 @@
 
     <div class="input-group-append">
         <form th:action="@{/post/remove-comment}" method="post">
-            <input type="text" name="postId" th:value="${post.id}" th:hidden="true"/>
+            <input type="text" name="postId" th:value="${post.postId}" th:hidden="true"/>
             <input type="text" name="commentId" th:value="${comment.id}" th:hidden="true"/>
             <button class="btn btn-primary">삭제</button>
         </form>

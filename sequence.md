@@ -423,7 +423,8 @@ s->>c: throw failImgSave();
 c->>cli: throw failImgSave();
 end
 r->>s: void
-s->>r: save(Post(글, 작성자, List<파일 경로>, List<태그>))
+s->>r: findById(memberId)
+r->>s: Member
 s->>hashTagService: storePostHashTags(Post)
 alt if numOfPostHashTag > 0
 hashTagService->>r: deleteByPostId(postId)
@@ -432,9 +433,13 @@ hashTagService->>hashTagService: parsingHashTag(postContent)
 hashTagService->>hashTagService: getHashTagList(Set<String> hashTagName)
 loop foundHashTag exist
 hashTagService->>r: save(postHashTag) 
-end
 hashTagService->>s: List<PostHashTag>
-r->>s: getId(postId)
+end
+s->>r: save(Post(글, 작성자, List<파일 경로>, List<태그>))
+loop: List<Img>
+s->>s: img.setPost(post)
+s->>r: save(img)
+end
 s->>l: upload 성공
 s->>c: postId
 c->>cli: "/"
