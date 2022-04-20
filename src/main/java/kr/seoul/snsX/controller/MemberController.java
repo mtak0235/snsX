@@ -54,7 +54,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto, @RequestParam(defaultValue = "/") String redirectURL) throws FailedLoginException {
+    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto, @RequestParam(defaultValue = "/post") String redirectURL) throws FailedLoginException {
         MemberInfoDto memberInfoDto = memberService.login(memberLoginDto);
         if (memberInfoDto == null) {
             return "login";
