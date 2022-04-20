@@ -36,6 +36,22 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    public String occupyNickName(String nickName, String uuid) throws AlreadyExistException {
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(nickName, uuid);
+        if (memberSignupCacheDto.isFlag()) {
+            if (memberSignupCacheDto.getUuid() == null) {
+                throw new AlreadyExistException("이미 존재하는 nickName입니다");
+            } else {
+                return memberSignupCacheDto.getUuid();
+            }
+        }
+        if (!memberRepository.existsMemberByEmail(nickName)) {
+            throw new AlreadyExistException("이미 존재하는 nickName입니다");
+        }
+        return signupCache.createEmailCache(nickName);
+    }
+
+    @Override
     public MemberInfoDto registerMember(MemberSignupDto memberSignupDto) throws AlreadyExistException{
         if (memberRepository.existsMemberByEmail(memberSignupDto.getEmail())) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");

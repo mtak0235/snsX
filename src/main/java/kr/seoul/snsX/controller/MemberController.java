@@ -47,6 +47,14 @@ public class MemberController {
         return "";
     }
 
+    @PostMapping("/signup/checkNickName")
+    public String occupyMemberNickName(@RequestParam(name = "nickName") String nickName, @CookieValue(name = "nickNameUuid", required = false) String nickNameUuid, HttpServletResponse response) throws AlreadyExistException {
+        String uuid = memberService.occupyNickName(nickName, nickNameUuid);
+        if (nickNameUuid == null)
+            response.addCookie(new Cookie("nickNameUuid", uuid));
+        return "";
+    }
+
     @PostMapping("/searchLost")
     public String searchLost(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber) {
         String email = memberService.searchLostMemberEmail(nickName, phoneNumber);
