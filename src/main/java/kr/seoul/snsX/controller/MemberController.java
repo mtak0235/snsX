@@ -29,14 +29,12 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result
-            , HttpServletRequest request, @CookieValue(name = "uuid", required = false) String uuid) {
+            , HttpServletRequest request, @CookieValue(name = "uuid", required = false) String uuid) throws AlreadyExistException {
         if (result.hasErrors()) {
             return "signup";
         }
-        MemberInfoDto userInfo = memberService.registerMember(member, uuid);
-        HttpSession session = request.getSession();
-        session.setAttribute("userInfo", userInfo);
-        return "redirect:/post";
+        memberService.registerMember(member, uuid);
+        return "redirect:/member/login";
     }
 
     @PostMapping("/signup/checkEmail")
@@ -74,6 +72,8 @@ public class MemberController {
 
         return "redirect:/post/member_feed/"+ memberInfoDto.getMemberId();
     }
+
+
 
 //    @GetMapping("/logout")
 //    public String logout(HttpServletRequest request) {

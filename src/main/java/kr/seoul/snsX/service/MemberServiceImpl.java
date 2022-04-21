@@ -54,12 +54,23 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException{
-        if (memberRepository.existsMemberByEmail(memberSignupDto.getEmail())) {
+    public void registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException{
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(memberSignupDto.getEmail(), uuid);
+        if (memberSignupCacheDto.getUuid() == null) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
         }
-        Member savedMember = memberRepository.save(memberSignupDto.toEntity());
-        return new MemberInfoDto(savedMember);
+        memberSignupCacheDto = signupCache.isUsableNickName(memberSignupDto.getNickName(), memberSignupCacheDto.getUuid());
+        if (memberSignupCacheDto.getUuid() == null) {
+            throw new AlreadyExistException("이미 존재하는 회원입니다");
+        }
+        try {
+            Member savedMember = memberRepository.save(memberSignupDto.toEntity());
+        } catch (IllegalArgumentException e) {
+            throw new AlreadyExistException("이미 존재하는 회원입니다");
+        } finally {
+            signupCache.expireEmail(memberSignupDto.getEmail());
+            signupCache.expireNickName(memberSignupDto.getNickName());
+        }
     }
 
     @Override
