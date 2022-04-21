@@ -41,6 +41,11 @@ public class MemberController {
         return "redirect:/post";
     }
 
+    @GetMapping("/searchLostMemberEmail")
+    public String searchLostMemberEmailForm() {
+        return "search_lost_email_form";
+    }
+
     @PostMapping("/searchLostMemberEmail")
     public String searchLostMemberEmail(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber, Model model) throws InputDataInvalidException {
         String email = memberService.searchLostMemberEmail(nickName, phoneNumber);
