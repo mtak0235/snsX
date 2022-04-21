@@ -10,6 +10,8 @@ import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
@@ -36,5 +38,11 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public String searchLostMemberEmail(String nickName, String phoneNumber) {
         return null;
+    }
+
+    @Override
+    public MemberInfoDto searchMember(String nickName) throws EntityNotFoundException {
+        Member member = memberRepository.findMemberByNickName(nickName);
+        return new MemberInfoDto(member);
     }
 }

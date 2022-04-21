@@ -19,9 +19,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/", "/post/[0-9]+", "/post/images/**", "/post/search/**", "/post/feed/**",
+                        "/", "/post", "/post/", "/post/[0-9]+", "/post/images/**", "/post/search/**", "/post/feed/**",
                         "/member_feed/**", "/member/occupyMemberEmail", "/member/occupyMemberNickName",
-                        "/member/signup", "/member/searchLostMemberEmail", "/member/searchLostMemberPw"
+                        "/member/signup", "/member/searchLostMemberEmail", "/member/searchLostMemberPw",
+                        "/member/search/**", "/search"
                 );
     }
 }

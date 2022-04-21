@@ -12,4 +12,6 @@ public interface MemberService {
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws failedLogin;
 
     public String searchLostMemberEmail(String nickName, String phoneNumber);
+
+    public MemberInfoDto searchMember(String nickName);
 }

@@ -366,8 +366,8 @@ participant l as Log
 cli->>c: nickName
 c->>s: searchMember(nickName)
 s->>r: findMemberByNickName(nickName)
-r->>s: MemberInfoDto(pk, nickName, profileFileName)
-s->>c: MemberInfoDto
+r->>s: Member
+s->>c: MemberInfoDto(pk, nickName, profileFileName)
 c->>cli: MemberInfoDto
 ```
 

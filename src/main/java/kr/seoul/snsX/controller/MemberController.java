@@ -3,6 +3,7 @@ package kr.seoul.snsX.controller;
 import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
+import kr.seoul.snsX.dto.TagResponseDto;
 import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,14 @@ public class MemberController {
     public String searchLost(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber) {
         String email = memberService.searchLostMemberEmail(nickName, phoneNumber);
         return "";
+    }
+
+    @GetMapping("/search/{nickName}")
+    public String searchMemberPageForm(@PathVariable("nickName") String nickName, Model model) {
+        MemberInfoDto memberInfoDto = memberService.searchMember(nickName);
+        model.addAttribute("member", memberInfoDto);
+
+        return "member_page_form";
     }
 
     @GetMapping("/login")
