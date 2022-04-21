@@ -10,6 +10,7 @@ import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +18,8 @@ import org.springframework.stereotype.Service;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
-    private final SignupCache signupCache;
+    @Autowired
+    private final SignupCache signupCache = new SignupCache();
 
     @Override
     public String occupyEmail(String email, String uuid) throws AlreadyExistException {

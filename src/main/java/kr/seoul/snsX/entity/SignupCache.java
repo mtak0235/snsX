@@ -2,13 +2,18 @@ package kr.seoul.snsX.entity;
 
 import kr.seoul.snsX.dto.MemberSignupCacheDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Component
+@NoArgsConstructor
 public class SignupCache {
 
     private Map<String, Occupant> usedEmail = new HashMap();
