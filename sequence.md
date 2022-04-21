@@ -133,27 +133,27 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>i: cookie(key), pw
+cli->>i: cookie(key)
 i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
 i->>cli: redirect:/member/login
 end
 i->>c: memberId, pw
-c->>r: findEmailById(memberId)
-r->>c: email
-alt: key가 유효하지 않은 경우
-c->>cli: redirect:/member/login
-end
-c->>s: removeMember(email, pw)
-s->>r: findMemberByPwAndEmail(email, pw)
+c->>s: removeMember(memberId, pw)
+s->>r: findById(memberId)
 r->>s: Member
-alt 유효하지 않은 비밀번호인 경우
-s->>c: throws inValidAccess("잘못된 접근입니다")
-c->>cli: throws inValidAccess("잘못된 접근입니다")
+alt member가 없는 경우
+s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")
+c->>cli: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")
 end
-s->>r: member.setActive(false)
-s->>r: deletePost(List<Post>)
-r->>s: void
+alt 유효하지 않은 비밀번호인 경우
+s->>c: throws inValidException("틀린 비밀번호 입니다.")
+c->>cli: throws inValidException("틀린 비밀번호 입니다.")
+end
+s->>r: member.setStatus(INACTIVE)
+loop posts:
+s->>s: removePost(postId)
+end
 s->>c: void
 c->>c: expire(cookie)
 c->>cli: void
