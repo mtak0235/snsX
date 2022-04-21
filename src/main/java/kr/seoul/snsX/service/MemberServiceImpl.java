@@ -5,6 +5,7 @@ import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
 import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.exception.AlreadyExistException;
+import kr.seoul.snsX.exception.InputDataInvalidException;
 import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,10 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public String searchLostMemberEmail(String nickName, String phoneNumber) {
-        return null;
+    public String searchLostMemberEmail(String nickName, String phoneNumber) throws InputDataInvalidException {
+        String email = memberRepository.findMemberEmailByNickNameAndPhoneNumber(nickName, phoneNumber);
+        if (email == null)
+            throw new InputDataInvalidException("잘못된 정보입니다");
+        return email;
     }
 }

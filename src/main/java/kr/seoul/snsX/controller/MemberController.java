@@ -3,6 +3,7 @@ package kr.seoul.snsX.controller;
 import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
+import kr.seoul.snsX.exception.InputDataInvalidException;
 import kr.seoul.snsX.exception.failedLogin;
 import kr.seoul.snsX.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,12 @@ public class MemberController {
         return "redirect:/post";
     }
 
-    @PostMapping("/searchLost")
-    public String searchLost(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber) {
+    @PostMapping("/searchLostMemberEmail")
+    public String searchLostMemberEmail(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber, Model model) throws InputDataInvalidException {
         String email = memberService.searchLostMemberEmail(nickName, phoneNumber);
-        return "";
+        model.addAttribute("search", "Email");
+        model.addAttribute("value", email);
+        return "search_lost_form";
     }
 
     @GetMapping("/login")
