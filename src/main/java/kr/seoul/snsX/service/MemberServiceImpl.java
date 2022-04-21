@@ -11,6 +11,8 @@ import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
@@ -40,5 +42,11 @@ public class MemberServiceImpl implements MemberService{
         if (email == null)
             throw new InputDataInvalidException("잘못된 정보입니다");
         return email;
+    }
+
+    @Override
+    public void searchLostMemberPw(String email) {
+        Member member = memberRepository.findMemberByEmail(email);
+        
     }
 }

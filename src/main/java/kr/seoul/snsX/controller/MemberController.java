@@ -54,6 +54,17 @@ public class MemberController {
         return "search_lost_form";
     }
 
+    @GetMapping("/searchLostMemberPw")
+    public String searchLostMemberPwForm() {
+        return "search_lost_pw_form";
+    }
+
+    @PostMapping("/searchLostMemberPw")
+    public String searchLostMemberPw(@RequestParam(name = "email") String email) throws InputDataInvalidException {
+        memberService.searchLostMemberPw(email);
+        return "redirect:/member/login";
+    }
+
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto) {
         return "signin";
