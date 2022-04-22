@@ -16,7 +16,7 @@ public interface PostService {
 
     Long modifyPost(PostUpdateDto dto) throws IOException, EntityNotFoundException;
 
-    void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException;
+    void removePost(Long pk, Long memberId) throws EntityNotFoundException, FileNotFoundException;
 
     void addComment(Long postId,Long memberId, CommentRequestDto requestDto);
 

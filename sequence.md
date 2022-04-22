@@ -489,13 +489,18 @@ i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
 i->>cli: redirect:/member/login
 end
-i->>c: postId
-c->>s: removePost(postId)
+i->>c: postId, memberId
+c->>s: removePost(postId, memberId)
 s->>r: findById(postId)
 alt 게시물이 없으면
 r->>s: throw EntityNotFoundException()
 s->>c: throw EntityNotFoundException()
 c->cli: 400 에러
+end
+s->>s: havePermission(memberId, uploaderId)
+alt 권한이 없으면
+s->>c: throw InvalidException
+c->>cli: throw InvalidException
 end
 s->>r: deleteFiles(image)
 alt 게시물이 없으면
