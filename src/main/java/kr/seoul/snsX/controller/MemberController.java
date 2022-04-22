@@ -4,13 +4,19 @@ package kr.seoul.snsX.controller;
 import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
+<<<<<<< HEAD
 import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.exception.AlreadyExistException;
+=======
+import kr.seoul.snsX.exception.InputDataInvalidException;
+import kr.seoul.snsX.exception.failedLogin;
+>>>>>>> searchLostMemberEmail
 import kr.seoul.snsX.service.MemberService;
 import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,10 +65,28 @@ public class MemberController {
         return "";
     }
 
-    @PostMapping("/searchLost")
-    public String searchLost(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber) {
+    @GetMapping("/searchLostMemberEmail")
+    public String searchLostMemberEmailForm() {
+        return "search_lost_email_form";
+    }
+
+    @PostMapping("/searchLostMemberEmail")
+    public String searchLostMemberEmail(@RequestParam(name = "nickName") String nickName, @RequestParam(name = "phoneNumber") String phoneNumber, Model model) throws InputDataInvalidException {
         String email = memberService.searchLostMemberEmail(nickName, phoneNumber);
-        return "";
+        model.addAttribute("search", "Email");
+        model.addAttribute("value", email);
+        return "search_lost_form";
+    }
+
+    @GetMapping("/searchLostMemberPw")
+    public String searchLostMemberPwForm() {
+        return "search_lost_pw_form";
+    }
+
+    @PostMapping("/searchLostMemberPw")
+    public String searchLostMemberPw(@RequestParam(name = "email") String email) throws InputDataInvalidException {
+        memberService.searchLostMemberPw(email);
+        return "redirect:/member/login";
     }
 
     @GetMapping("/login")

@@ -9,8 +9,13 @@ import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.entity.Status;
 import kr.seoul.snsX.entity.SignupCache;
 import kr.seoul.snsX.exception.AlreadyExistException;
+<<<<<<< HEAD
 import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.exception.FailedLoginException;
+=======
+import kr.seoul.snsX.exception.InputDataInvalidException;
+import kr.seoul.snsX.exception.failedLogin;
+>>>>>>> searchLostMemberEmail
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.util.List;
+
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -95,8 +102,17 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public String searchLostMemberEmail(String nickName, String phoneNumber) {
-        return null;
+    public String searchLostMemberEmail(String nickName, String phoneNumber) throws InputDataInvalidException {
+        String email = memberRepository.findMemberEmailByNickNameAndPhoneNumber(nickName, phoneNumber);
+        if (email == null)
+            throw new InputDataInvalidException("잘못된 정보입니다");
+        return email;
+    }
+
+    @Override
+    public void searchLostMemberPw(String email) {
+        Member member = memberRepository.findMemberByEmail(email);
+        //추가 필요
     }
 
     @Override

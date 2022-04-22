@@ -18,5 +18,7 @@ public interface MemberService {
 
     public String searchLostMemberEmail(String nickName, String phoneNumber);
 
+    public void searchLostMemberPw(String email);
+
     public void removeMember(String password, Long memberId) throws FileNotFoundException;
 }
