@@ -71,11 +71,11 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException{
         MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(memberSignupDto.getEmail(), uuid);
-        if (memberSignupCacheDto.getUuid() == null) {
+        if (memberSignupCacheDto.getUuid() == null && memberSignupCacheDto.isFlag()) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
         }
         memberSignupCacheDto = signupCache.isUsableNickName(memberSignupDto.getNickName(), memberSignupCacheDto.getUuid());
-        if (memberSignupCacheDto.getUuid() == null) {
+        if (memberSignupCacheDto.getUuid() == null && memberSignupCacheDto.isFlag()) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
         }
         try {
