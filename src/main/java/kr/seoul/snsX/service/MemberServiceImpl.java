@@ -92,7 +92,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     @Transactional
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws FailedLoginException {
-        Member memberByEmailAndPw = memberRepository.findMemberByEmailAndPwAndStatus(memberLoginDto.getEmail(), memberLoginDto.getPw(), Status.ACTIVE.name());
+        Member memberByEmailAndPw = memberRepository.findTop1ByEmailAndPwAndStatus(memberLoginDto.getEmail(), memberLoginDto.getPw(), Status.ACTIVE);
         if (memberByEmailAndPw == null)
             throw new FailedLoginException();
         return new MemberInfoDto(memberByEmailAndPw);

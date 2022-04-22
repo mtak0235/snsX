@@ -1,6 +1,7 @@
 package kr.seoul.snsX.repository;
 
 import kr.seoul.snsX.entity.Member;
+import kr.seoul.snsX.entity.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,8 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsMemberByEmail(String email);
 
-    @Query(nativeQuery = true, value = "SELECT m FROM Member m WHERE m.email=:email AND m.pw = :pw AND m.status=:status LIMIT 1")
-    Member findMemberByEmailAndPwAndStatus(String email, String pw, String status);
+    Member findTop1ByEmailAndPwAndStatus(@Param("email") String email, @Param("pw") String pw, Status status);
 
     Member findMemberByNickName(String nickName);
 }
