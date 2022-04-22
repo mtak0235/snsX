@@ -8,7 +8,11 @@ import kr.seoul.snsX.exception.FailedLoginException;
 import java.io.FileNotFoundException;
 
 public interface MemberService {
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto);
+    public String occupyEmail(String email, String uuid);
+
+    public String occupyNickName(String nickName, String uuid);
+
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid);
 
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws FailedLoginException;
 

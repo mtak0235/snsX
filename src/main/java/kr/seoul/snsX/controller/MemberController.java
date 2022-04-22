@@ -5,6 +5,7 @@ import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
 import kr.seoul.snsX.exception.FailedLoginException;
+import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.service.MemberService;
 import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
 
@@ -33,14 +35,28 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result
-            , HttpServletRequest request) {
+            , HttpServletRequest request, @CookieValue(name = "uuid", required = false) String uuid) throws AlreadyExistException {
         if (result.hasErrors()) {
             return "signup";
         }
-        MemberInfoDto userInfo = memberService.registerMember(member);
-//        HttpSession session = request.getSession();
-//        session.setAttribute("userInfo", userInfo);
+        memberService.registerMember(member, uuid);
         return "redirect:/member/login";
+    }
+
+    @PostMapping("/signup/checkEmail")
+    public String occupyMemberEmail(@RequestParam(name = "email") String email, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) throws AlreadyExistException {
+        String createdUuid = memberService.occupyEmail(email, uuid);
+        if (uuid == null)
+            response.addCookie(new Cookie("uuid", createdUuid));
+        return "";
+    }
+
+    @PostMapping("/signup/checkNickName")
+    public String occupyMemberNickName(@RequestParam(name = "nickName") String nickName, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) throws AlreadyExistException {
+        String createdUuid = memberService.occupyNickName(nickName, uuid);
+        if (uuid == null)
+            response.addCookie(new Cookie("uuid", createdUuid));
+        return "";
     }
 
     @PostMapping("/searchLost")

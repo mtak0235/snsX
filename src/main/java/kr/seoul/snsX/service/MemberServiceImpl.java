@@ -1,18 +1,19 @@
 package kr.seoul.snsX.service;
 
 import kr.seoul.snsX.dto.MemberLoginDto;
+import kr.seoul.snsX.dto.MemberSignupCacheDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
 import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.entity.Status;
+import kr.seoul.snsX.entity.SignupCache;
 import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.exception.FailedLoginException;
-import kr.seoul.snsX.repository.FileRepository;
 import kr.seoul.snsX.repository.MemberRepository;
-import kr.seoul.snsX.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
@@ -25,17 +26,62 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final PostService postService;
-    private final PostRepository postRepository;
-    private final FileRepository fileRepository;
+
+    @Autowired
+    private final SignupCache signupCache = new SignupCache();
+
+    @Override
+    public String occupyEmail(String email, String uuid) throws AlreadyExistException {
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(email, uuid);
+        if (memberSignupCacheDto.isFlag()) {
+            if (memberSignupCacheDto.getUuid() == null) {
+                throw new AlreadyExistException("이미 존재하는 email입니다");
+            } else {
+                return memberSignupCacheDto.getUuid();
+            }
+        }
+        if (!memberRepository.existsMemberByEmail(email)) {
+            throw new AlreadyExistException("이미 존재하는 email입니다");
+        }
+        return signupCache.createEmailCache(email);
+    }
+
+    @Override
+    public String occupyNickName(String nickName, String uuid) throws AlreadyExistException {
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(nickName, uuid);
+        if (memberSignupCacheDto.isFlag()) {
+            if (memberSignupCacheDto.getUuid() == null) {
+                throw new AlreadyExistException("이미 존재하는 nickName입니다");
+            } else {
+                return memberSignupCacheDto.getUuid();
+            }
+        }
+        if (!memberRepository.existsMemberByEmail(nickName)) {
+            throw new AlreadyExistException("이미 존재하는 nickName입니다");
+        }
+        return signupCache.createEmailCache(nickName);
+    }
 
     @Override
     @Transactional
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto) throws AlreadyExistException{
-        if (memberRepository.existsMemberByEmail(memberSignupDto.getEmail())) {
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException{
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(memberSignupDto.getEmail(), uuid);
+        if (memberSignupCacheDto.getUuid() == null) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
         }
-        Member savedMember = memberRepository.save(memberSignupDto.toEntity());
-        return new MemberInfoDto(savedMember);
+        memberSignupCacheDto = signupCache.isUsableNickName(memberSignupDto.getNickName(), memberSignupCacheDto.getUuid());
+        if (memberSignupCacheDto.getUuid() == null) {
+            throw new AlreadyExistException("이미 존재하는 회원입니다");
+        }
+        try {
+            Member savedMember = memberRepository.save(memberSignupDto.toEntity());
+            return new MemberInfoDto(savedMember);
+        } catch (IllegalArgumentException e) {
+            throw new AlreadyExistException("이미 존재하는 회원입니다");
+        } finally {
+            signupCache.expireEmail(memberSignupDto.getEmail());
+            signupCache.expireNickName(memberSignupDto.getNickName());
+        }
     }
 
     @Override
