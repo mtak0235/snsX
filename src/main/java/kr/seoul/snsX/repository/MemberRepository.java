@@ -16,7 +16,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsMemberByEmail(String email);
 
-    Member findMemberByEmailAndPw(String email, String pw);
+    @Query(nativeQuery = true, value = "SELECT m FROM Member m WHERE m.email=:email AND m.pw = :pw AND m.status=:status LIMIT 1")
+    Member findMemberByEmailAndPwAndStatus(String email, String pw, String status);
 
     Member findMemberByNickName(String nickName);
 }
