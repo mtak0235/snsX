@@ -73,8 +73,9 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/save-comment")
-    public String saveComment(@PathVariable Long postId, @RequestParam Long memberId, @ModelAttribute CommentRequestDto requestDto) {
-        postService.addComment(postId, memberId, requestDto);
+    public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto,
+                              @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
+        postService.addComment(postId, memberInfoDto.getMemberId(), requestDto);
         return "redirect:/post/" + postId;
     }
 

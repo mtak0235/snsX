@@ -52,11 +52,6 @@
 
 <div class="container">
     <form id="comment" th:action="@{/post/{identity}/save-comment (identity=${post.postId})}" method="post">
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">@</span>
-            <input type="text" name="commenter" class="form-control" placeholder="Username" aria-label="Username"
-                   aria-describedby="basic-addon1">
-        </div>
         <div class="input-group">
             <span class="input-group-text">content</span>
             <textarea name="content" class="form-control" aria-label="With textarea"
@@ -96,7 +91,7 @@
                 <li class="list-group-item">[[${comment.comment}]]</li>
             </ul>
             <div class="card-footer">
-                <p class="card-text">@ [[${comment.author}]]</p>
+                <p class="card-text">@ [[${comment.user.nickName}]]</p>
             </div>
         </div>
     </div>
