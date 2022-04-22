@@ -630,12 +630,21 @@ i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
 i->>cli: redirect:/member/login
 end
-i->>c: postId, commentId
-c->>s: removeComment(postId, commentId)
+i->>c: postId, commentId, memberId
+c->>s: removeComment(postId, commentId, memberId)
 s->>r: findPostById(postId)
 alt 게시물이 없으면
 r->>s: throw EntityNotFoundException()
-s->>c: throw EntityNotFoundException()
+end
+s->>r: findCommentById(commentId)
+alt 댓글 없으면
+r->>s: throw EntityNotFoundException()
+end
+s->>s: havePermission(memberId, commenterId)
+alt 권한이 없으면
+r->>s: throw InvalidException()
+end
+s->>c: throw EntityNotFoundException(), 
 c->cli: 400 에러
 end
 s->>r: delete(commentId)

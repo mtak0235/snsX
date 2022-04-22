@@ -1,6 +1,7 @@
 package kr.seoul.snsX.service;
 
 import kr.seoul.snsX.dto.*;
+import kr.seoul.snsX.exception.InvalidException;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
@@ -19,7 +20,7 @@ public interface PostService {
 
     void addComment(Long postId,Long memberId, CommentRequestDto requestDto);
 
-    void removeComment(Long postId, Long commentId);
+    void removeComment(Long postId, Long commentId, Long memberId) throws EntityNotFoundException, InvalidException;
 
     List<ThumbnailDto> showPosts(Long offset, Long limit);
 

@@ -7,6 +7,7 @@ import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.exception.FailImgSaveException;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
+import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,12 +111,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void removeComment(Long postId, Long commentId) {
+    public void removeComment(Long postId, Long commentId, Long memberId) throws EntityNotFoundException, InvalidException {
         postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException());
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException());
-        commentRepository.delete(comment);
+        if (memberId == comment.getMember().getId())
+            commentRepository.delete(comment);
+        else
+            throw new InvalidException();
     }
 
     @Override

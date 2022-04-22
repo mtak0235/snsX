@@ -2,6 +2,7 @@ package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
+import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.service.HashTagService;
 import kr.seoul.snsX.service.PostService;
 import kr.seoul.snsX.sessison.SessionConst;
@@ -39,7 +40,8 @@ public class PostController {
     }
 
     @PostMapping("/upload")
-    public String savePost(@ModelAttribute PostSaveDto postSaveDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) throws IOException, ImageOverUploadedException {
+    public String savePost(@ModelAttribute PostSaveDto postSaveDto,
+                           @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) throws IOException, ImageOverUploadedException {
         postSaveDto.setMemberId(memberInfoDto.getMemberId());
         Long postId = postService.uploadPost(postSaveDto);
         return "redirect:/post/" + postId;
@@ -80,8 +82,10 @@ public class PostController {
     }
 
     @PostMapping("/remove-comment")
-    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId) {
-        postService.removeComment(postId, commentId);
+    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId,
+                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto)
+    throws EntityNotFoundException, InvalidException {
+        postService.removeComment(postId, commentId, memberInfoDto.getMemberId());
         return "redirect:/post/" + postId;
     }
 
