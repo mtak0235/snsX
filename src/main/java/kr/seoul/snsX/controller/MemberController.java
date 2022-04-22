@@ -84,8 +84,8 @@ public class MemberController {
         return "redirect:/member/login";
     }
 
-    @GetMapping("/search/{nickName}")
-    public String searchMemberPageForm(@PathVariable("nickName") String nickName, Model model) {
+    @GetMapping({"/search/{nickName}", "/search/"})
+    public String searchMemberPageForm(@PathVariable(value = "nickName", required = false) String nickName, Model model) {
         MemberInfoDto memberInfoDto = memberService.searchMember(nickName);
         model.addAttribute("member", memberInfoDto);
 

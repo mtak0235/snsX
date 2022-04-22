@@ -16,7 +16,7 @@ public class HomeController {
     @GetMapping("/search")
     public String searchMemberOrTag(HttpServletRequest request) {
         String searchWord = request.getParameter("searchWord");
-        if (searchWord != "" && searchWord.charAt(0) == '#')
+        if (!searchWord.equals("") && searchWord.charAt(0) == '#')
             return "redirect:/post/search/" + searchWord;
         return "redirect:/member/search/" + searchWord;
     }
