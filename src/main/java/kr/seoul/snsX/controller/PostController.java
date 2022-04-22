@@ -66,7 +66,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public String showPostForm(@PathVariable Long postId, Model model) {
+    public String showPostForm(@PathVariable("postId") Long postId, Model model) {
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
         return "post_result";
@@ -90,10 +90,9 @@ public class PostController {
         return new UrlResource("file:" + fileDir + filename);
     }
 
-    @GetMapping("/search")
-    public String searchByTagForm(HttpServletRequest request, Model model) {
-        String tagName = "#" + request.getParameter("tag");
-        TagResponseDto tagResponseDto = hashTagService.getTagByTagName(tagName);
+    @GetMapping("/search/{tag}")
+    public String searchByTagForm(@PathVariable("tag") String tag, Model model) {
+        TagResponseDto tagResponseDto = hashTagService.getTagByTagName(tag);
         model.addAttribute("tag", tagResponseDto);
 
         return "tag_feed_form";
@@ -101,7 +100,7 @@ public class PostController {
 
     @ResponseBody
     @GetMapping("/search/{tagId}/{offset}/{limit}")
-    public List<ThumbnailDto> searchByTag(@PathVariable Long tagId, @PathVariable Long offset, @PathVariable Long limit) {
+    public List<ThumbnailDto> searchByTag(@PathVariable("tagId") Long tagId, @PathVariable("offset") Long offset, @PathVariable Long limit) {
         List<ThumbnailDto> result = postService.getTagPosts(tagId, offset, limit);
         return result;
     }
@@ -117,7 +116,7 @@ public class PostController {
 
     @ResponseBody
     @GetMapping("/feed/{offset}/{limit}")
-    public List<ThumbnailDto> showFeed(@PathVariable Long offset, @PathVariable Long limit) {
+    public List<ThumbnailDto> showFeed(@PathVariable Long offset, @PathVariable("limit") Long limit) {
         List<ThumbnailDto> result = postService.showPosts(offset, limit);
         return result;
     }

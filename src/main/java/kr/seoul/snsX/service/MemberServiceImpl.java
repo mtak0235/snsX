@@ -9,13 +9,9 @@ import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.entity.Status;
 import kr.seoul.snsX.entity.SignupCache;
 import kr.seoul.snsX.exception.AlreadyExistException;
-<<<<<<< HEAD
 import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.exception.FailedLoginException;
-=======
 import kr.seoul.snsX.exception.InputDataInvalidException;
-import kr.seoul.snsX.exception.failedLogin;
->>>>>>> searchLostMemberEmail
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 import java.util.Random;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -94,10 +92,10 @@ public class MemberServiceImpl implements MemberService{
     @Override
     @Transactional
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws FailedLoginException {
-        List<Member> memberByEmailAndPw = memberRepository.findMemberByEmailAndPw(memberLoginDto.getEmail(), memberLoginDto.getPw());
-        if (memberByEmailAndPw.size() == 0)
+        Member memberByEmailAndPw = memberRepository.findMemberByEmailAndPw(memberLoginDto.getEmail(), memberLoginDto.getPw());
+        if (memberByEmailAndPw == null)
             throw new FailedLoginException();
-        return new MemberInfoDto(memberByEmailAndPw.get(0));
+        return new MemberInfoDto(memberByEmailAndPw);
     }
 
     @Override
@@ -127,5 +125,11 @@ public class MemberServiceImpl implements MemberService{
         for (Post post : posts) {
             postService.removePost(post.getId());
         }
+    }
+
+    @Override
+    public MemberInfoDto searchMember(String nickName) throws EntityNotFoundException {
+        Member member = memberRepository.findMemberByNickName(nickName);
+        return new MemberInfoDto(member);
     }
 }

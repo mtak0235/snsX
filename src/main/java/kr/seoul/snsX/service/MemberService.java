@@ -21,4 +21,6 @@ public interface MemberService {
     public void searchLostMemberPw(String email);
 
     public void removeMember(String password, Long memberId) throws FileNotFoundException;
+
+    public MemberInfoDto searchMember(String nickName);
 }

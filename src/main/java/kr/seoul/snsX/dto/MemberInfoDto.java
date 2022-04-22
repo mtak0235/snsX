@@ -13,6 +13,7 @@ public class MemberInfoDto {
     public MemberInfoDto(Member member) {
         this.nickName = member.getNickName();
         this.memberId = member.getId();
+        this.profileImage = member.getProfileFileName();
     }
 
 }

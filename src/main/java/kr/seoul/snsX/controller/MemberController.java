@@ -1,16 +1,11 @@
 package kr.seoul.snsX.controller;
 
-
 import kr.seoul.snsX.dto.MemberLoginDto;
 import kr.seoul.snsX.dto.MemberSignupDto;
 import kr.seoul.snsX.dto.MemberInfoDto;
-<<<<<<< HEAD
 import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.exception.AlreadyExistException;
-=======
 import kr.seoul.snsX.exception.InputDataInvalidException;
-import kr.seoul.snsX.exception.failedLogin;
->>>>>>> searchLostMemberEmail
 import kr.seoul.snsX.service.MemberService;
 import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +82,14 @@ public class MemberController {
     public String searchLostMemberPw(@RequestParam(name = "email") String email) throws InputDataInvalidException {
         memberService.searchLostMemberPw(email);
         return "redirect:/member/login";
+    }
+
+    @GetMapping("/search/{nickName}")
+    public String searchMemberPageForm(@PathVariable("nickName") String nickName, Model model) {
+        MemberInfoDto memberInfoDto = memberService.searchMember(nickName);
+        model.addAttribute("member", memberInfoDto);
+
+        return "member_page_form";
     }
 
     @GetMapping("/login")
