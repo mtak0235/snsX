@@ -105,7 +105,7 @@ public class PostController {
         return result;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
         if (userInfo == null) {
             return "post_feed_list";
