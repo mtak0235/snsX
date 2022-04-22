@@ -286,7 +286,10 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: email, pw
+cli->>c: email, pw, session
+alt 이미 로그인 했다면(session 이 null이 아니면)
+c->>cli: redirect:/post
+end
 c->>s: login(email, pw)
 s->>r: findMemberByEmailAndPw(email, pw)
 r->>s: Member

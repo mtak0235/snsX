@@ -72,7 +72,7 @@ public class PostController {
         return "post_result";
     }
 
-    @PostMapping("/{postId}/save-comment")
+    @RequestMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto,
                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
         postService.addComment(postId, memberInfoDto.getMemberId(), requestDto);
