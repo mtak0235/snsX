@@ -58,7 +58,12 @@
         <h2>설정</h2>
     </div>
     <div class="col">
-        <a class="nav-link active" aria-current="page" href="/member/withdraw">회원 탈퇴하기</a>
+        <button class="w-100 btn btn-primary btn-lg" th:onclick="|location.href='@{/member/verify}'|"
+                type="button">내정보수정</button>
+    </div>
+    <div class="col">
+        <button class="w-100 btn btn-primary btn-lg" th:onclick="|location.href='@{/member/withdraw}'|"
+                type="button">회원탈퇴</button>
     </div>
 <!--    <div class="col">-->
 <!--        <form th:action="@{/member/withdraw}" method="post">-->

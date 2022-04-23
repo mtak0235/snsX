@@ -1,11 +1,10 @@
 package kr.seoul.snsX.controller;
 
-import kr.seoul.snsX.dto.MemberLoginDto;
-import kr.seoul.snsX.dto.MemberSignupDto;
-import kr.seoul.snsX.dto.MemberInfoDto;
+import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.InputDataInvalidException;
+import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.service.MemberService;
 import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
@@ -121,13 +120,37 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/verify")
+    public String isValidPwForm(Model model) {
+        model.addAttribute("path", "verify");
+        return "pw_verify";
+    }
+
+    @PostMapping("/verify")
+    public String isValidPw(HttpServletRequest request, @RequestParam(name = "password") String password, Model model) throws InvalidException {
+        MemberFullInfoDto memberFullInfoDto = memberService.isValidPw(((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), password);
+        if (memberFullInfoDto == null)
+            return "redirect:/member/verify";
+        model.addAttribute("member", memberFullInfoDto);
+        return "member_update_form";
+    }
+
+    @PostMapping("/update")
+    public String modifyMemberForm(HttpServletRequest request, @ModelAttribute("member") MemberUpdateDto memberUpdateDto, Model model) {
+        return "";
+//        MemberInfoDto memberInfoDto = memberService.modifyMember(((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), memberUpdateDto);
+//        model.addAttribute("member", memberInfoDto);
+//        return "";
+    }
+
     @GetMapping("/setting")
     public String setting() {
         return "setting";
     }
 
     @GetMapping("/withdraw")
-    public String withdrawForm() {
+    public String withdrawForm(Model model) {
+        model.addAttribute("path", "withdraw");
         return "pw_verify";
     }
 
