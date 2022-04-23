@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -74,8 +75,11 @@ public class HashTagServiceImpl implements HashTagService {
     }
 
     @Override
-    public TagResponseDto getTagByTagName(String tagName) {
-        return new TagResponseDto(hashTagRepository.findByName(tagName));
+    public TagResponseDto getTagByTagName(String tagName) throws EntityNotFoundException {
+        HashTag hashTag = hashTagRepository.findByName(tagName);
+        if (hashTag == null)
+            throw new EntityNotFoundException("게시물이 없습니다.");
+        return new TagResponseDto(hashTag);
     }
 
 }

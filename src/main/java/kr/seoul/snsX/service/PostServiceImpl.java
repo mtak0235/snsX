@@ -131,7 +131,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit) {
+    public List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit) throws EntityNotFoundException {
 
         List<Object[]> result = postRepository.findPostIdAndThumbnailFileNameByTagId(tagId, offset, limit);
         List<ThumbnailDto> convertedResult = new ArrayList<>();
