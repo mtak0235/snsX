@@ -158,10 +158,10 @@
                         let fc = document.createElement("figcaption");
                         let img = document.createElement("img");
                         let link=document.createElement("a");
-                        link.href = "http://localhost:8080/post/images/" + item.thumbnailFileName;
-                        img.src = item.thumbnailFileName;
+                        link.href = "http://localhost:8080/post/" + item.postId;
+                        img.src = "http://localhost:8080/post/images/" + item.thumbnailFileName;
                         img.alt = item.postId;
-                        fc.textContent = item.postId;
+                        fc.textContent = item.content;
                         link.appendChild(img);
                         fig.appendChild(link);
                         fig.appendChild(fc);

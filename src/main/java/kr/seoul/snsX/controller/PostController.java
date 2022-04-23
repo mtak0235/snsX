@@ -93,9 +93,8 @@ public class PostController {
 
     @GetMapping("/search/{tag}")
     public String searchByTagForm(@PathVariable("tag") String tag, Model model) {
-        TagResponseDto tagResponseDto = hashTagService.getTagByTagName(tag);
+        TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
         model.addAttribute("tag", tagResponseDto);
-
         return "tag_feed_form";
     }
 

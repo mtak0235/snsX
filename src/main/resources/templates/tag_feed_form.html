@@ -92,7 +92,7 @@
                     <!--                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
                     <!--                    </li>-->
                 </ul>
-                <form class="d-flex" th:action="@{/post/search}">
+                <form class="d-flex" th:action="@{search}">
                     <input name="tag" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <input class="btn btn-outline-success" type="submit" th:value="Search"/>
                 </form>
@@ -112,8 +112,11 @@
         crossorigin="anonymous"></script>
 
 <script th:inline="javascript">
+    let offset = 0;
+    let limit = 3;
+    let isEnd = false;
     let URL =
-        "http://localhost:8080/post/search/" +[[${tag.tagId}]];
+        "http://localhost:8080/post/search/" + [[${tag.tagId}]] + "/" + offset + "/" + limit;
     document.addEventListener("DOMContentLoaded", () => {
         //set up the IntersectionObserver to load more images if the footer is visible.
         let options = {
@@ -130,33 +133,39 @@
     function handleIntersect(entries) {
         if (entries[0].isIntersecting) {
             console.warn("something is intersecting with the viewport");
+            URL = "http://localhost:8080/post/search/" + [[${tag.tagId}]] + "/" + offset + "/" + limit;
             getData();
         }
     }
     function getData() {
         let main = document.querySelector("main");
         console.log("fetch some JSON data");
-        fetch(URL)
-            .then(response => response.json())
-            .then(data => {
-                // data.items[].img, data.items[].name
-                console.log(data);
-                data.forEach(item => {
-                    let fig = document.createElement("figure");
-                    let fc = document.createElement("figcaption");
-                    let img = document.createElement("img");
-                    let link=document.createElement("a");
-                    link.href = "http://localhost:8080/post/" + item.id;
-                    img.src = "http://localhost:8080/post/images/"+ item.fileName;
-                    img.alt = item.id;
-                    fc.textContent = item.id;
-                    link.appendChild(img);
-                    fig.appendChild(link);
-                    fig.appendChild(fc);
-                    main.appendChild(fig);
+        if (isEnd === false) {
+            fetch(URL)
+                .then(response => response.json())
+                .then(data => {
+                    // data.items[].img, data.items[].name
+                    // console.log(data);
+                    data.forEach(item => {
+                        let fig = document.createElement("figure");
+                        let fc = document.createElement("figcaption");
+                        let img = document.createElement("img");
+                        let link=document.createElement("a");
+                        link.href = "http://localhost:8080/post/" + item.postId;
+                        img.src = "http://localhost:8080/post/images/"+ item.thumbnailFileName;
+                        img.alt = item.postId;
+                        // fc.textContent = item.id;
+                        link.appendChild(img);
+                        fig.appendChild(link);
+                        fig.appendChild(fc);
+                        main.appendChild(fig);
+                    });
+                    if (data.length === 0) {
+                        isEnd = true;
+                    }
+                    offset += data.lastPK;
                 });
-                offset = data.lastPK;
-            });
+        }
     }
 </script>
 </body>

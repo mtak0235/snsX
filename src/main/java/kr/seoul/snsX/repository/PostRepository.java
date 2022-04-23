@@ -9,12 +9,8 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(nativeQuery = true, value =
-            "SELECT post_id, thumbnail_file_name " +
-                    "FROM post " +
-                    "INNER JOIN (SELECT post_id FROM post LIMIT :offset, :limit) pp ON pp.post_id = post.post_id " +
-                    "WHERE post_id IN " +
-                    "(SELECT post_id FROM post_hash_tag WHERE hash_tag = " +
-                    "(SELECT hashtag_id FROM hash_tag WHERE name = :tagId))"
+            "SELECT post_id, thumbnail_file_name FROM post WHERE post_id IN " +
+                    "(SELECT post_id FROM post_hash_tag WHERE hashtag_id = :tagId) LIMIT :offset, :limit"
     )
     List<Object[]> findPostIdAndThumbnailFileNameByTagId(@Param("tagId") Long tagId, @Param("offset") Long offset, @Param("limit") Long limit);
 
