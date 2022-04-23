@@ -44,8 +44,8 @@
                     <!--                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
                     <!--                    </li>-->
                 </ul>
-                <form class="d-flex" th:action="@{/post/search}">
-                    <input name="tag" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex" th:action="@{/search}">
+                    <input name="searchWord" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <input class="btn btn-outline-success" type="submit"th:value="Search"/>
                 </form>
             </div>
