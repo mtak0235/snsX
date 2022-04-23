@@ -122,7 +122,7 @@
         const observer = new IntersectionObserver(handleIntersect, options);
         observer.observe(document.querySelector("footer"));
         //an initial load of some data
-        getData();
+        //getData();
     });
     function handleIntersect(entries) {
         if (entries[0].isIntersecting) {
