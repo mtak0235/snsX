@@ -139,12 +139,12 @@
                 .then(response => response.json())
                 .then(data => {
                     // data.items[].img, data.items[].name
-                    data.posts.forEach(item => {
+                    data.forEach(item => {
                         let fig = document.createElement("figure");
                         let fc = document.createElement("figcaption");
                         let img = document.createElement("img");
                         let link=document.createElement("a");
-                        link.href = "http://localhost:8080/post/" + item.id;
+                        link.href = "http://localhost:8080/post/images/" + item.id;
                         img.src = item.img;
                         img.alt = item.author;
                         fc.textContent = item.content;
