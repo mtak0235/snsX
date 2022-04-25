@@ -101,10 +101,8 @@ public class PostController {
     public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, @PathVariable("tag") String tag, Model model) throws EntityNotFoundException {
         TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
         model.addAttribute("tag", tagResponseDto);
-        if (userInfo == null)
-            return "tag_feed_form";
         model.addAttribute("member", userInfo);
-        return "member_tag_feed_form";
+        return "tag_feed_form";
     }
 
     @ResponseBody

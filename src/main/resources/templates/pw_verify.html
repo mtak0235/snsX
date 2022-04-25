@@ -16,7 +16,7 @@
     </style>
 </head>
 <body>
-<div th:insert="~{/header :: headerFragment}"></div>
+<div th:insert="~{/header :: headerFragment (${member})}"></div>
 <div class="container">
     <form  th:action="@{/member/{path} (path=${path})}" method="post">
         <div>
