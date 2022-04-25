@@ -120,7 +120,7 @@ public class MemberServiceImpl implements MemberService{
         member.setStatus(Status.INACTIVE);
         List<Post> posts = member.getPosts();
         for (Post post : posts) {
-            postService.removePost(post.getId());
+            postService.removePost(post.getId(), memberId);
         }
     }
 

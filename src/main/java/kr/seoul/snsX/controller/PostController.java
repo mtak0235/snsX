@@ -2,6 +2,7 @@ package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
+import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.service.HashTagService;
 import kr.seoul.snsX.service.PostService;
 import kr.seoul.snsX.sessison.SessionConst;
@@ -39,7 +40,8 @@ public class PostController {
     }
 
     @PostMapping("/upload")
-    public String savePost(@ModelAttribute PostSaveDto postSaveDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) throws IOException, ImageOverUploadedException {
+    public String savePost(@ModelAttribute PostSaveDto postSaveDto,
+                           @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) throws IOException, ImageOverUploadedException {
         postSaveDto.setMemberId(memberInfoDto.getMemberId());
         Long postId = postService.uploadPost(postSaveDto);
         return "redirect:/post/" + postId;
@@ -60,8 +62,10 @@ public class PostController {
     }
 
     @PostMapping("/delete")
-    public String deletePost(@RequestParam Long postId) throws EntityNotFoundException, FileNotFoundException {
-        postService.removePost(postId);
+    public String deletePost(@RequestParam Long postId,
+                             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto
+    ) throws EntityNotFoundException, FileNotFoundException {
+        postService.removePost(postId, memberInfoDto.getMemberId());
         return "redirect:/post";
     }
 
@@ -72,7 +76,7 @@ public class PostController {
         return "post_result";
     }
 
-    @PostMapping("/{postId}/save-comment")
+    @RequestMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto,
                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
         postService.addComment(postId, memberInfoDto.getMemberId(), requestDto);
@@ -80,8 +84,10 @@ public class PostController {
     }
 
     @PostMapping("/remove-comment")
-    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId) {
-        postService.removeComment(postId, commentId);
+    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId,
+                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto)
+    throws EntityNotFoundException, InvalidException {
+        postService.removeComment(postId, commentId, memberInfoDto.getMemberId());
         return "redirect:/post/" + postId;
     }
 
@@ -111,7 +117,7 @@ public class PostController {
     @GetMapping
     public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
         if (userInfo == null) {
-            return "post_feed_list";
+            return "post_feed_form";
         }
         model.addAttribute("member", userInfo);
         return "member_feed_form";

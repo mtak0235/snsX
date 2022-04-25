@@ -7,6 +7,7 @@ import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.exception.FailImgSaveException;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
+import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,11 +90,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException {
+    public void removePost(Long pk, Long memberId) throws EntityNotFoundException, FileNotFoundException {
         Post foundPost = postRepository.findById(pk)
                 .orElseThrow(() -> new EntityNotFoundException());
-        fileRepository.deleteFiles(foundPost.getImages());
-        postRepository.delete(foundPost);
+        if (havePermission(memberId, foundPost.getMember().getId())) {
+            fileRepository.deleteFiles(foundPost.getImages());
+            postRepository.delete(foundPost);
+        } else {
+            throw new InvalidException();
+        }
     }
 
     @Override
@@ -110,12 +115,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void removeComment(Long postId, Long commentId) {
+    public void removeComment(Long postId, Long commentId, Long memberId) throws EntityNotFoundException, InvalidException {
         postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException());
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException());
-        commentRepository.delete(comment);
+        if (havePermission(memberId, comment.getMember().getId()))
+            commentRepository.delete(comment);
+        else
+            throw new InvalidException();
+    }
+
+    private boolean havePermission(Long memberId, Long makerId) {
+        if (memberId == makerId)
+            return true;
+        else
+            return false;
     }
 
     @Override
