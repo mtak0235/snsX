@@ -92,10 +92,10 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
-        if (memberInfoDto != null) {
-            return "redirect:/post";
-        }
+    public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, Model model) {
+//        if (memberInfoDto != null) {
+//            return "redirect:/post";
+//        }
         return "login";
     }
 

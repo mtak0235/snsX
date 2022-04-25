@@ -39,7 +39,7 @@
     </style>
 </head>
 <body>
-    <div th:insert="~{/header :: headerFragment}"></div>
+    <div th:insert="~{/header :: headerFragment (${member})}"></div>
 <main>
     <!-- images will be loaded here with figure and figcaption -->
 </main>

@@ -116,11 +116,8 @@ public class PostController {
 
     @GetMapping
     public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
-        if (userInfo == null) {
-            return "post_feed_form";
-        }
         model.addAttribute("member", userInfo);
-        return "member_feed_form";
+        return "post_feed_form";
     }
 
     @ResponseBody
