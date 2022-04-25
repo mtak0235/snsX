@@ -86,7 +86,7 @@ public class PostController {
     @PostMapping("/remove-comment")
     public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId,
                                 @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto)
-    throws EntityNotFoundException, InvalidException {
+            throws EntityNotFoundException, InvalidException {
         postService.removeComment(postId, commentId, memberInfoDto.getMemberId());
         return "redirect:/post/" + postId;
     }
