@@ -9,7 +9,8 @@
 <div th:insert="~{/header :: headerFragment (${member})}"></div>
 <div class="container">
     <p th:text="${member.nickName}"></p>
-    <p th:text="${member.profileImage}"></p>
+    <img class="rounded card-img-top" th:src="|/post/images/${member.profileImage}|"
+         width="50" height="300"/>
 </div>
 <div th:insert="~{/footer :: footerFragment}"></div>
 </body>
