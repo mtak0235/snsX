@@ -14,6 +14,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     )
     List<Object[]> findPostIdAndThumbnailFileNameByTagId(@Param("tagId") Long tagId, @Param("offset") Long offset, @Param("limit") Long limit);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM post p JOIN (SELECT post_id FROM post ORDER BY post_id DESC LIMIT :offset, :limit) pp ON pp.post_id=p.post_id ORDER BY p.post_id DESC")
+    @Query(nativeQuery = true, value = "SELECT * FROM post p JOIN (SELECT post_id FROM post WHERE modified_date BETWEEN DATE_ADD(NOW(), INTERVAL -3 DAY) AND NOW() LIMIT :offset, :limit) pp ON pp.post_id=p.post_id ORDER BY p.post_id DESC")
     List<Post> findPosts(@Param("offset") Long offset, @Param("limit") Long limit);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM post p WHERE modified_date BETWEEN DATE_ADD(NOW(), INTERVAL -3 DAY) AND NOW() ORDER BY p.post_id DESC LIMIT :limit")
+    List<Post> findFirstFollowingPosts(@Param("limit") Long limit);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM post p WHERE :cursor > post_id AND modified_date BETWEEN DATE_ADD(NOW(), INTERVAL -3 DAY) AND NOW() ORDER BY post_id DESC LIMIT :limit")
+    List<Post> findFollowingPosts(@Param("cursor") Long cursor, @Param("limit") Long limit);
 }

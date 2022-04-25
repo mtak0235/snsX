@@ -33,14 +33,23 @@
             color: cornflowerblue;
         }
         main {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-gap: 1rem;
             width: 80vw;
-            margin: 3rem 3rem;
-            grid-template-rows: auto;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
         }
         main figure {
+            /*width: 300px;*/
+            height: 300px;
+            width: 40%;
+            height: 40%;
+            margin: 10px auto;
+        }
+        main figure img {
+            width: 100%;
+            height: 100%;
         }
         main figcaption {
             font-size: 1rem;
@@ -70,22 +79,6 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<!--                    <li class="nav-item dropdown">-->
-<!--                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                            Dropdown-->
-<!--                        </a>-->
-<!--                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">-->
-<!--                            <li><a class="dropdown-item" href="#">Action</a></li>-->
-<!--                            <li><a class="dropdown-item" href="#">Another action</a></li>-->
-<!--                            <li><hr class="dropdown-divider"></li>-->
-<!--                            <li><a class="dropdown-item" href="#">Something else here</a></li>-->
-<!--                        </ul>-->
-<!--                    </li>-->
-<!--                    <li class="nav-item">-->
-<!--                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
-<!--                    </li>-->
-                </ul>
                 <form class="d-flex" th:action="@{/search}">
                     <input name="searchWord" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <input class="btn btn-outline-success" type="submit"th:value="Search"/>
@@ -106,11 +99,11 @@
         crossorigin="anonymous"></script>
 
 <script th:inline="javascript">
-    let offset = 0;
+    let cursor = -1;
     let limit = 3;
     let isEnd = false;
     let URL =
-        "http://localhost:8080/post/feed/" + offset + "/" + limit;
+        "http://localhost:8080/post/feed/" + cursor + "/" + limit;
     document.addEventListener("DOMContentLoaded", () => {
         //set up the IntersectionObserver to load more images if the footer is visible.
         //URL - https://gist.githubusercontent.com/prof3ssorSt3v3/1944e7ba7ffb62fe771c51764f7977a4/raw/c58a342ab149fbbb9bb19c94e278d64702833270/infinite.json
@@ -122,12 +115,12 @@
         const observer = new IntersectionObserver(handleIntersect, options);
         observer.observe(document.querySelector("footer"));
         //an initial load of some data
-        //getData();
+        // getData();
     });
     function handleIntersect(entries) {
         if (entries[0].isIntersecting) {
             console.warn("something is intersecting with the viewport");
-            URL = "http://localhost:8080/post/feed/" + offset + "/" + limit;
+            URL = "http://localhost:8080/post/feed/" + cursor + "/" + limit;
             getData();
         }
     }
@@ -151,11 +144,11 @@
                         fig.appendChild(link);
                         fig.appendChild(fc);
                         main.appendChild(fig);
+                        cursor = item.postId - 1;
                     });
                     if (data.length === 0) {
                         isEnd = true;
                     }
-                    offset += data.length;
                 });
         }
     }

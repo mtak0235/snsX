@@ -124,9 +124,9 @@ public class PostController {
     }
 
     @ResponseBody
-    @GetMapping("/feed/{offset}/{limit}")
-    public List<ThumbnailDto> showFeed(@PathVariable Long offset, @PathVariable("limit") Long limit) {
-        List<ThumbnailDto> result = postService.showPosts(offset, limit);
+    @GetMapping("/feed/{cursor}/{limit}")
+    public List<ThumbnailDto> showFeed(@PathVariable Long cursor, @PathVariable("limit") Long limit) {
+        List<ThumbnailDto> result = postService.showPosts(cursor, limit);
         return result;
     }
 

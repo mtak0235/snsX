@@ -135,9 +135,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<ThumbnailDto> showPosts(Long offset, Long limit) {
-
-        List<Post> posts = postRepository.findPosts(offset, limit);
+    public List<ThumbnailDto> showPosts(Long cursor, Long limit) {
+        List<Post> posts;
+        if (cursor == -1)
+            posts = postRepository.findFirstFollowingPosts(limit);
+        else
+            posts = postRepository.findFollowingPosts(cursor, limit);
         List<ThumbnailDto> thumbnailDtos = new ArrayList<>();
         for (Post p : posts) {
             thumbnailDtos.add(new ThumbnailDto(p.getId(), p.getThumbnailFileName()));

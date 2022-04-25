@@ -22,7 +22,7 @@ public interface PostService {
 
     void removeComment(Long postId, Long commentId, Long memberId) throws EntityNotFoundException, InvalidException;
 
-    List<ThumbnailDto> showPosts(Long offset, Long limit);
+    List<ThumbnailDto> showPosts(Long cursor, Long limit);
 
     List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit);
 
