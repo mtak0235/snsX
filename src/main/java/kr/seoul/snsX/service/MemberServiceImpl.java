@@ -1,9 +1,6 @@
 package kr.seoul.snsX.service;
 
-import kr.seoul.snsX.dto.MemberLoginDto;
-import kr.seoul.snsX.dto.MemberSignupCacheDto;
-import kr.seoul.snsX.dto.MemberSignupDto;
-import kr.seoul.snsX.dto.MemberInfoDto;
+import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.entity.Member;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.entity.Status;
@@ -132,4 +129,16 @@ public class MemberServiceImpl implements MemberService{
         Member member = memberRepository.findMemberByNickName(nickName);
         return new MemberInfoDto(member);
     }
+
+    @Override
+    public MemberFullInfoDto isValidPw(Long memberId, String password) {
+        return null;
+    }
+
+    @Override
+    public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto) {
+        return null;
+    }
+
+
 }
