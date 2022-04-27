@@ -1,5 +1,6 @@
 package kr.seoul.snsX.controller;
 
+import kr.seoul.snsX.cookie.CookieConst;
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
 import kr.seoul.snsX.exception.InvalidException;
@@ -15,7 +16,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,8 +44,32 @@ public class PostController {
 
     @PostMapping("/upload")
     public String savePost(@ModelAttribute PostSaveDto postSaveDto,
-                           @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) throws IOException, ImageOverUploadedException {
-        postSaveDto.setMemberId(memberInfoDto.getMemberId());
+                           @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto,
+                           @CookieValue(name = CookieConst.PENDING_POST_CONTENT, required = false) PostSaveDto postTemporalSaveDto,
+                           HttpServletResponse response) throws IOException, ImageOverUploadedException {
+
+        //        if (request.getCookies() != null) {
+//            Cookie comment = Arrays.stream(request.getCookies())
+//                    .filter(cookie -> cookie.getName().equals(CookieConst.PENDING_COMMENT_CONTENT))
+//                    .findAny()
+//                    .orElse(null);
+//            if (comment != null) {
+//                System.out.println("comment = " + comment.getValue());
+//                //comment.getValue를 request body에 넣어야 함.
+//                comment.setMaxAge(0);
+//                response.addCookie(comment);
+//            }
+//        }
+
+        if (postTemporalSaveDto == null) {
+            postSaveDto.setMemberId(memberInfoDto.getMemberId());
+        } else {
+            postTemporalSaveDto.setMemberId(memberInfoDto.getMemberId());
+            postSaveDto = postTemporalSaveDto;
+            Cookie cookie = new Cookie(CookieConst.PENDING_POST_CONTENT, null);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
         Long postId = postService.uploadPost(postSaveDto);
         return "redirect:/post/" + postId;
     }
@@ -69,72 +96,83 @@ public class PostController {
         return "redirect:/post";
     }
 
-    @GetMapping("/{postId}")
-    public String showPostForm(@PathVariable("postId") Long postId, Model model) {
+    @GetMapping("/{postId}/{prev}")
+    public String showPostForm(@PathVariable("postId") Long postId,@PathVariable("prev") Long prev, Model model) {
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
+        model.addAttribute("prev", prev);
         return "post_result";
     }
 
-    @RequestMapping("/{postId}/save-comment")
+    @GetMapping("/{postId}/save-comment/{prev}")
+    public String saveCommentForm(@PathVariable Long prev, @PathVariable Long postId) {
+        return "redirect:/post/" + postId + "/" + prev;
+    }
+
+    @PostMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto,
                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
         postService.addComment(postId, memberInfoDto.getMemberId(), requestDto);
         return "redirect:/post/" + postId;
     }
 
-    @PostMapping("/remove-comment")
-    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId,
-                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto)
+        @PostMapping("/remove-comment")
+        public String removeComment (@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long
+        commentId,
+                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto)
     throws EntityNotFoundException, InvalidException {
-        postService.removeComment(postId, commentId, memberInfoDto.getMemberId());
-        return "redirect:/post/" + postId;
-    }
-
-    @ResponseBody
-    @GetMapping("/images/{filename}")
-    public UrlResource showImageForm(@PathVariable String filename) throws MalformedURLException {
-        return new UrlResource("file:" + fileDir + filename);
-    }
-
-    @GetMapping("/search/{tag}")
-    public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, @PathVariable("tag") String tag, Model model) throws EntityNotFoundException {
-        TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
-        model.addAttribute("tag", tagResponseDto);
-        if (userInfo == null)
-            return "tag_feed_form";
-        model.addAttribute("member", userInfo);
-        return "member_tag_feed_form";
-    }
-
-    @ResponseBody
-    @GetMapping("/search/{tagId}/{offset}/{limit}")
-    public List<ThumbnailDto> searchByTag(@PathVariable("tagId") Long tagId, @PathVariable("offset") Long offset, @PathVariable Long limit) {
-        List<ThumbnailDto> result = postService.getTagPosts(tagId, offset, limit);
-        return result;
-    }
-
-    @GetMapping
-    public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
-        if (userInfo == null) {
-            return "post_feed_form";
+            postService.removeComment(postId, commentId, memberInfoDto.getMemberId());
+            return "redirect:/post/" + postId;
         }
-        model.addAttribute("member", userInfo);
-        return "member_feed_form";
-    }
 
-    @ResponseBody
-    @GetMapping("/feed/{cursor}/{limit}")
-    public List<ThumbnailDto> showFeed(@PathVariable Long cursor, @PathVariable("limit") Long limit) {
-        List<ThumbnailDto> result = postService.showPosts(cursor, limit);
-        return result;
-    }
+        @ResponseBody
+        @GetMapping("/images/{filename}")
+        public UrlResource showImageForm (@PathVariable String filename) throws MalformedURLException {
+            return new UrlResource("file:" + fileDir + filename);
+        }
 
-    @GetMapping("/member_feed/{memberId}")
-    public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
-        HttpSession session = request.getSession(false);
-        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        model.addAttribute("member", memberInfo);
-        return "member_feed_form";
+        @GetMapping("/search/{tag}")
+        public String searchByTagForm
+        (@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto
+        userInfo, @PathVariable("tag") String tag, Model model) throws EntityNotFoundException {
+            TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
+            model.addAttribute("tag", tagResponseDto);
+            if (userInfo == null)
+                return "tag_feed_form";
+            model.addAttribute("member", userInfo);
+            return "member_tag_feed_form";
+        }
+
+        @ResponseBody
+        @GetMapping("/search/{tagId}/{offset}/{limit}")
+        public List<ThumbnailDto> searchByTag (@PathVariable("tagId") Long tagId, @PathVariable("offset") Long
+        offset, @PathVariable Long limit){
+            List<ThumbnailDto> result = postService.getTagPosts(tagId, offset, limit);
+            return result;
+        }
+
+        @GetMapping
+        public String showFeedForm (@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto
+        userInfo, Model model){
+            if (userInfo == null) {
+                return "post_feed_form";
+            }
+            model.addAttribute("member", userInfo);
+            return "member_feed_form";
+        }
+
+        @ResponseBody
+        @GetMapping("/feed/{cursor}/{limit}")
+        public List<ThumbnailDto> showFeed (@PathVariable Long cursor, @PathVariable("limit") Long limit){
+            List<ThumbnailDto> result = postService.showPosts(cursor, limit);
+            return result;
+        }
+
+        @GetMapping("/member_feed/{memberId}")
+        public String memberFeedForm (HttpServletRequest request, @PathVariable Long memberId, Model model){
+            HttpSession session = request.getSession(false);
+            MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+            model.addAttribute("member", memberInfo);
+            return "member_feed_form";
+        }
     }
-}

@@ -2,6 +2,9 @@ package kr.seoul.snsX.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,4 +23,19 @@ public class HomeController {
             return "redirect:/post/search/" + searchWord.substring(1);
         return "redirect:/member/search/" + searchWord;
     }
+
+    @ResponseBody
+    @RequestMapping("/AAA")
+    public String AAA() {
+//        return "redirect:/BBB";
+        return BBB();
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/BBB")
+    public String BBB() {
+        return "BBB";
+    }
+
 }

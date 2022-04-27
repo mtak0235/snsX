@@ -1,3 +1,25 @@
+#LoginCheckInterceptor
+
+```mermaid
+sequenceDiagram
+participant w as was
+participant i as interceptor
+participant c as controller
+
+alt included path == False
+else
+w->>i: request, response
+alt login member session not exists
+alt post method
+i->>i: create and add Cookie uuid:body
+i->>i: redirect: url/uuid
+i->>c:false
+else
+i->>c:true
+end
+end
+```
+
 # occupyMemberEmail
 
 ```mermaid
@@ -298,7 +320,10 @@ s->>c: throws failedLogin("로그인에 실패했습니다")
 c->>cli: throws failedLogin("로그인에 실패했습니다")
 end
 s->>c: MemberInfoDto
-c->>cli: redirect:/post/memver_feed/{memberId}+ MemberInfoDto
+alt redirectURL이 있을 경우
+c->>cli: redirect:/redirectURL/{uuid}
+end
+c->>cli: redirect:/post + MemberInfoDto
 ```
 
 # logout
@@ -581,7 +606,7 @@ s->>c: postId
 c->>cli: redirect:/post/postId
 ```
 
-# Add Comment
+# Save Comment
 
 ```mermaid
 sequenceDiagram
@@ -595,7 +620,7 @@ participant l as Log
 cli->>i: cookie(key), postId, CommentRequestDto(content)
 i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
-i->>cli: redirect:/member/login
+i->>cli: redirect:/member/login , uuid-body 쿠키 생성
 end
 i->>c: memberId, postId, CommentRequestDto
 c->>s: addComment(postId, memberId, CommentRequestDto)
