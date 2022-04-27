@@ -2,8 +2,10 @@ package kr.seoul.snsX.dto;
 
 import kr.seoul.snsX.entity.Member;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 public class MemberSignupDto {
@@ -19,6 +21,7 @@ public class MemberSignupDto {
 
     public Member toEntity() {
         return Member.builder()
+                .profileFileName("no-image.png")
                 .pw(pw)
                 .email(email)
                 .nickName(nickName)

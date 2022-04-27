@@ -20,6 +20,7 @@ public class Member extends BaseTimeEntity{
     @Column(unique = true)
     private String email;
     private String pw;
+    @Column(columnDefinition = "no-image.png")
     private String phoneNumber;
     @Column(unique = true)
     private String nickName;

@@ -87,15 +87,16 @@ public class MemberController {
     }
 
     @GetMapping({"/search/{nickName}", "/search/"})
-    public String searchMemberPageForm(@PathVariable(value = "nickName", required = false) String nickName, Model model) {
+    public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfoDto, @PathVariable(value = "nickName", required = false) String nickName, Model model) {
         MemberInfoDto memberInfoDto = memberService.searchMember(nickName);
+        model.addAttribute("loginMember", userInfoDto);
         model.addAttribute("member", memberInfoDto);
 
         return "member_page_form";
     }
 
     @GetMapping("/login")
-    public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
+    public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, Model model) {
         if (memberInfoDto != null) {
             return "redirect:/post";
         }
@@ -140,7 +141,7 @@ public class MemberController {
         MemberFullInfoDto memberFullInfoDto = memberService.isValidPw(((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), password);
         if (memberFullInfoDto == null)
             return "redirect:/member/verify";
-        model.addAttribute("member", memberFullInfoDto);
+        model.addAttribute("loginMember", memberFullInfoDto);
         return "member_update_form";
     }
 
@@ -153,7 +154,8 @@ public class MemberController {
     }
 
     @GetMapping("/setting")
-    public String setting() {
+    public String setting(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfoDto, Model model) {
+        model.addAttribute("loginMember", userInfoDto);
         return "setting";
     }
 
