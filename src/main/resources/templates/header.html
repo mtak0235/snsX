@@ -24,7 +24,7 @@
   </style>
 </head>
 <body>
-<header th:fragment="headerFragment (member)">
+<header th:fragment="headerFragment (loginMember)">
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="/post/">snsX</a>
@@ -32,12 +32,12 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0" th:if="${member != null}">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0" th:if="${loginMember != null}">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/post/upload">게시글 작성하기</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/member/setting">[[${member.nickName}]]</a>
+            <a class="nav-link" href="/member/setting">[[${loginMember.nickName}]]</a>
           </li>
           <div class="col">
             <form th:action="@{/member/logout}" method="post">

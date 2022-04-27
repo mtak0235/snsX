@@ -35,7 +35,8 @@ public class PostController {
     private final HashTagService hashTagService;
 
     @GetMapping("/upload")
-    public String savePostForm() {
+    public String savePostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, Model model) {
+        model.addAttribute("loginMember", memberInfoDto);
         return "post_form";
     }
 
@@ -48,16 +49,18 @@ public class PostController {
     }
 
     @GetMapping("/update/{postId}")
-    public String updatePostForm(@PathVariable Long postId, Model model) {
+    public String updatePostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable Long postId, Model model) {
 
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
+        model.addAttribute("loginMember", memberInfoDto);
         return "post_update_form";
     }
 
     @PostMapping("/update")
-    public String updatePost(@ModelAttribute PostUpdateDto postUpdateDto) throws EntityNotFoundException, IOException {
+    public String updatePost(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @ModelAttribute PostUpdateDto postUpdateDto, Model model) throws EntityNotFoundException, IOException {
         Long postId = postService.modifyPost(postUpdateDto);
+        model.addAttribute("loginMember", memberInfoDto);
         return "redirect:/post/" + postId;
     }
 
@@ -70,9 +73,10 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public String showPostForm(@PathVariable("postId") Long postId, Model model) {
+    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId, Model model) {
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
+        model.addAttribute("loginMember", memberInfoDto);
         return "post_result";
     }
 
@@ -101,7 +105,7 @@ public class PostController {
     public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, @PathVariable("tag") String tag, Model model) throws EntityNotFoundException {
         TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
         model.addAttribute("tag", tagResponseDto);
-        model.addAttribute("member", userInfo);
+        model.addAttribute("loginMember", userInfo);
         return "tag_feed_form";
     }
 
@@ -114,7 +118,7 @@ public class PostController {
 
     @GetMapping
     public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
-        model.addAttribute("member", userInfo);
+        model.addAttribute("loginMember", userInfo);
         return "post_feed_form";
     }
 
@@ -129,7 +133,7 @@ public class PostController {
     public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
         HttpSession session = request.getSession(false);
         MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        model.addAttribute("member", memberInfo);
-        return "member_feed_form";
+        model.addAttribute("loginMember", memberInfo);
+        return "post_feed_form";
     }
 }
