@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="col-12 input-group-append">
+    <div class="col-12 input-group-append" th:if="${loginMember} != null and ${loginMember.nickName} == ${post.member.nickName}">
         <a role="button" th:href="@{/post/update/{identity} (identity=${post.postId})}" class="btn btn-primary">글 수정</a>
         <form th:action="@{/post/delete}" method="post">
             <input type="text" name="postId" th:value="${post.postId}" th:hidden="true"/>
@@ -31,7 +31,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" th:if="${loginMember != null}">
     <form id="comment" th:action="@{/post/{identity}/save-comment (identity=${post.postId})}" method="post">
         <div class="input-group">
             <span class="input-group-text">content</span>
