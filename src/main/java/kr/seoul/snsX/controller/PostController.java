@@ -135,11 +135,11 @@ public class PostController {
             return result;
         }
 
-    @GetMapping("/member_feed/{memberId}")
-    public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
-        HttpSession session = request.getSession(false);
-        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
-        model.addAttribute("loginMember", memberInfo);
-        return "post_feed_form";
-    }
+//    @GetMapping("/member_feed/{memberId}")
+//    public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
+//        HttpSession session = request.getSession(false);
+//        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+//        model.addAttribute("loginMember", memberInfo);
+//        return "post_feed_form";
+//    }
 }
