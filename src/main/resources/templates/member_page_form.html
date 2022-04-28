@@ -24,13 +24,26 @@
             height: auto;
             max-width: 100%;
         }
+        div .profile {
+            width: 80vw;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        #profileImg {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+        }
+
     </style>
 </head>
 <body>
 <div th:insert="~{/header :: headerFragment (${loginMember})}"></div>
-<div class="container">
-    <img class="rounded card-img-top" th:src="|/post/images/${member.profileImage}|"
-         width="50" height="300"/>
+<div class="profile container">
+    <img class="rounded card-img-top" id="profileImg" th:src="|/post/images/${member.profileImage}|"/>
     <p th:text="${member.nickName}"></p>
     <main>
         <!-- images will be loaded here with figure and figcaption -->

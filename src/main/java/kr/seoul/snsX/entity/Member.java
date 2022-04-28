@@ -1,6 +1,7 @@
 package kr.seoul.snsX.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ public class Member extends BaseTimeEntity{
     @Column(unique = true)
     private String email;
     private String pw;
-    @Column(columnDefinition = "no-image.png")
     private String phoneNumber;
+
     @Column(unique = true)
     private String nickName;
+
+    @ColumnDefault("'no-image.jpeg'")
     private String profileFileName;
 
     @Enumerated(EnumType.STRING)
