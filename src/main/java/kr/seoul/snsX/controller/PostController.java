@@ -35,7 +35,7 @@ public class PostController {
     private final HashTagService hashTagService;
 
     @GetMapping("/upload")
-    public String savePostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, Model model) {
+    public String savePostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto memberInfoDto, Model model) {
         model.addAttribute("loginMember", memberInfoDto);
         return "post_form";
     }
@@ -72,15 +72,21 @@ public class PostController {
         return "redirect:/post";
     }
 
-    @GetMapping("/{postId}")
-    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId, Model model) {
+    @GetMapping("/{postId}/{prev}")
+    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId,@PathVariable("prev") Long prev, Model model) {
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
+        model.addAttribute("prev", prev);
         model.addAttribute("loginMember", memberInfoDto);
         return "post_result";
     }
 
-    @RequestMapping("/{postId}/save-comment")
+    @GetMapping("/{postId}/save-comment/{prev}")
+    public String saveCommentForm(@PathVariable Long prev, @PathVariable Long postId) {
+        return "redirect:/post/" + postId + "/" + prev;
+    }
+
+    @PostMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto,
                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
         postService.addComment(postId, memberInfoDto.getMemberId(), requestDto);
@@ -89,8 +95,8 @@ public class PostController {
 
     @PostMapping("/remove-comment")
     public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId,
-                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto)
-            throws EntityNotFoundException, InvalidException {
+                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto memberInfoDto)
+    throws EntityNotFoundException, InvalidException {
         postService.removeComment(postId, commentId, memberInfoDto.getMemberId());
         return "redirect:/post/" + postId;
     }
@@ -110,9 +116,9 @@ public class PostController {
     }
 
     @ResponseBody
-    @GetMapping("/search/{tagId}/{offset}/{limit}")
-    public List<ThumbnailDto> searchByTag(@PathVariable("tagId") Long tagId, @PathVariable("offset") Long offset, @PathVariable Long limit) {
-        List<ThumbnailDto> result = postService.getTagPosts(tagId, offset, limit);
+    @GetMapping("/search/{tagId}/{cursor}/{limit}")
+    public List<ThumbnailDto> searchByTag(@PathVariable("tagId") Long tagId, @PathVariable("cursor") Long cursor, @PathVariable Long limit) {
+        List<ThumbnailDto> result = postService.getTagPosts(tagId, cursor, limit);
         return result;
     }
 
@@ -122,12 +128,12 @@ public class PostController {
         return "post_feed_form";
     }
 
-    @ResponseBody
-    @GetMapping("/feed/{cursor}/{limit}")
-    public List<ThumbnailDto> showFeed(@PathVariable Long cursor, @PathVariable("limit") Long limit) {
-        List<ThumbnailDto> result = postService.showPosts(cursor, limit);
-        return result;
-    }
+        @ResponseBody
+        @GetMapping("/feed/{cursor}/{limit}")
+        public List<ThumbnailDto> showFeed (@PathVariable Long cursor, @PathVariable("limit") Long limit){
+            List<ThumbnailDto> result = postService.showPosts(cursor, limit);
+            return result;
+        }
 
     @GetMapping("/member_feed/{memberId}")
     public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {

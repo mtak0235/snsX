@@ -45,6 +45,14 @@
             height: auto;
             max-width: 100%;
         }
+        footer {
+            background-color: #aaa;
+            color: #333;
+            font-size: 1rem;
+            font-weight: 300;
+            padding: 1rem 3rem 3rem 3rem;
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
@@ -62,6 +70,7 @@
     let cursor = -1;
     let limit = 3;
     let isEnd = false;
+    let stackPoint = -1;
     let URL =
         "http://localhost:8080/post/feed/" + cursor + "/" + limit;
     document.addEventListener("DOMContentLoaded", () => {
@@ -75,7 +84,7 @@
         const observer = new IntersectionObserver(handleIntersect, options);
         observer.observe(document.querySelector("footer"));
         //an initial load of some data
-        // getData();
+        //getData();
     });
     function handleIntersect(entries) {
         if (entries[0].isIntersecting) {
@@ -104,11 +113,14 @@
                         fig.appendChild(link);
                         fig.appendChild(fc);
                         main.appendChild(fig);
+                        console.log("cursor, postId" + cursor + "," + item.postId);
                         cursor = item.postId - 1;
                     });
+                    console.log("cursor====" + cursor);
                     if (data.length === 0) {
                         isEnd = true;
                     }
+                    offset += data.length;
                 });
         }
     }

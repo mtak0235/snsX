@@ -1,5 +1,6 @@
 package kr.seoul.snsX.controller;
 
+import kr.seoul.snsX.cookie.CookieConst;
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.exception.AlreadyExistException;
@@ -13,12 +14,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.*;
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 @Slf4j
 @Controller
@@ -101,7 +104,10 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, @ModelAttribute("member") MemberLoginDto memberLoginDto, @RequestParam(defaultValue = "/post") String redirectURL) throws FailedLoginException {
+    public String login(HttpServletRequest request,
+                        @ModelAttribute("member") MemberLoginDto memberLoginDto,
+                        @RequestParam(defaultValue = "/post/member_feed") String redirectURL)
+            throws FailedLoginException {
         MemberInfoDto memberInfoDto = memberService.login(memberLoginDto);
         if (memberInfoDto == null) {
             return "login";
