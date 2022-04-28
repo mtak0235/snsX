@@ -72,11 +72,10 @@ public class PostController {
         return "redirect:/post";
     }
 
-    @GetMapping("/{postId}/{prev}")
-    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId,@PathVariable("prev") Long prev, Model model) {
+    @GetMapping("/{postId}")
+    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId, Model model) {
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
-        model.addAttribute("prev", prev);
         model.addAttribute("loginMember", memberInfoDto);
         return "post_result";
     }
