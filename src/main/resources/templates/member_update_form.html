@@ -25,7 +25,7 @@
 
     <h4 class="mb-3">회원 정보 입력</h4>
 
-    <form action="" th:action="@{/member/update}" th:object="${member}" method="post">
+    <form th:action="@{/member/update}" th:object="${member}" method="post">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"

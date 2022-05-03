@@ -17,11 +17,12 @@ public class HomeController {
     }
 
     @GetMapping("/search")
-    public String searchMemberOrTag(HttpServletRequest request) {
+    public String
+    searchMemberOrTag(HttpServletRequest request) {
         String searchWord = request.getParameter("searchWord");
         if (!searchWord.equals("") && searchWord.charAt(0) == '#')
-            return "redirect:/post/search/" + searchWord.substring(1);
-        return "redirect:/member/search/" + searchWord;
+            return "redirect:/post/search?" + "target=" + searchWord.substring(1);
+        return "redirect:/member/search?" + "target=" + searchWord;
     }
 
     @ResponseBody

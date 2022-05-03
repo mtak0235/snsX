@@ -44,6 +44,7 @@ public class Member extends BaseTimeEntity{
     @PrePersist
     public void prePersist() {
         this.status = this.status == null ? Status.ACTIVE : this.status;
+        this.profileFileName = this.profileFileName == null ? "no-image.jpeg" : this.profileFileName;
     }
 
 }

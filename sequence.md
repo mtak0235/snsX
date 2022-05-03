@@ -636,7 +636,7 @@ s->>c: postId
 c->>cli: redirect:/post/postId
 ```
 
-# Save Comment
+# saveComment
 
 ```mermaid
 sequenceDiagram
@@ -674,7 +674,7 @@ s->>c: void
 c->>cli: void
 ```
 
-# Remove Comment
+# removeComment
 
 ```mermaid
 sequenceDiagram
