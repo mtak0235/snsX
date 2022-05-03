@@ -26,6 +26,6 @@ public interface PostService {
 
     List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit);
 
-    List<ThumbnailDto> showMemberPosts(Long memberId, Long offset, Long limit);
+    List<ThumbnailDto> findMemberPosts(Long memberId, Long offset, Long limit);
 
 }

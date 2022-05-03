@@ -15,8 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -136,8 +134,8 @@ public class PostController {
 
     @ResponseBody
     @GetMapping("/search/member/{memberId}/{offset}/{limit}")
-    public List<ThumbnailDto> showMemberFeed(@PathVariable Long memberId, @PathVariable Long offset, @PathVariable Long limit) {
-        List<ThumbnailDto> result = postService.showMemberPosts(memberId, offset, limit);
+    public List<ThumbnailDto> searchMemberPage(@PathVariable Long memberId, @PathVariable Long offset, @PathVariable Long limit) {
+        List<ThumbnailDto> result = postService.findMemberPosts(memberId, offset, limit);
         return result;
     }
 
