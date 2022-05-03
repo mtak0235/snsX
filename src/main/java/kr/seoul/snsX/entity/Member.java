@@ -35,7 +35,7 @@ public class Member extends BaseTimeEntity{
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "normal", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE)
     List<Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "followee", cascade = CascadeType.REMOVE)

@@ -1,24 +1,21 @@
 package kr.seoul.snsX.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@IdClass(FollowId.class)
 public class Follow {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "FOLLOW_ID")
-    private Long id;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
-    private Member normal;
+    @JoinColumn(name = "follower", nullable = false)
+    private Member follower;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
+    @Id
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "followee", nullable = false)
     private Member followee;
+
+    @Enumerated(EnumType.STRING)
+    private Status bestFriend;
 }
