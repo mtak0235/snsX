@@ -22,4 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM post p WHERE :cursor > post_id AND modified_date BETWEEN DATE_ADD(NOW(), INTERVAL -3 DAY) AND NOW() ORDER BY post_id DESC LIMIT :limit")
     List<Post> findFollowingPosts(@Param("cursor") Long cursor, @Param("limit") Long limit);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM post p WHERE p.member_id = :memberId ORDER BY p.post_id DESC LIMIT :offset, :limit")
+    List<Post> findMemberPosts(@Param("memberId") Long memberId, @Param("offset") Long offset, @Param("limit") Long limit);
 }

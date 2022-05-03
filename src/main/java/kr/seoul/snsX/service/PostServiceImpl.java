@@ -159,4 +159,14 @@ public class PostServiceImpl implements PostService {
         return convertedResult;
     }
 
+    @Override
+    public List<ThumbnailDto> showMemberPosts(Long memberId, Long offset, Long limit) {
+        List<Post> posts = postRepository.findMemberPosts(memberId, offset, limit);
+        List<ThumbnailDto> thumbnailDtos = new ArrayList<>();
+        for (Post p : posts) {
+            thumbnailDtos.add(new ThumbnailDto(p.getId(), p.getThumbnailFileName()));
+        }
+        return thumbnailDtos;
+    }
+
 }
