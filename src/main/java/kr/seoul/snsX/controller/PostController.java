@@ -127,12 +127,19 @@ public class PostController {
         return "post_feed_form";
     }
 
-        @ResponseBody
-        @GetMapping("/feed/{cursor}/{limit}")
-        public List<ThumbnailDto> showFeed (@PathVariable Long cursor, @PathVariable("limit") Long limit){
-            List<ThumbnailDto> result = postService.showPosts(cursor, limit);
-            return result;
-        }
+    @ResponseBody
+    @GetMapping("/feed/{cursor}/{limit}")
+    public List<ThumbnailDto> showFeed (@PathVariable Long cursor, @PathVariable("limit") Long limit){
+        List<ThumbnailDto> result = postService.showPosts(cursor, limit);
+        return result;
+    }
+
+    @ResponseBody
+    @GetMapping("/search/member/{memberId}/{offset}/{limit}")
+    public List<ThumbnailDto> showMemberFeed(@PathVariable Long memberId, @PathVariable Long offset, @PathVariable Long limit) {
+        List<ThumbnailDto> result = postService.showMemberPosts(memberId, offset, limit);
+        return result;
+    }
 
 //    @GetMapping("/member_feed/{memberId}")
 //    public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
