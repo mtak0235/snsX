@@ -13,17 +13,21 @@
             margin: 3rem 3rem;
             grid-template-rows: auto;
         }
+
         main figure {
         }
+
         main figcaption {
             font-size: 1rem;
             font-family: inherit;
         }
+
         main img {
             width: 100%;
             height: auto;
             max-width: 100%;
         }
+
         div .profile {
             width: 80vw;
             margin: 0 auto;
@@ -32,6 +36,7 @@
             justify-content: center;
             align-items: flex-start;
         }
+
         #profileImg {
             width: 100%;
             height: auto;
@@ -45,9 +50,18 @@
 <div class="profile container">
     <img class="rounded card-img-top" id="profileImg" th:src="|/post/images/${member.profileImage}|"/>
     <p th:text="${member.nickName}"></p>
-    <div  th:unless="${loginMember.memberId == member.memberId}">
-            <button id="follow-id" th:onclick="follow([[${member.memberId}]])" th:value="follow"></button>
+
+    <div th:if="${loginMember}!=null and ${loginMember.memberId} != ${member.memberId}">
+        <button id="follow-btn"
+                th:if="${loginMember.followee} == null or (${loginMember.followee} != null and (${#lists.contains(loginMember.getFollowee(),member.getMemberId())} == false))"
+                th:onclick="'follow();'" th:value="follow">follow
+        </button>
+        <button id="unfollow-btn"
+                th:if="${loginMember.followee} != null and (${#lists.contains(loginMember.getFollowee(),member.getMemberId())} == true)"
+                th:onclick="'unfollow()'" th:value="follow">unfollow
+        </button>
     </div>
+
     <main>
         <!-- images will be loaded here with figure and figcaption -->
     </main>
@@ -114,11 +128,12 @@
                 });
         }
 
+        document.getElementById('follow-btn').addEventListener('click', follow);
+        document.getElementById('unfollow-btn').addEventListener('click', unfollow);
+
         function follow() {
-            console.log("호출");
             let params = {
-                "param1": "value1",
-                "param2": "value2"
+                "followee": [[${member.memberId}]]
             };
 
             let query = Object.keys(params)
@@ -126,6 +141,28 @@
                 .join('&');
 
             let url = 'http://localhost:8080/member/follow?' + query;
+
+            fetch(url)
+                .then(response => response.json())
+                .then((data) => {
+                    let e = document.getElementById('follow-btn')
+                    e.disabled = true
+                    e.innerHTML = "<div>following</div>"
+                }).catch(function (error) {
+                console.log('request failed', error)
+            });
+        }
+
+        function unfollow() {
+            let params = {
+                "followee": [[${member.memberId}]]
+            };
+
+            let query = Object.keys(params)
+                .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+                .join('&');
+
+            let url = 'http://localhost:8080/member/unfollow?' + query;
 
             fetch(url)
                 .then(data => data.text())

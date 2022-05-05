@@ -36,10 +36,10 @@ public class Member extends BaseTimeEntity{
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE)
-    List<Follow> followers = new ArrayList<>();
+    private List<Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "followee", cascade = CascadeType.REMOVE)
-    List<Follow> followees = new ArrayList<>();
+    private List<Follow> followees = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

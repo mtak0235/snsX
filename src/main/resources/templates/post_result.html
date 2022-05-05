@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -22,7 +23,7 @@
         </div>
     </div>
 
-    <div class="col-12 input-group-append" th:if="${loginMember} != null and ${loginMember.nickName} == ${post.member.nickName}">
+    <div class="col-12 input-group-append" th:if="${loginMember} != null and ${loginMember.memberId} == ${post.member.memberId}">
         <a role="button" th:href="@{/post/update/{identity} (identity=${post.postId})}" class="btn btn-primary">글 수정</a>
         <form th:action="@{/post/delete}" method="post">
             <input type="text" name="postId" th:value="${post.postId}" th:hidden="true"/>
@@ -45,6 +46,7 @@
         </div>
     </form>
 </div>
+
 <div class="container" th:each="comment : ${post.comments}">
     <div class="card py-5" style="width: 25rem;">
         <div class="card card-body" style="width: 25rem;">

@@ -23,6 +23,10 @@ s->>c: throws EntityNotFoundException
 c->>cli: throws EntityNotFoundException
 end
 s->>r: findById(memberId)
+alt: member==null
+s->>c: throws EntityNotFoundException
+c->>cli: throws EntityNotFoundException
+end
 r->>s: Member
 s->>r: save(Member(follower), Member(followee))
 r->>s: Follow

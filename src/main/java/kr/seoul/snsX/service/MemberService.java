@@ -25,4 +25,6 @@ public interface MemberService {
     public MemberFullInfoDto isValidPw(Long memberId, String password);
 
     public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto);
+
+    public void following(Long memberId, Long followeeId);
 }

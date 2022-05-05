@@ -1,19 +1,18 @@
 package kr.seoul.snsX.service;
 
 import kr.seoul.snsX.dto.*;
-import kr.seoul.snsX.entity.Member;
-import kr.seoul.snsX.entity.Post;
-import kr.seoul.snsX.entity.Status;
-import kr.seoul.snsX.entity.SignupCache;
+import kr.seoul.snsX.entity.*;
 import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.exception.InputDataInvalidException;
+import kr.seoul.snsX.repository.FollowRepository;
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -24,10 +23,11 @@ import javax.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final PostService postService;
+    private final FollowRepository followRepository;
 
     @Autowired
     private final SignupCache signupCache = new SignupCache();
@@ -66,7 +66,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException{
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException {
         MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(memberSignupDto.getEmail(), uuid);
         if (memberSignupCacheDto.getUuid() == null && memberSignupCacheDto.isFlag()) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
@@ -125,6 +125,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    @Transactional
     public MemberInfoDto searchMember(String nickName) throws EntityNotFoundException {
         Member member = memberRepository.findMemberByNickName(nickName);
         return new MemberInfoDto(member);
@@ -138,6 +139,19 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto) {
         return null;
+    }
+
+    @Override
+    @Transactional
+    public void following(Long memberId, Long followeeId) {
+        Member follower = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 입니다."));
+        Follow follow = new Follow();
+        Member followee = memberRepository.findById(followeeId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 입니다."));
+        follow.setFollower(follower);
+        follow.setFollowee(followee);
+        follow.setBestFriend(Status.INACTIVE);
+        followRepository.save(follow);
+        follower.getFollowees().add(follow);
     }
 
 

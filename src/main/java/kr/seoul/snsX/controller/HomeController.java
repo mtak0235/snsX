@@ -20,8 +20,10 @@ public class HomeController {
     public String
     searchMemberOrTag(HttpServletRequest request) {
         String searchWord = request.getParameter("searchWord");
-        if (!searchWord.equals("") && searchWord.charAt(0) == '#')
+        if (!searchWord.equals("") && searchWord.charAt(0) == '#') {
+            System.out.println("searchWord = " + searchWord);
             return "redirect:/post/search?" + "target=" + searchWord.substring(1);
+        }
         return "redirect:/member/search?" + "target=" + searchWord;
     }
 
