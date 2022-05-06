@@ -1,4 +1,33 @@
-# Follow
+# UnfollowMember
+```mermaid
+sequenceDiagram
+actor cli
+participant i as interceptor
+participant c as controller
+participant s as service
+participant ca as cache
+participant r as repository
+participant l as Log
+
+cli->>i: cookie(key), followeeId
+i->>i: preHandle(key)
+alt: key가 유효하지 않은 경우
+i->>cli: redirect:/member/login
+end
+i->>c: memberId, followeeId
+c->>s: unfollowing(memberId, followeeId)
+s->>r: findById(memberId, followeeId)
+r->>s: Follow
+alt: Follow==null
+s->>c: throws EntityNotFoundException
+c->>cli: throws EntityNotFoundException
+end
+s->>r: delete(Follow)
+r->>s:void
+
+```
+
+# FollowMember
 ```mermaid
 sequenceDiagram
 actor cli
