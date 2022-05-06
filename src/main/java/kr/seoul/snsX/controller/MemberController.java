@@ -1,6 +1,5 @@
 package kr.seoul.snsX.controller;
 
-import kr.seoul.snsX.cookie.CookieConst;
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.exception.AlreadyExistException;
@@ -14,14 +13,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.*;
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 @Slf4j
 @Controller
@@ -86,15 +83,6 @@ public class MemberController {
         return "redirect:/member/login";
     }
 
-    @GetMapping({"/search/{nickName}", "/search/"})
-    public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfoDto, @PathVariable(value = "nickName", required = false) String nickName, Model model) {
-        MemberInfoDto memberInfoDto = memberService.searchMember(nickName);
-        model.addAttribute("loginMember", userInfoDto);
-        model.addAttribute("member", memberInfoDto);
-
-        return "member_page_form";
-    }
-
     @GetMapping("/login")
     public String loginForm(@ModelAttribute("member") MemberLoginDto memberLoginDto, @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, Model model) {
         if (memberInfoDto != null) {
@@ -138,7 +126,7 @@ public class MemberController {
 
     @PostMapping("/verify")
     public String isValidPw(HttpServletRequest request, @RequestParam(name = "password") String password, Model model) throws InvalidException {
-        MemberFullInfoDto memberFullInfoDto = memberService.isValidPw(((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), password);
+        MemberFullInfoDto memberFullInfoDto = memberService.isValidPw(((MemberInfoDto) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), password);
         if (memberFullInfoDto == null)
             return "redirect:/member/verify";
         model.addAttribute("loginMember", memberFullInfoDto);
@@ -167,8 +155,36 @@ public class MemberController {
 
     @PostMapping("/withdraw")
     public String withdraw(HttpServletRequest request, @RequestParam(name = "password") String password) throws FileNotFoundException {
-        memberService.removeMember(password, ((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId());
+        memberService.removeMember(password, ((MemberInfoDto) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId());
         expireUserSession(request);
         return "redirect:/member/login";
+    }
+
+    @GetMapping("/search")
+    public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfoDto,
+                                       @RequestParam(name = "target") String nickName,
+                                       Model model) {
+        MemberInfoDto memberInfoDto = memberService.searchMember(nickName);
+        model.addAttribute("loginMember", userInfoDto);
+        System.out.println("userInfoDto.getFollowee = " + userInfoDto.getFollowee());
+        model.addAttribute("member", memberInfoDto);
+        System.out.println("memberInfoDto.getMemberId() = " + memberInfoDto.getMemberId());
+
+        return "member_page_form";
+    }
+
+    @ResponseBody
+    @GetMapping("/follow")
+    public String followMember(@RequestParam(value = "followee") Long followeeId,
+                             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
+        memberService.following(memberInfoDto.getMemberId(), followeeId);
+        System.out.println("followee = " + followeeId);
+        return "ok";
+    }
+
+    @GetMapping("/unfollow")
+    public void unfollowMember(@RequestParam(value = "followee", required = true) Long followee,
+                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
+        System.out.println("followee = " + followee);
     }
 }

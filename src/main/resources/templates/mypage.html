@@ -29,9 +29,9 @@
 <body>
 <div th:insert="~{/header :: headerFragment (${loginMember})}"></div>
 <div class="container">
-    <img class="rounded card-img-top" th:src="|/post/images/${member.profileImage}|"
-         width="50" height="300"/>
+    <img class="rounded card-img-top" th:src="|/post/images/${member.profileImage}|" width="50" height="300"/>
     <p th:text="${member.nickName}"></p>
+    <button th:onclick=""></button>
     <main>
         <!-- images will be loaded here with figure and figcaption -->
     </main>

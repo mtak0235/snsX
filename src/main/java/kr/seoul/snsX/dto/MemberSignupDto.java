@@ -21,7 +21,6 @@ public class MemberSignupDto {
 
     public Member toEntity() {
         return Member.builder()
-                .profileFileName("no-image.png")
                 .pw(pw)
                 .email(email)
                 .nickName(nickName)

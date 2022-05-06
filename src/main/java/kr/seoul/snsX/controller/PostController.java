@@ -4,6 +4,7 @@ import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
 import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.service.HashTagService;
+import kr.seoul.snsX.service.MemberService;
 import kr.seoul.snsX.service.PostService;
 import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class PostController {
     public String fileDir;
 
     private final PostService postService;
+    private final MemberService memberService;
     private final HashTagService hashTagService;
 
     @GetMapping("/upload")
@@ -78,10 +80,6 @@ public class PostController {
         return "post_result";
     }
 
-    @GetMapping("/{postId}/save-comment/{prev}")
-    public String saveCommentForm(@PathVariable Long prev, @PathVariable Long postId) {
-        return "redirect:/post/" + postId + "/" + prev;
-    }
 
     @PostMapping("/{postId}/save-comment")
     public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto,
@@ -104,11 +102,17 @@ public class PostController {
         return new UrlResource("file:" + fileDir + filename);
     }
 
-    @GetMapping("/search/{tag}")
-    public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, @PathVariable("tag") String tag, Model model) throws EntityNotFoundException {
+    @GetMapping("/search")
+    public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo,
+//                                  @PathVariable("tag") String tag,
+                                  @RequestParam(name = "target") String tag,
+                                  Model model) throws EntityNotFoundException {
         TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
         model.addAttribute("tag", tagResponseDto);
         model.addAttribute("loginMember", userInfo);
+
+        System.out.println("PostController.searchByTagForm");
+
         return "tag_feed_form";
     }
 
@@ -118,6 +122,7 @@ public class PostController {
         List<ThumbnailDto> result = postService.getTagPosts(tagId, cursor, limit);
         return result;
     }
+
 
     @GetMapping
     public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
@@ -145,5 +150,10 @@ public class PostController {
 //        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
 //        model.addAttribute("loginMember", memberInfo);
 //        return "post_feed_form";
+
+//    @GetMapping("/{postId}/save-comment/{prev}")
+//    public String saveCommentForm(@PathVariable Long prev, @PathVariable Long postId) {
+//        return "redirect:/post/" + postId + "/" + prev;
+//    }
 //    }
 }

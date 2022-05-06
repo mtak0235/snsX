@@ -113,14 +113,11 @@
                         fig.appendChild(link);
                         fig.appendChild(fc);
                         main.appendChild(fig);
-                        console.log("cursor, postId" + cursor + "," + item.postId);
                         cursor = item.postId - 1;
                     });
-                    console.log("cursor====" + cursor);
                     if (data.length === 0) {
                         isEnd = true;
                     }
-                    offset += data.length;
                 });
         }
     }

@@ -1,4 +1,40 @@
-#LoginCheckInterceptor
+# Follow
+```mermaid
+sequenceDiagram
+actor cli
+participant i as interceptor
+participant c as controller
+participant s as service
+participant ca as cache
+participant r as repository
+participant l as Log
+
+cli->>i: cookie(key), followeeId
+i->>i: preHandle(key)
+alt: key가 유효하지 않은 경우
+i->>cli: redirect:/member/login
+end
+i->>c: memberId, followeeId
+c->>s: following(memberId, followeeId)
+s->>r: findFollowee(followeeId)
+r->>s: Member
+alt: member==null
+s->>c: throws EntityNotFoundException
+c->>cli: throws EntityNotFoundException
+end
+s->>r: findById(memberId)
+alt: member==null
+s->>c: throws EntityNotFoundException
+c->>cli: throws EntityNotFoundException
+end
+r->>s: Member
+s->>r: save(Member(follower), Member(followee))
+r->>s: Follow
+s->>c:void
+c->>cli: void
+```
+
+# LoginCheckInterceptor
 
 ```mermaid
 sequenceDiagram
@@ -6,17 +42,15 @@ participant w as was
 participant i as interceptor
 participant c as controller
 
-alt included path == False
-else
 w->>i: request, response
 alt login member session not exists
 alt post method
 i->>i: create and add Cookie uuid:body
 i->>i: redirect: url/uuid
+end
 i->>c:false
 else
 i->>c:true
-end
 end
 ```
 
@@ -606,7 +640,7 @@ s->>c: postId
 c->>cli: redirect:/post/postId
 ```
 
-# Save Comment
+# saveComment
 
 ```mermaid
 sequenceDiagram
@@ -644,7 +678,7 @@ s->>c: void
 c->>cli: void
 ```
 
-# Remove Comment
+# removeComment
 
 ```mermaid
 sequenceDiagram

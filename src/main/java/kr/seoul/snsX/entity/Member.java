@@ -35,9 +35,16 @@ public class Member extends BaseTimeEntity{
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE)
+    private List<Follow> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followee", cascade = CascadeType.REMOVE)
+    private List<Follow> followees = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
         this.status = this.status == null ? Status.ACTIVE : this.status;
+        this.profileFileName = this.profileFileName == null ? "no-image.jpeg" : this.profileFileName;
     }
 
 }
