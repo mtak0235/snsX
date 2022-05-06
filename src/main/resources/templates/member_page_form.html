@@ -50,14 +50,14 @@
 <div class="profile container">
     <img class="rounded card-img-top" id="profileImg" th:src="|/post/images/${member.profileImage}|"/>
     <p th:text="${member.nickName}"></p>
-
-    <div th:if="${loginMember}!=null and ${loginMember.memberId} != ${member.memberId}">
+        [[${loginMember.followingStatus}]]
+    <div th:if="${#strings.equals(loginMember.followingStatus, 'NONE')} == false">
         <button id="follow-btn"
-                th:if="${loginMember.followee} == null or (${loginMember.followee} != null and (${#lists.contains(loginMember.getFollowee(),member.getMemberId())} == false))"
+                th:if="${#strings.equals(loginMember.followingStatus, 'UNFOLLOW')}"
                 th:onclick="'follow();'" th:value="follow">follow
         </button>
         <button id="unfollow-btn"
-                th:if="${loginMember.followee} != null and (${#lists.contains(loginMember.getFollowee(),member.getMemberId())} == true)"
+                th:if="${#strings.equals(loginMember.followingStatus, 'FOLLOW')}"
                 th:onclick="'unfollow()'" th:value="follow">unfollow
         </button>
     </div>

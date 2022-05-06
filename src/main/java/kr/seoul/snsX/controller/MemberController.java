@@ -164,10 +164,10 @@ public class MemberController {
     public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember,
                                        @RequestParam(name = "target") String nickName,
                                        Model model) {
-        MemberInfoDto target = memberService.searchMember(nickName, loginMember.getMemberId());
+        MemberInfoDto target = memberService.searchMember(nickName);
         model.addAttribute("loginMember", loginMember);
+        loginMember.setFollowingStatus(memberService.getRelation(loginMember.getMemberId(), target.getMemberId()));
         model.addAttribute("member", target);
-
         return "member_page_form";
     }
 

@@ -18,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import java.util.Optional;
 import java.util.Random;
 
 import javax.persistence.EntityNotFoundException;
@@ -127,19 +128,23 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberInfoDto searchMember(String nickName, Long loginMemberId) throws EntityNotFoundException {
+    public MemberInfoDto searchMember(String nickName) throws EntityNotFoundException {
         Member member = memberRepository.findMemberByNickName(nickName);
+
+        return new MemberInfoDto(member);
+    }
+
+    private MemberInfoDto getMemberInfoDto(Long loginMemberId, Member member) {
         MemberInfoDto memberInfoDto = new MemberInfoDto(member);
         if (loginMemberId != null && loginMemberId != member.getId()) {
-            FollowId followId = new FollowId();
-            followId.setFollowee(loginMemberId);
-            followId.setFollower(member.getId());
-            followRepository.exists(followId);
-            if ()
+            Optional<Follow> relation = followRepository.findById(new FollowId(loginMemberId, member.getId()));
+            if (relation.isPresent()) {
+                memberInfoDto.setFollowingStatus(FollowingStatus.FOLLOW);
+            } else {
+                memberInfoDto.setFollowingStatus(FollowingStatus.UNFOLLOW);
+            }
         }
-        memberInfoDto.setFollowingStatus();
-
-        return ;
+        return memberInfoDto;
     }
 
     @Override
@@ -163,6 +168,20 @@ public class MemberServiceImpl implements MemberService {
         follow.setFollowee(followee);
         follow.setBestFriend(Status.INACTIVE);
         followRepository.save(follow);
+    }
+
+    @Override
+    @Transactional
+    public FollowingStatus getRelation(Long followerId, Long followeeId) {
+        if (followerId != null && followerId != followeeId) {
+            Optional<Follow> relation = followRepository.findById(new FollowId(followerId, followeeId));
+            if (relation.isPresent()) {
+                return FollowingStatus.FOLLOW;
+            } else {
+                return FollowingStatus.UNFOLLOW;
+            }
+        }
+        return FollowingStatus.NONE;
     }
 
 
