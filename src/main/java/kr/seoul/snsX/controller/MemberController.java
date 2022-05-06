@@ -165,8 +165,10 @@ public class MemberController {
                                        @RequestParam(name = "target") String nickName,
                                        Model model) {
         MemberInfoDto target = memberService.searchMember(nickName);
+        if (loginMember != null) {
+            loginMember.setFollowingStatus(memberService.getRelation(loginMember.getMemberId(), target.getMemberId()));
+        }
         model.addAttribute("loginMember", loginMember);
-        loginMember.setFollowingStatus(memberService.getRelation(loginMember.getMemberId(), target.getMemberId()));
         model.addAttribute("member", target);
         return "member_page_form";
     }
@@ -179,9 +181,12 @@ public class MemberController {
         return "ok";
     }
 
+    @ResponseBody
     @GetMapping("/unfollow")
-    public void unfollowMember(@RequestParam(value = "followee", required = true) Long followee,
-                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
-        System.out.println("followee = " + followee);
+    public String unfollowMember(@RequestParam(value = "followee", required = true) Long followeeId,
+                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember) {
+        System.out.println("MemberController.unfollowMember");
+        memberService.unFollowing(loginMember.getMemberId(), followeeId);
+        return "ok";
     }
 }

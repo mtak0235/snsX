@@ -172,6 +172,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
+    public void unFollowing(Long followerId, Long followeeId) {
+        Follow target = followRepository.findById(new FollowId(followerId, followeeId)).orElseThrow(() -> new EntityNotFoundException("팔로우 관계가 없습니다."));
+        System.out.println("target.getFollower() = " + target.getFollower());
+        followRepository.delete(target);
+    }
+
+    @Override
+    @Transactional
     public FollowingStatus getRelation(Long followerId, Long followeeId) {
         if (followerId != null && followerId != followeeId) {
             Optional<Follow> relation = followRepository.findById(new FollowId(followerId, followeeId));

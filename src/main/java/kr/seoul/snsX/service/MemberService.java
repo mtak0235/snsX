@@ -28,5 +28,7 @@ public interface MemberService {
 
     public void following(Long memberId, Long followeeId);
 
+    public void unFollowing(Long followerId, Long followeeId);
+
     public FollowingStatus getRelation(Long followerId, Long followeeId);
 }
