@@ -176,9 +176,9 @@ public class MemberServiceImpl implements MemberService {
         if (followerId != null && followerId != followeeId) {
             Optional<Follow> relation = followRepository.findById(new FollowId(followerId, followeeId));
             if (relation.isPresent()) {
-                return FollowingStatus.FOLLOW;
-            } else {
                 return FollowingStatus.UNFOLLOW;
+            } else {
+                return FollowingStatus.FOLLOW;
             }
         }
         return FollowingStatus.NONE;
