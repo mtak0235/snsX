@@ -10,6 +10,7 @@ import kr.seoul.snsX.repository.FollowRepository;
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,9 +127,19 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberInfoDto searchMember(String nickName) throws EntityNotFoundException {
+    public MemberInfoDto searchMember(String nickName, Long loginMemberId) throws EntityNotFoundException {
         Member member = memberRepository.findMemberByNickName(nickName);
-        return new MemberInfoDto(member);
+        MemberInfoDto memberInfoDto = new MemberInfoDto(member);
+        if (loginMemberId != null && loginMemberId != member.getId()) {
+            FollowId followId = new FollowId();
+            followId.setFollowee(loginMemberId);
+            followId.setFollower(member.getId());
+            followRepository.exists(followId);
+            if ()
+        }
+        memberInfoDto.setFollowingStatus();
+
+        return ;
     }
 
     @Override
@@ -145,13 +156,13 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void following(Long memberId, Long followeeId) {
         Member follower = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 입니다."));
+        Member followee = new Member();
+        followee.setId(followeeId);
         Follow follow = new Follow();
-        Member followee = memberRepository.findById(followeeId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 입니다."));
         follow.setFollower(follower);
         follow.setFollowee(followee);
         follow.setBestFriend(Status.INACTIVE);
         followRepository.save(follow);
-        follower.getFollowees().add(follow);
     }
 
 

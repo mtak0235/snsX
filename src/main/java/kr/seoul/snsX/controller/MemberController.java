@@ -161,14 +161,12 @@ public class MemberController {
     }
 
     @GetMapping("/search")
-    public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfoDto,
+    public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember,
                                        @RequestParam(name = "target") String nickName,
                                        Model model) {
-        MemberInfoDto memberInfoDto = memberService.searchMember(nickName);
-        model.addAttribute("loginMember", userInfoDto);
-        System.out.println("userInfoDto.getFollowee = " + userInfoDto.getFollowee());
-        model.addAttribute("member", memberInfoDto);
-        System.out.println("memberInfoDto.getMemberId() = " + memberInfoDto.getMemberId());
+        MemberInfoDto target = memberService.searchMember(nickName, loginMember.getMemberId());
+        model.addAttribute("loginMember", loginMember);
+        model.addAttribute("member", target);
 
         return "member_page_form";
     }
@@ -176,9 +174,8 @@ public class MemberController {
     @ResponseBody
     @GetMapping("/follow")
     public String followMember(@RequestParam(value = "followee") Long followeeId,
-                             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
-        memberService.following(memberInfoDto.getMemberId(), followeeId);
-        System.out.println("followee = " + followeeId);
+                             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember) {
+        memberService.following(loginMember.getMemberId(), followeeId);
         return "ok";
     }
 

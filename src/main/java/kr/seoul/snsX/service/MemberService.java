@@ -20,7 +20,7 @@ public interface MemberService {
 
     public void removeMember(String password, Long memberId) throws FileNotFoundException;
 
-    public MemberInfoDto searchMember(String nickName);
+    public MemberInfoDto searchMember(String nickName, Long memberId);
 
     public MemberFullInfoDto isValidPw(Long memberId, String password);
 

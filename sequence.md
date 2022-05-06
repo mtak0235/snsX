@@ -22,12 +22,6 @@ alt: member==null
 s->>c: throws EntityNotFoundException
 c->>cli: throws EntityNotFoundException
 end
-s->>r: findById(memberId)
-alt: member==null
-s->>c: throws EntityNotFoundException
-c->>cli: throws EntityNotFoundException
-end
-r->>s: Member
 s->>r: save(Member(follower), Member(followee))
 r->>s: Follow
 s->>c:void
@@ -451,8 +445,8 @@ participant s as service
 participant r as repository
 participant l as Log
 
-cli->>c: nickName
-c->>s: searchMember(nickName)
+cli->>c: nickName, loginMemberId
+c->>s: searchMember(nickName, loginMemberId)
 s->>r: findMemberByNickName(nickName)
 r->>s: Member
 s->>c: MemberInfoDto(pk, nickName, profileFileName)
