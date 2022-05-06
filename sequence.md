@@ -1,3 +1,32 @@
+# MyPage
+```mermaid
+sequenceDiagram
+actor cli
+participant i as interceptor
+participant c as controller
+participant s as service
+participant ca as cache
+participant r as repository
+participant l as Log
+
+cli->>i: cookie(key)
+i->>i: preHandle(key)
+alt: key가 유효하지 않은 경우
+i->>cli: redirect:/member/login
+end
+i->>c: memberId
+c->>s: searchMyInfo(memberId)
+s->>r: findById(memberId)
+r->>s: member
+alt: member==null
+s->>c: throws EntityNotFoundException
+c->>cli: throws EntityNotFoundException
+end
+s->>c: MemberFullInfo(Member)
+c->>cli:void
+
+```
+
 # UnfollowMember
 ```mermaid
 sequenceDiagram
