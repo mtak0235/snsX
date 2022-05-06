@@ -450,6 +450,8 @@ c->>s: searchMember(nickName, loginMemberId)
 s->>r: findMemberByNickName(nickName)
 r->>s: Member
 s->>c: MemberInfoDto(pk, nickName, profileFileName)
+c->>s: getRelation(loginMemberId, memberId)
+s->>c: FollowingStatus
 c->>cli: MemberInfoDto
 ```
 
