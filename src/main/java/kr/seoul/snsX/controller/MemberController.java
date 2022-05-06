@@ -125,8 +125,8 @@ public class MemberController {
     }
 
     @PostMapping("/verify")
-    public String isValidPw(HttpServletRequest request, @RequestParam(name = "password") String password, Model model) throws InvalidException {
-        MemberFullInfoDto memberFullInfoDto = memberService.isValidPw(((MemberInfoDto) request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), password);
+    public String isValidPw(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember, HttpServletRequest request, @RequestParam(name = "password") String password, Model model) throws InvalidException {
+        MemberFullInfoDto memberFullInfoDto = memberService.isValidPw(loginMember.getMemberId(), password);
         if (memberFullInfoDto == null)
             return "redirect:/member/verify";
         model.addAttribute("loginMember", memberFullInfoDto);
@@ -139,12 +139,6 @@ public class MemberController {
 //        MemberInfoDto memberInfoDto = memberService.modifyMember(((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), memberUpdateDto);
 //        model.addAttribute("member", memberInfoDto);
 //        return "";
-    }
-
-    @GetMapping("/setting")
-    public String setting(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfoDto, Model model) {
-        model.addAttribute("loginMember", userInfoDto);
-        return "setting";
     }
 
     @GetMapping("/withdraw")
@@ -188,5 +182,11 @@ public class MemberController {
         System.out.println("MemberController.unfollowMember");
         memberService.unFollowing(loginMember.getMemberId(), followeeId);
         return "ok";
+    }
+
+    @GetMapping("/mypage")
+    public String mypage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = true) MemberInfoDto loginMember, Model model) {
+        model.addAttribute("loginMember", memberService.searchMyInfo(loginMember.getMemberId()));
+        return "mypage";
     }
 }

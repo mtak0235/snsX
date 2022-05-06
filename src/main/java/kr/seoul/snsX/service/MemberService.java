@@ -31,4 +31,6 @@ public interface MemberService {
     public void unFollowing(Long followerId, Long followeeId);
 
     public FollowingStatus getRelation(Long followerId, Long followeeId);
+
+    public MemberFullInfoDto searchMyInfo(Long memberId);
 }

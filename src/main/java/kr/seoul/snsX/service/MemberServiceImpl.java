@@ -148,8 +148,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberFullInfoDto isValidPw(Long memberId, String password) {
-        return null;
+    public MemberFullInfoDto isValidPw(Long memberId, String password) throws EntityNotFoundException {
+        Member member = memberRepository.findMemberByIdAndPw(memberId, password);
+        if (member == null)
+            throw new EntityNotFoundException("잘못된 비밀번호입니다");
+        return new MemberFullInfoDto(member);
     }
 
     @Override
@@ -190,6 +193,12 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         return FollowingStatus.NONE;
+    }
+
+    @Override
+    public MemberFullInfoDto searchMyInfo(Long memberId) throws EntityNotFoundException {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다"));
+        return new MemberFullInfoDto(member);
     }
 
 

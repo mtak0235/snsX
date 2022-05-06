@@ -37,7 +37,7 @@
             <a class="nav-link active" aria-current="page" href="/post/upload">게시글 작성하기</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/member/setting">[[${loginMember.nickName}]]</a>
+            <a class="nav-link" href="/member/mypage">[[${loginMember.nickName}]]</a>
           </li>
           <div class="col">
             <form th:action="@{/member/logout}" method="post">
@@ -46,6 +46,9 @@
               </button>
             </form>
           </div>
+          <li class="nav-item">
+            <a class="nav-link" href="/member/mypage">마이페이지</a>
+          </li>
         </ul>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0" th:unless="${loginMember != null}">
           <div class="col">
