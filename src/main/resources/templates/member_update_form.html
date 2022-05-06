@@ -25,7 +25,7 @@
 
     <h4 class="mb-3">회원 정보 입력</h4>
 
-    <form th:action="@{/member/update}" th:object="${loginMember}" method="post">
+    <form th:action="@{/member/update}" th:object="${memberUpdateForm}" method="post" enctype="multipart/form-data">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
@@ -33,9 +33,9 @@
         </div>
 
         <div>
-            <label for="loginId">닉네임</label>
-            <input type="text" id="loginId" th:field="*{nickName}" class="form-control"
-                   th:errorclass="field-error">
+            <label for="nickName">닉네임</label>
+            <input type="text" id="nickName" th:field="*{nickName}" class="form-control"
+                   th:errorclass="field-error" th:value="${loginMember.getNickName()}">
             <div class="field-error" th:errors="*{nickName}" />
 
         </div>
@@ -43,21 +43,25 @@
             <label for="password">비밀번호</label>
             <input type="password" id="password" th:field="*{pw}"
                    class="form-control"
-                   th:errorclass="field-error">
+                   th:errorclass="field-error" th:value="${loginMember.getPw()}">
             <div class="field-error" th:errors="*{pw}" />
         </div>
         <div>
-            <label for="name">이메일</label>
+            <label for="email">이메일</label>
 
-            <input type="text" id="name" th:field="*{email}" class="form-control" th:errorclass="field-error" readonly>
+            <input type="text" id="email" th:field="*{email}" class="form-control" th:errorclass="field-error" readonly
+            th:value="${loginMember.getEmail()}">
             <div class="field-error" th:errors="*{email}" />
         </div>
         <div>
             <label for="phoneNumber">phone number</label>
             <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control"
-                   th:errorclass="field-error">
+                   th:errorclass="field-error" th:value="${loginMember.getPhoneNumber()}">
             <div class="field-error" th:errors="*{phoneNumber}" />
-
+        </div>
+        <div>
+            <label for="profileImage">프로필 이미지</label>
+            <input id="profileImage" th:type="file" th:field="*{profileImage}"/>
         </div>
 
         <hr class="my-4">

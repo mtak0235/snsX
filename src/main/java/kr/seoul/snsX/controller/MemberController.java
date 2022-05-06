@@ -125,20 +125,30 @@ public class MemberController {
     }
 
     @PostMapping("/verify")
-    public String isValidPw(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember, HttpServletRequest request, @RequestParam(name = "password") String password, Model model) throws InvalidException {
+    public String isValidPw(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember,
+                            @RequestParam(name = "password") String password) throws InvalidException {
         MemberFullInfoDto memberFullInfoDto = memberService.isValidPw(loginMember.getMemberId(), password);
         if (memberFullInfoDto == null)
             return "redirect:/member/verify";
-        model.addAttribute("loginMember", memberFullInfoDto);
+        return "redirect:/member/modify";
+    }
+
+    @GetMapping("/modify")
+    public String modifyMemberForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto loginMember,
+                                   Model model) {
+
+        model.addAttribute("loginMember", loginMember);
+        model.addAttribute("memberUpdateForm", new MemberFullInfoDto());
+
         return "member_update_form";
     }
 
     @PostMapping("/update")
-    public String modifyMemberForm(HttpServletRequest request, @ModelAttribute("member") MemberUpdateDto memberUpdateDto, Model model) {
-        return "";
-//        MemberInfoDto memberInfoDto = memberService.modifyMember(((MemberInfoDto)request.getSession().getAttribute(SessionConst.LOGIN_MEMBER)).getMemberId(), memberUpdateDto);
-//        model.addAttribute("member", memberInfoDto);
-//        return "";
+    public String modifyMember(HttpServletRequest request,
+                               @ModelAttribute("member") MemberUpdateDto memberUpdateDto,
+                               @SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto loginMember) throws FileNotFoundException {
+        memberService.modifyMember(loginMember.getMemberId(), memberUpdateDto);
+        return "redirect:/member/mypage";
     }
 
     @GetMapping("/withdraw")
@@ -158,6 +168,7 @@ public class MemberController {
     public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember,
                                        @RequestParam(name = "target") String nickName,
                                        Model model) {
+        System.out.println("nickName = " + nickName);
         MemberInfoDto target = memberService.searchMember(nickName);
         if (loginMember != null) {
             loginMember.setFollowingStatus(memberService.getRelation(loginMember.getMemberId(), target.getMemberId()));

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 @Controller
 public class HomeController {
@@ -18,13 +20,12 @@ public class HomeController {
 
     @GetMapping("/search")
     public String
-    searchMemberOrTag(HttpServletRequest request) {
+    searchMemberOrTag(HttpServletRequest request) throws UnsupportedEncodingException {
         String searchWord = request.getParameter("searchWord");
         if (!searchWord.equals("") && searchWord.charAt(0) == '#') {
-            System.out.println("searchWord = " + searchWord);
-            return "redirect:/post/search?" + "target=" + searchWord.substring(1);
+            return "redirect:/post/search?" + "target=" + URLEncoder.encode(searchWord.substring(1), "utf-8");
         }
-        return "redirect:/member/search?" + "target=" + searchWord;
+        return "redirect:/member/search?" + "target=" + URLEncoder.encode(searchWord, "utf-8");
     }
 
     @ResponseBody

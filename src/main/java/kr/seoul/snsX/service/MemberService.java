@@ -24,7 +24,7 @@ public interface MemberService {
 
     public MemberFullInfoDto isValidPw(Long memberId, String password);
 
-    public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto);
+    public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto) throws FileNotFoundException;
 
     public void following(Long memberId, Long followeeId);
 
@@ -33,4 +33,5 @@ public interface MemberService {
     public FollowingStatus getRelation(Long followerId, Long followeeId);
 
     public MemberFullInfoDto searchMyInfo(Long memberId);
+
 }

@@ -23,21 +23,29 @@ public class FileRepositoryImpl implements FileRepository{
 
     public void deleteFiles(List<Image> files) throws IllegalArgumentException, FileNotFoundException {
         for (Image img : files) {
-            String filePath = fileDir + img.getUploadedFilename();
-            File file = new File(filePath);
-            if (file.exists()) {
-                if (!file.delete()) {
-                    log.info("[File Delete] Failed to delete file: filepath -> {}", filePath);
-                    throw new IllegalArgumentException();
-//
-                } else {
-                    log.info("[File Delete] Deleted file: filepath -> {}", filePath);
-                }
-            } else {
-                throw new FileNotFoundException();
-            }
+            deleteFile(img);
         }
     }
+
+    public void deleteFile(Image img) throws FileNotFoundException {
+        deleteFileByName(img.getUploadedFilename());
+    }
+
+    public void deleteFileByName(String uploadedFileName) throws FileNotFoundException {
+        String filePath = fileDir +uploadedFileName;
+        File file = new File(filePath);
+        if (file.exists()) {
+            if (!file.delete()) {
+                log.info("[File Delete] Failed to delete file: filepath -> {}", filePath);
+                throw new IllegalArgumentException();
+            } else {
+                log.info("[File Delete] Deleted file: filepath -> {}", filePath);
+            }
+        } else {
+            throw new FileNotFoundException();
+        }
+    }
+
 
     private String getFullPath(String filename) {
         return fileDir + filename;
@@ -57,7 +65,7 @@ public class FileRepositoryImpl implements FileRepository{
         }
     }
 
-    private void storeFile(MultipartFile file, String uploadName) throws FailImgSaveException {
+    public void storeFile(MultipartFile file, String uploadName) throws FailImgSaveException {
         try {
             file.transferTo(new File(getFullPath(uploadName)));
         } catch (Exception e) {
