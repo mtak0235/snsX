@@ -43,6 +43,9 @@
             max-width: 100%;
         }
 
+
+
+
     </style>
 </head>
 <body>
@@ -50,11 +53,9 @@
 <div class="profile container">
     <img class="rounded card-img-top" id="profileImg" th:src="|/post/images/${member.profileImage}|"/>
     <p th:text="${member.nickName}"></p>
-    [[${loginMember.followingStatus}]]
     <div th:if="${#strings.equals(loginMember.followingStatus, 'NONE')} == false">
-        <button th:id="follow-btn"
-                th:if="${#strings.equals(loginMember.followingStatus, 'UNFOLLOW')}"
-                th:value="follow">
+        <button id="follow-btn"
+                th:onclick="'follow()'">[[${loginMember.followingStatus}]]
         </button>
     </div>
 
@@ -127,34 +128,25 @@
         }
     }
 
-    document.getElementById('follow-btn').addEventListener('click', follow);
-    let follow_btn = document.getElementById('follow-btn');
-    let params = {
-        "followee": [[${member.memberId}]]
-    };
-    let query = Object.keys(params)
-        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
-        .join('&');
-    let follow_url = "";
-    if ("${#strings.equals(loginMember.followingStatus, 'UNFOLLOW')}") {
-        follow_btn.value = "follow";
-        follow_url = 'http://localhost:8080/member/follow?' + query;
-        follow_btn.innerHTML = "follow";
-    } else if ("${#strings.equals(loginMember.followingStatus, 'FOLLOW')}") {
-        follow_btn.value = "unfollow";
-        follow_url = 'http://localhost:8080/member/unfollow?' + query;
-        follow_btn.innerHTML = "unfollow";
-    }
-
     function follow() {
-        fetch(follow_url)
+        let status = document.getElementById('follow-btn').innerText.toLowerCase();
+        let params = {
+            "followee": [[${member.memberId}]]
+        };
+
+        let query = Object.keys(params)
+            .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+            .join('&');
+
+        let url = 'http://localhost:8080/member/' + status + '?' + query;
+        fetch(url)
             .then(response => response.json())
             .then((data) => {
-                console.log('hello');
-                location.reload();
+
             }).catch(function (error) {
             console.log('request failed', error)
         });
+        document.getElementById('follow-btn').innerText = (status === 'follow') ? 'UNFOLLOW' : 'FOLLOW';
     }
 </script>
 </body>
