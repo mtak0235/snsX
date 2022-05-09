@@ -181,7 +181,7 @@ public class MemberController {
 
     @PostMapping("/update")
     public String modifyMember(HttpServletRequest request,
-                               @Valid @ModelAttribute("member") MemberUpdateDto memberUpdateDto,BindingResult bindingResult,
+                               @Valid @ModelAttribute MemberUpdateDto memberUpdateDto,BindingResult bindingResult,
                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto loginMember) throws FileNotFoundException {
         if (bindingResult.hasErrors()) {
             return "redirect:/member/modify";

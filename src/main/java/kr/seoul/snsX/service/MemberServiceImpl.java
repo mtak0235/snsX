@@ -147,10 +147,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto) throws FileNotFoundException {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         member.setEmail(memberUpdateDto.getEmail());
-        member.setNickName(memberUpdateDto.getEmail());
+        member.setNickName(memberUpdateDto.getNickName());
         member.setPhoneNumber(memberUpdateDto.getPhoneNumber());
         if (memberUpdateDto.getProfileImage() != null) {
             if (!member.getProfileFileName().equals("no-image.jpeg")) {
