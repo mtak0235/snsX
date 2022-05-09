@@ -47,7 +47,7 @@ public class SignupCache {
     }
 
     public MemberSignupCacheDto isUsableEmail(String email, String uuid) {
-        return isUsable(this.usedEmail, email, uuid);
+        return isUsable(this.usedEmail, email, uuid);//굳이?
     }
 
     public MemberSignupCacheDto isUsableNickName(String nickName, String uuid) {

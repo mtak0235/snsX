@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/", "/post", "/post/{postId:[0-9]+}", "/post/images/**", "/post/search/**", "/post/feed/**",
                         "/post/member_feed/**", "/member/signup/checkEmail/**", "/member/signup/checkNickName/**",
                         "/member/signup", "/member/searchLostMemberEmail", "/member/searchLostMemberPw",
-                        "/member/login", "/member/search/**", "/search/", "/search", "/*.ico"
+                        "/member/login", "/member/search/**", "/search/", "/search", "/*.ico", "/error/**"
                 );
     }
 }

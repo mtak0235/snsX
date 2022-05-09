@@ -31,7 +31,6 @@ public class PostController {
     public String fileDir;
 
     private final PostService postService;
-    private final MemberService memberService;
     private final HashTagService hashTagService;
 
     @GetMapping("/upload")

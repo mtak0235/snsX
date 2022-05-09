@@ -37,12 +37,15 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result
-            , HttpServletRequest request, @CookieValue(name = "signupCacheId", required = false) String cacheId) {
+            , HttpServletResponse response, @CookieValue(name = "signupCacheId") String cacheId) {
         if (result.hasErrors()) {
             return "signup";
         }
         try {
             memberService.registerMember(member, cacheId);
+            Cookie cookie = new Cookie("signupCacheId", null);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
         } catch (AlreadyExistException e) {
             log.info("##############[]", e.getMessage());
         }
@@ -51,13 +54,19 @@ public class MemberController {
 
     @ResponseBody
     @GetMapping("/signup/checkEmail/{email}")
-    public Map<String, String> occupyMemberEmail(@PathVariable(name = "email") String email, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response) {
+    public Map<String, String> occupyMemberEmail(@PathVariable(name = "email") String email, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response
+    ,HttpServletRequest request) {
+
         Map<String, String> map = new HashMap<>();
         map.put("flag", "valid");
         try {
             String createdUuid = memberService.occupyEmail(email, cacheId);
-            if (cacheId == null)
-                response.addCookie(new Cookie("signupCacheId", createdUuid));
+            if (cacheId == null)//쿠키가 없으면 만들어서 넣어줘.
+            {
+                Cookie cookie = new Cookie("signupCacheId", createdUuid);
+                cookie.setPath("/member/signup");
+                response.addCookie(cookie);
+            }
         } catch (AlreadyExistException e) {
             map.put("flag", "invalid");
         } finally {
@@ -67,13 +76,17 @@ public class MemberController {
 
     @ResponseBody
     @GetMapping("/signup/checkNickName/{nickName}")
-    public Map<String, String> occupyMemberNickName(@PathVariable(name = "nickName") String nickName, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response) {
+    public Map<String, String> occupyMemberNickName(@PathVariable(name = "nickName") String nickName, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response,
+                                                    HttpServletRequest request) {
         Map<String, String> map = new HashMap<>();
         map.put("flag", "valid");
         try {
             String createdUuid = memberService.occupyNickName(nickName, cacheId);
-            if (cacheId == null)
-                response.addCookie(new Cookie("signupCacheId", createdUuid));
+            if (cacheId == null) {
+                Cookie cookie = new Cookie("signupCacheId", createdUuid);
+                cookie.setPath("/member/signup");
+                response.addCookie(cookie);
+            }
         } catch (AlreadyExistException e) {
             map.put("flag", "invalid");
         } finally {

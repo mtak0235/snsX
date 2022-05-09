@@ -46,9 +46,11 @@ public class MemberServiceImpl implements MemberService {
                 return memberSignupCacheDto.getUuid();
             }
         }
+
         if (memberRepository.existsMemberByEmail(email)) {
             throw new AlreadyExistException("이미 존재하는 email입니다");
         }
+
         return signupCache.createEmailCache(email, uuid);
     }
 
