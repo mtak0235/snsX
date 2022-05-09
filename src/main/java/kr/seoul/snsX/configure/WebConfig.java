@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/", "/post", "/post/{postId:[0-9]+}", "/post/images/**", "/post/search/**", "/post/feed/**",
-                        "/post/member_feed/**", "/member/occupyMemberEmail", "/member/occupyMemberNickName",
+                        "/post/member_feed/**", "/member/signup/checkEmail/**", "/member/signup/checkNickName/**",
                         "/member/signup", "/member/searchLostMemberEmail", "/member/searchLostMemberPw",
                         "/member/login", "/member/search/**", "/search/", "/search", "/*.ico"
                 );

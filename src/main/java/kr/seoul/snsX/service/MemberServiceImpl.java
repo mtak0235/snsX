@@ -44,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
                 return memberSignupCacheDto.getUuid();
             }
         }
-        if (!memberRepository.existsMemberByEmail(email)) {
+        if (memberRepository.existsMemberByEmail(email)) {
             throw new AlreadyExistException("이미 존재하는 email입니다");
         }
         return signupCache.createEmailCache(email);
@@ -60,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
                 return memberSignupCacheDto.getUuid();
             }
         }
-        if (!memberRepository.existsMemberByEmail(nickName)) {
+        if (memberRepository.existsMemberByNickName(nickName)) {
             throw new AlreadyExistException("이미 존재하는 nickName입니다");
         }
         return signupCache.createEmailCache(nickName);

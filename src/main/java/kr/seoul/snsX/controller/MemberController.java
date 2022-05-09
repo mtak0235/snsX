@@ -19,6 +19,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.*;
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -35,28 +37,48 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String save(@Valid @ModelAttribute(name = "member") MemberSignupDto member, BindingResult result
-            , HttpServletRequest request, @CookieValue(name = "uuid", required = false) String uuid) throws AlreadyExistException {
+            , HttpServletRequest request, @CookieValue(name = "uuid", required = false) String uuid) {
         if (result.hasErrors()) {
             return "signup";
         }
-        memberService.registerMember(member, uuid);
+        try {
+            memberService.registerMember(member, uuid);
+        } catch (AlreadyExistException e) {
+            log.info("##############[]", e.getMessage());
+        }
         return "redirect:/member/login";
     }
 
-    @PostMapping("/signup/checkEmail")
-    public String occupyMemberEmail(@RequestParam(name = "email") String email, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) throws AlreadyExistException {
-        String createdUuid = memberService.occupyEmail(email, uuid);
-        if (uuid == null)
-            response.addCookie(new Cookie("uuid", createdUuid));
-        return "";
+    @ResponseBody
+    @GetMapping("/signup/checkEmail/{email}")
+    public Map<String, String> occupyMemberEmail(@PathVariable(name = "email") String email, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) {
+        Map<String, String> map = new HashMap<>();
+        map.put("flag", "valid");
+        try {
+            String createdUuid = memberService.occupyEmail(email, uuid);
+            if (uuid == null)
+                response.addCookie(new Cookie("uuid", createdUuid));
+        } catch (AlreadyExistException e) {
+            map.put("flag", "invalid");
+        } finally {
+            return map;
+        }
     }
 
-    @PostMapping("/signup/checkNickName")
-    public String occupyMemberNickName(@RequestParam(name = "nickName") String nickName, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) throws AlreadyExistException {
-        String createdUuid = memberService.occupyNickName(nickName, uuid);
-        if (uuid == null)
-            response.addCookie(new Cookie("uuid", createdUuid));
-        return "";
+    @ResponseBody
+    @GetMapping("/signup/checkNickName/{nickName}")
+    public Map<String, String> occupyMemberNickName(@PathVariable(name = "nickName") String nickName, @CookieValue(name = "uuid", required = false) String uuid, HttpServletResponse response) {
+        Map<String, String> map = new HashMap<>();
+        map.put("flag", "valid");
+        try {
+            String createdUuid = memberService.occupyNickName(nickName, uuid);
+            if (uuid == null)
+                response.addCookie(new Cookie("uuid", createdUuid));
+        } catch (AlreadyExistException e) {
+            map.put("flag", "invalid");
+        } finally {
+            return map;
+        }
     }
 
     @GetMapping("/searchLostMemberEmail")

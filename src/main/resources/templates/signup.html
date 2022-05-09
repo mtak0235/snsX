@@ -34,10 +34,31 @@
 
         <div>
             <label for="loginId">닉네임</label>
-            <input type="text" id="loginId" th:field="*{nickName}" class="form-control"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{nickName}" />
+            <div class="input-group">
+                <input type="text" id="loginId" th:field="*{nickName}" class="form-control"
+                       th:errorclass="field-error">
+                <div class="field-error" th:errors="*{nickName}" />
+                <span class="input-group-btn">
+                    <button class="btn btn-primary btn-lg" id="nbutton" type="button" onclick="check('NickName', 'loginId', 'nbutton')">중복검사</button>
+                </span>
+            </div>
 
+        </div>
+        <div>
+            <label for="name">이메일</label>
+            <div class="input-group">
+                <input type="text" id="name" th:field="*{email}" class="form-control" th:errorclass="field-error">
+                <div class="field-error" th:errors="*{email}" />
+                <span class="input-group-btn">
+                    <button class="btn btn-primary btn-lg" id="ebutton" type="button" onclick="check('Email', 'name', 'ebutton')">중복검사</button>
+                </span>
+            </div>
+        </div>
+        <div>
+            <label for="phoneNumber">phone number</label>
+            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control"
+                   th:errorclass="field-error">
+            <div class="field-error" th:errors="*{phoneNumber}" />
         </div>
         <div>
             <label for="password">비밀번호</label>
@@ -45,19 +66,6 @@
                    class="form-control"
                    th:errorclass="field-error">
             <div class="field-error" th:errors="*{pw}" />
-        </div>
-        <div>
-            <label for="name">이메일</label>
-
-            <input type="text" id="name" th:field="*{email}" class="form-control" th:errorclass="field-error">
-            <div class="field-error" th:errors="*{email}" />
-        </div>
-        <div>
-            <label for="phoneNumber">phone number</label>
-            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{phoneNumber}" />
-
         </div>
 
         <hr class="my-4">
@@ -73,4 +81,22 @@
 </div> <!-- /container -->
 <div th:insert="~{/footer :: footerFragment}"></div>
 </body>
+<script>
+    function check(target, targetId, buttonId) {
+        let value = document.getElementById(targetId).value;
+        let url = 'http://localhost:8080/member/signup/check' + target + '/' + value;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+               if (data.flag === 'invalid') {
+                    document.getElementById(buttonId).style.backgroundColor = 'red';
+                    document.getElementById(buttonId).innerText = '사용불가';
+               } else {
+                    document.getElementById(buttonId).style.backgroundColor = 'green';
+                    document.getElementById(buttonId).innerText = '사용가능';
+               }
+            });
+    }
+</script>
 </html>
