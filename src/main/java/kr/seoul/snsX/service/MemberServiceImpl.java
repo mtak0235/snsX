@@ -49,12 +49,12 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsMemberByEmail(email)) {
             throw new AlreadyExistException("이미 존재하는 email입니다");
         }
-        return signupCache.createEmailCache(email);
+        return signupCache.createEmailCache(email, uuid);
     }
 
     @Override
     public String occupyNickName(String nickName, String uuid) throws AlreadyExistException {
-        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(nickName, uuid);
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableNickName(nickName, uuid);
         if (memberSignupCacheDto.isFlag()) {
             if (memberSignupCacheDto.getUuid() == null) {
                 throw new AlreadyExistException("이미 존재하는 nickName입니다");
@@ -65,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsMemberByNickName(nickName)) {
             throw new AlreadyExistException("이미 존재하는 nickName입니다");
         }
-        return signupCache.createEmailCache(nickName);
+        return signupCache.createNickNameCache(nickName, uuid);
     }
 
     @Override

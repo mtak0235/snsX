@@ -54,18 +54,20 @@ public class SignupCache {
         return isUsable(this.usedNickName, nickName, uuid);
     }
 
-    private String createCache(Map<String, Occupant> cache, String key) {
-        String uuid = UUID.randomUUID().toString();
-        cache.put(key, new Occupant(uuid, LocalDateTime.now().plusDays(1L)));
-        return uuid;
+    private String createCache(Map<String, Occupant> cache, String key, String uuid) {
+        String createdUuid = uuid;
+        if (createdUuid == null)
+            createdUuid = UUID.randomUUID().toString();
+        cache.put(key, new Occupant(createdUuid, LocalDateTime.now().plusDays(1L)));
+        return createdUuid;
     }
 
-    public String createEmailCache(String email) {
-        return createCache(this.usedEmail, email);
+    public String createEmailCache(String email, String uuid) {
+        return createCache(this.usedEmail, email, uuid);
     }
 
-    public String createNickNameCache(String nickName) {
-        return createCache(this.usedNickName, nickName);
+    public String createNickNameCache(String nickName, String uuid) {
+        return createCache(this.usedNickName, nickName, uuid);
     }
 
     private void expireKey(Map<String, Occupant> cache, String key) {
