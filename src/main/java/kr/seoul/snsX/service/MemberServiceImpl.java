@@ -153,7 +153,9 @@ public class MemberServiceImpl implements MemberService {
         member.setNickName(memberUpdateDto.getEmail());
         member.setPhoneNumber(memberUpdateDto.getPhoneNumber());
         if (memberUpdateDto.getProfileImage() != null) {
-            fileRepository.deleteFileByName(member.getProfileFileName());
+            if (!member.getProfileFileName().equals("no-image.jpeg")) {
+                fileRepository.deleteFileByName(member.getProfileFileName());
+            }
             String uploadedFileName = fileRepository.createStoreFileName(memberUpdateDto.getProfileImage().getOriginalFilename());
             fileRepository.storeFile(memberUpdateDto.getProfileImage(), uploadedFileName);
             member.setProfileFileName(uploadedFileName);

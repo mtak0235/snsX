@@ -7,24 +7,21 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
 public class MemberUpdateDto {
     @NotEmpty(message = "User's email cannot be empty.")
-    @Size(min = 5, max = 250)
     private String email;
     @NotEmpty(message = "User's nickName cannot be empty.")
-    @Size(min = 5, max = 250)
     private String nickName;
-    @NotEmpty(message = "User's profileImage cannot be empty.")
+    @NotNull(message = "User's profileImage cannot be empty.")
     private MultipartFile profileImage;
     @NotEmpty(message = "User's phoneNumber cannot be empty.")
-    @Size(min = 5, max = 250)
     private String phoneNumber;
     @NotEmpty(message = "User's pw cannot be empty.")
-    @Size(min = 5, max = 250)
     private String pw;
 
 

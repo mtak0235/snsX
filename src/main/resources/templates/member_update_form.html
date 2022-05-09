@@ -49,7 +49,7 @@
             <label for="email">이메일</label>
 
             <input type="text" id="email" th:field="*{email}" class="form-control" th:errorclass="field-error" readonly
-            th:placeholder="${loginMember.getEmail()}">
+            th:placeholder="${loginMember.getEmail()}" th:value="${loginMember.getEmail()}">
             <div class="field-error" th:errors="*{email}" />
         </div>
         <div>
