@@ -2,6 +2,7 @@ package kr.seoul.snsX.dto;
 
 import kr.seoul.snsX.entity.Follow;
 import kr.seoul.snsX.entity.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
@@ -15,7 +16,10 @@ public class MemberInfoDto {
     private Long memberId;
     private String profileImage;
     private List<Follow> followee;
+    private List<Follow> followers;
     private FollowingStatus followingStatus;
+
+
 
     public MemberInfoDto(Member member) {
         this.nickName = member.getNickName();
@@ -24,5 +28,4 @@ public class MemberInfoDto {
         this.followee = member.getFollowees();
         this.followingStatus = FollowingStatus.NONE;
     }
-
 }

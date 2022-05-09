@@ -104,15 +104,12 @@ public class PostController {
 
     @GetMapping("/search")
     public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo,
-//                                  @PathVariable("tag") String tag,
                                   @RequestParam(name = "target") String tag,
                                   Model model) throws EntityNotFoundException {
+        System.out.println("tag = " + tag);
         TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
         model.addAttribute("tag", tagResponseDto);
         model.addAttribute("loginMember", userInfo);
-
-        System.out.println("PostController.searchByTagForm");
-
         return "tag_feed_form";
     }
 
@@ -122,7 +119,6 @@ public class PostController {
         List<ThumbnailDto> result = postService.getTagPosts(tagId, cursor, limit);
         return result;
     }
-
 
     @GetMapping
     public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {

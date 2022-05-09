@@ -6,6 +6,7 @@ import kr.seoul.snsX.exception.AlreadyExistException;
 import kr.seoul.snsX.exception.InvalidException;
 import kr.seoul.snsX.exception.FailedLoginException;
 import kr.seoul.snsX.exception.InputDataInvalidException;
+import kr.seoul.snsX.repository.FileRepository;
 import kr.seoul.snsX.repository.FollowRepository;
 import kr.seoul.snsX.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class MemberServiceImpl implements MemberService {
     private final PostService postService;
     private final FollowRepository followRepository;
 
+    private final FileRepository fileRepository;
     @Autowired
     private final SignupCache signupCache = new SignupCache();
 
@@ -134,19 +136,6 @@ public class MemberServiceImpl implements MemberService {
         return new MemberInfoDto(member);
     }
 
-    private MemberInfoDto getMemberInfoDto(Long loginMemberId, Member member) {
-        MemberInfoDto memberInfoDto = new MemberInfoDto(member);
-        if (loginMemberId != null && loginMemberId != member.getId()) {
-            Optional<Follow> relation = followRepository.findById(new FollowId(loginMemberId, member.getId()));
-            if (relation.isPresent()) {
-                memberInfoDto.setFollowingStatus(FollowingStatus.FOLLOW);
-            } else {
-                memberInfoDto.setFollowingStatus(FollowingStatus.UNFOLLOW);
-            }
-        }
-        return memberInfoDto;
-    }
-
     @Override
     public MemberFullInfoDto isValidPw(Long memberId, String password) throws EntityNotFoundException {
         Member member = memberRepository.findMemberByIdAndPw(memberId, password);
@@ -156,8 +145,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto) {
-        return null;
+    public MemberInfoDto modifyMember(Long memberId, MemberUpdateDto memberUpdateDto) throws FileNotFoundException {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+        member.setEmail(memberUpdateDto.getEmail());
+        member.setNickName(memberUpdateDto.getEmail());
+        member.setPhoneNumber(memberUpdateDto.getPhoneNumber());
+        if (memberUpdateDto.getProfileImage() != null) {
+            fileRepository.deleteFileByName(member.getProfileFileName());
+            String uploadedFileName = fileRepository.createStoreFileName(memberUpdateDto.getProfileImage().getOriginalFilename());
+            fileRepository.storeFile(memberUpdateDto.getProfileImage(), uploadedFileName);
+            member.setProfileFileName(uploadedFileName);
+        }
+        return new MemberInfoDto(member);
     }
 
     @Override

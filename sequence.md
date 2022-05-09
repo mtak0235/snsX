@@ -373,7 +373,7 @@ i->>i: preHandle(key)
 alt: key가 유효하지 않은 경우
 i->>cli: redirect:/member/login
 end
-i->>c: memberId, MemberUpdateDto(nickName, phoneNumber, email, pw)
+i->>c: memberId, MemberUpdateDto(nickName, phoneNumber, email, pw, profileImage)
 c->>s: modifyMember(memberId, MemberUpdateDto)
 s->>r: findMemberById(memberId)
 r->>s: Member
@@ -381,8 +381,20 @@ alt: 회원이 존재하지 않는 경우
 s->>c: throw EntityNotFoundException()
 c->>cli: throw EntityNotFoundException()
 end
+alt: profileImage != null
+s->>r:deleteFileByName(originalProfileFileName)
+ alt 게시물이 없으면
+r->>s: throw FileNotFoundException()
+s->>c: throw FileNotFoundException()
+c->cli: 400 에러
+end
+s->>r: createStoreFileName(originalFileName)
+r->>s: uploadedFileName
+s->>r:storeFile(profileImage, uploadedFileName)
+s->>r: setProfileFileName(uploadedFileName)
+end 
 s->>c: MemberInfoDto(Member)
-c->>cli: redirect:/member/{memberId} + MemberInfoDto
+c->>cli: redirect:/member/mypage
 ```
 
 # login
