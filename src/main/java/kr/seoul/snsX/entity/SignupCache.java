@@ -36,7 +36,7 @@ public class SignupCache {
         }
         Occupant occupant = cache.get(key);
         LocalDateTime now = LocalDateTime.now();
-        if (!now.isAfter(occupant.getExpirationDate()) && !uuid.equals(occupant.getUuid())) {
+        if (!now.isAfter(occupant.getExpirationDate()) && !occupant.getUuid().equals(uuid)) {
             return new MemberSignupCacheDto(null, true);
         }
         occupant.setExpirationDate(now.plusDays(1L));

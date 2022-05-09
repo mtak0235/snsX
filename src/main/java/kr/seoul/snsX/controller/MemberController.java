@@ -80,6 +80,7 @@ public class MemberController {
                                                     HttpServletRequest request) {
         Map<String, String> map = new HashMap<>();
         map.put("flag", "valid");
+        System.out.println(cacheId);
         try {
             String createdUuid = memberService.occupyNickName(nickName, cacheId);
             if (cacheId == null) {
