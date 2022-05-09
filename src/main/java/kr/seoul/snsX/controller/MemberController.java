@@ -56,8 +56,11 @@ public class MemberController {
         map.put("flag", "valid");
         try {
             String createdUuid = memberService.occupyEmail(email, cacheId);
-            if (cacheId == null)
-                response.addCookie(new Cookie("signupCacheId", createdUuid));
+            if (cacheId == null) {
+                Cookie cookie = new Cookie("signupCacheId", createdUuid);
+                cookie.setPath("/member/signup");
+                response.addCookie(cookie);
+            }
         } catch (AlreadyExistException e) {
             map.put("flag", "invalid");
         } finally {
@@ -72,8 +75,11 @@ public class MemberController {
         map.put("flag", "valid");
         try {
             String createdUuid = memberService.occupyNickName(nickName, cacheId);
-            if (cacheId == null)
-                response.addCookie(new Cookie("signupCacheId", createdUuid));
+            if (cacheId == null) {
+                Cookie cookie = new Cookie("signupCacheId", createdUuid);
+                cookie.setPath("/member/signup");
+                response.addCookie(cookie);
+            }
         } catch (AlreadyExistException e) {
             map.put("flag", "invalid");
         } finally {
