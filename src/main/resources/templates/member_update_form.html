@@ -33,28 +33,27 @@
 
         <div>
             <label for="nickName">닉네임</label>
-            <input type="text" id="nickName" th:field="*{nickName}" class="form-control"
+            <input type="text" id="nickName" name="nickName" class="form-control"
                    th:errorclass="field-error" th:value="${loginMember.getNickName()}">
             <div class="field-error" th:errors="*{nickName}" />
 
         </div>
         <div>
             <label for="password">비밀번호</label>
-            <input type="password" id="password" th:field="*{pw}"
+            <input type="password" id="password" name="pw"
                    class="form-control"
                    th:errorclass="field-error" th:value="${loginMember.getPw()}">
             <div class="field-error" th:errors="*{pw}" />
         </div>
         <div>
             <label for="email">이메일</label>
-
-            <input type="text" id="email" th:field="*{email}" class="form-control" th:errorclass="field-error" readonly
-            th:placeholder="${loginMember.getEmail()}" th:value="${loginMember.getEmail()}">
+            <input type="text" id="email" name="email" class="form-control"
+                   th:errorclass="field-error" readonly th:value="${loginMember.getEmail()}">
             <div class="field-error" th:errors="*{email}" />
         </div>
         <div>
             <label for="phoneNumber">phone number</label>
-            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control"
+            <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
                    th:errorclass="field-error" th:value="${loginMember.getPhoneNumber()}">
             <div class="field-error" th:errors="*{phoneNumber}" />
         </div>

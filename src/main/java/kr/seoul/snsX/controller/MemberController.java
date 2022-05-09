@@ -183,7 +183,6 @@ public class MemberController {
     public String modifyMember(HttpServletRequest request,
                                @Valid @ModelAttribute("member") MemberUpdateDto memberUpdateDto,BindingResult bindingResult,
                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto loginMember) throws FileNotFoundException {
-        System.out.println("memberUpdateDto.getEmail() = " + memberUpdateDto.getEmail());
         if (bindingResult.hasErrors()) {
             return "redirect:/member/modify";
         }
