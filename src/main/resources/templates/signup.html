@@ -25,7 +25,7 @@
 
     <h4 class="mb-3">회원 정보 입력</h4>
 
-    <form action="" th:action="@{/member/signup}" th:object="${member}" method="post">
+    <form action="" th:action="@{/member/signup}" th:object="${member}" method="post" id="register">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
@@ -70,18 +70,22 @@
 
         <hr class="my-4">
 
-        <div class="row">
-            <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" type="submit">회원가입</button>
-            </div>
-        </div>
+
 
     </form>
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg" th:onclick="'register()'">회원가입</button>
+        </div>
+    </div>
 
 </div> <!-- /container -->
 <div th:insert="~{/footer :: footerFragment}"></div>
 </body>
 <script>
+    let NickName = 0;
+    let Email = 0;
+
     function check(target, targetId, buttonId) {
         let value = document.getElementById(targetId).value;
         let url = 'http://localhost:8080/member/signup/check' + target + '/' + value;
@@ -92,11 +96,27 @@
                if (data.flag === 'invalid') {
                     document.getElementById(buttonId).style.backgroundColor = 'red';
                     document.getElementById(buttonId).innerText = '사용불가';
+                    if (target === 'NickName')
+                        NickName = 0;
+                    if (target === 'Email')
+                        Email = 0;
                } else {
                     document.getElementById(buttonId).style.backgroundColor = 'green';
                     document.getElementById(buttonId).innerText = '사용가능';
+                    if (target === 'NickName')
+                        NickName = 1;
+                    if (target === 'Email')
+                        Email = 1;
                }
             });
+    }
+
+    function register() {
+        if (NickName != 1 || Email != 1) {
+            alert('중복검사가 필요합니다.');
+        } else {
+            document.getElementById('register').submit();
+        }
     }
 </script>
 </html>
