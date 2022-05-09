@@ -19,7 +19,9 @@ public class MemberInfoDto {
     private List<Follow> followers;
     private FollowingStatus followingStatus;
 
-
+    private String pw;
+    private String email;
+    private String phoneNumber;
 
     public MemberInfoDto(Member member) {
         this.nickName = member.getNickName();
@@ -27,5 +29,10 @@ public class MemberInfoDto {
         this.profileImage = member.getProfileFileName();
         this.followee = member.getFollowees();
         this.followingStatus = FollowingStatus.NONE;
+
+        this.pw = member.getPw();
+        this.email = member.getEmail();
+        this.phoneNumber = member.getPhoneNumber();
+
     }
 }

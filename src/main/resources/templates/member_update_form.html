@@ -50,7 +50,7 @@
             <label for="email">이메일</label>
 
             <input type="text" id="email" th:field="*{email}" class="form-control" th:errorclass="field-error" readonly
-            th:value="${loginMember.getEmail()}">
+            th:placeholder="${loginMember.getEmail()}">
             <div class="field-error" th:errors="*{email}" />
         </div>
         <div>
@@ -61,7 +61,7 @@
         </div>
         <div>
             <label for="profileImage">프로필 이미지</label>
-            <input id="profileImage" th:type="file" th:field="*{profileImage}"/>
+            <input id="profileImage" multiple="multiple" th:type="file" th:field="*{profileImage}"/>
         </div>
 
         <hr class="my-4">
