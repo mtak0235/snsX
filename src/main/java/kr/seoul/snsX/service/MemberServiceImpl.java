@@ -49,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsMemberByEmail(email)) {
             throw new AlreadyExistException("이미 존재하는 email입니다");
         }
-        return signupCache.createEmailCache(email);
+        return signupCache.createEmailCache(email, uuid);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsMemberByNickName(nickName)) {
             throw new AlreadyExistException("이미 존재하는 nickName입니다");
         }
-        return signupCache.createEmailCache(nickName);
+        return signupCache.createNickNameCache(nickName, uuid);
     }
 
     @Override
