@@ -207,7 +207,6 @@ public class MemberController {
     public String searchMemberPageForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember,
                                        @RequestParam(name = "target") String nickName,
                                        Model model) {
-        System.out.println("nickName = " + nickName);
         MemberInfoDto target = memberService.searchMember(nickName);
         if (loginMember != null) {
             loginMember.setFollowingStatus(memberService.getRelation(loginMember.getMemberId(), target.getMemberId()));
