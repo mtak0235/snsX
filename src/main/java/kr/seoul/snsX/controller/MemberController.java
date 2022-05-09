@@ -173,15 +173,18 @@ public class MemberController {
                                    Model model) {
 
         model.addAttribute("loginMember", loginMember);
-        model.addAttribute("memberUpdateForm", new MemberFullInfoDto());
+        model.addAttribute("memberUpdateForm", new MemberUpdateDto());
 
         return "member_update_form";
     }
 
     @PostMapping("/update")
     public String modifyMember(HttpServletRequest request,
-                               @ModelAttribute("member") MemberUpdateDto memberUpdateDto,
+                               @Valid @ModelAttribute("member") MemberUpdateDto memberUpdateDto,BindingResult bindingResult,
                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto loginMember) throws FileNotFoundException {
+        if (bindingResult.hasErrors()) {
+            return "redirect:/member/modify";
+        }
         memberService.modifyMember(loginMember.getMemberId(), memberUpdateDto);
         return "redirect:/member/mypage";
     }
