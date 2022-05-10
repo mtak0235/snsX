@@ -12,11 +12,13 @@ import java.util.List;
 public class MemberSignupDto {
 
     @NotEmpty
+    @Pattern(regexp = "[\\w]+@[\\w]+(.){1}[a-z]+", message = "잘못된 형식입니다.")
     private String email;
     @NotEmpty
-    @Pattern(regexp = "[\\w]{4,12}")
+    @Pattern(regexp = "[\\w]{4,12}", message = "대소문자, 숫자 4~12만 가능합니다.")
     private String pw;
     @NotEmpty
+    @Pattern(regexp = "[0-9]{11}", message = "잘못된 입력입니다.")
     private String phoneNumber;
     @NotEmpty
     private String nickName;
