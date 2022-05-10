@@ -251,8 +251,8 @@ c->>s: removeMember(memberId, pw)
 s->>r: findById(memberId)
 r->>s: Member
 alt member가 없는 경우
-s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")
-c->>cli: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")
+s->>c: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")
+c->>cli: throws EntityNotFoundException("존재하지 않는 사용자 입니다.")
 end
 alt 유효하지 않은 비밀번호인 경우
 s->>c: throws inValidException("틀린 비밀번호 입니다.")
