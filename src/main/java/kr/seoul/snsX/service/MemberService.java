@@ -6,7 +6,7 @@ import kr.seoul.snsX.exception.FailedLoginException;
 import java.io.FileNotFoundException;
 
 public interface MemberService {
-    public String occupyEmail(String email, String uuid);
+    public String occupyEmail(String email, String cacheId);
 
     public String occupyNickName(String nickName, String uuid);
 

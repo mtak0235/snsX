@@ -10,10 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MemberFullInfoDto {
     private String email;
+    private String pw;
+    private String phoneNumber;
     private String nickName;
     private String profileImage;
-    private String phoneNumber;
-    private String pw;
 
 
     public MemberFullInfoDto(Member member) {

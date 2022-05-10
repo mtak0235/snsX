@@ -1,4 +1,4 @@
-# MyPage
+# myPage
 ```mermaid
 sequenceDiagram
 actor cli
@@ -48,11 +48,13 @@ c->>s: unfollowing(memberId, followeeId)
 s->>r: findById(memberId, followeeId)
 r->>s: Follow
 alt: Follow==null
-s->>c: throws EntityNotFoundException
-c->>cli: throws EntityNotFoundException
+s->>c: throws EntityNotFoundException("언팔로우 중입니다.")
+c->>cli: throws EntityNotFoundException("언팔로우 중입니다.")
 end
 s->>r: delete(Follow)
 r->>s:void
+s->>c: void
+c->>cli: "ok"
 
 ```
 
@@ -74,16 +76,16 @@ i->>cli: redirect:/member/login
 end
 i->>c: memberId, followeeId
 c->>s: following(memberId, followeeId)
-s->>r: findFollowee(followeeId)
+s->>r: findById(followeeId)
 r->>s: Member
 alt: member==null
 s->>c: throws EntityNotFoundException
 c->>cli: throws EntityNotFoundException
 end
-s->>r: save(Member(follower), Member(followee))
+s->>r: save(Follow)
 r->>s: Follow
 s->>c:void
-c->>cli: void
+c->>cli: "ok"
 ```
 
 # LoginCheckInterceptor
@@ -98,8 +100,8 @@ w->>i: request, response
 alt login member session not exists
 alt post method
 i->>i: create and add Cookie uuid:body
-i->>i: redirect: url/uuid
 end
+i->>i: redirect: /member/login?redirectURL=prev URL / [uuid]
 i->>c:false
 else
 i->>c:true
@@ -117,29 +119,39 @@ participant ca as cache
 participant r as repository
 participant l as Log
 
-cli->>+c: email, uuid
-c->>+s: occupyEmail(email, uuid)
+cli->>c: email, cacheId
+c->>s: occupyEmail(email, cacheId)
 s->>ca: isUsableEmail(email, uuid)
-ca->>s: uuid, boolean
-alt: boolean이 true면
-alt: uuid가 null이 아니면
-s->>c: Cookie(uuid)
-c->>cli: Cookie
+ca->>s: MemberSignupCacheDto[uuid, flag]
+alt: flag == true
+alt: uuid == null
+s->>c: throws alreadyExist("이미 사용중인 email입니다")
+c->>cli: flag=invalid
 else
-s->>c: throws alreadyExist("이미 존재하는 email입니다")
-c->>cli: false
+s->>c: uuid
+alt: cacheId == null
+c->>cli: flag=valid, Cookie[signupCacheId]
+else
+c->>cli: flag=valid
 end
 end
-s->>r: existsByEmail(email)
+else
+s->>r: existsMemberByEmail(email)
 r->>s: boolean
 alt: email이 존재하는 경우
-s->>c: throws alreadyExist("이미 존재하는 email입니다")
-c->>cli: throws alreadyExist("이미 존재하는 email입니다")
-end
+s->>c: throws alreadyExist("이미 사용중인 email입니다")
+c->>cli: flag=invalid
+else
 s->>ca: createCache(email)
 ca->>s: uuid
-s->>c: Cookie(uuid)
-c->>cli: Cookie
+s->>c: uuid
+alt: cacheId == null
+c->>cli: flag=valid, Cookie[signupCacheId]
+else
+c->>cli: flag=valid
+end
+end
+end
 ```
 
 # occupyMemberNickName
@@ -153,29 +165,40 @@ participant ca as cache
 participant r as repository
 participant l as Log
 
-cli->>+c: nickName, uuid
-c->>+s: occupyNickName(nickName, uuid)
+cli->>+c: nickName, cacheId
+c->>+s: occupyNickName(nickName, cacheId)
 s->>ca: isUsableNickName(nickName, uuid)
-ca->>s: uuid, boolean
-alt: boolean이 true면
-alt: uuid가 null이 아니면
-s->>c: Cookie(uuid)
-c->>cli: Cookie
+
+ca->>s: MemberSignupCacheDto[uuid, flag]
+alt: flag == true
+alt: uuid == null
+s->>c: throws alreadyExist("이미 사용중인 nickName입니다")
+c->>cli: flag=invalid
 else
-s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
-c->>cli: false
+s->>c: uuid
+alt: cacheId == null
+c->>cli: flag=valid, Cookie[signupCacheId]
+else
+c->>cli: flag=valid
 end
 end
+else
 s->>r: existsByNickName(nickName)
 r->>s: boolean
 alt nickName이 존재하는 경우
 s->>c: throws alreadyExist("이미 존재하는 nickName입니다")
-c->>cli: throws alreadyExist("이미 존재하는 nickName입니다")
-end
+c->>cli: flag=invalid
+else
 s->>ca: createCache(nickName)
 ca->>s: uuid
-s->>c: Cookie(uuid)
-c->>cli: Cookie
+s->>c: uuid
+alt: cacheId == null
+c->>cli: flag=valid, Cookie[signupCacheId]
+else
+c->>cli: flag=valid
+end
+end
+end
 ```
 
 # memberSignupForm

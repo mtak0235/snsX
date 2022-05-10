@@ -54,9 +54,7 @@ public class MemberController {
 
     @ResponseBody
     @GetMapping("/signup/checkEmail/{email}")
-    public Map<String, String> occupyMemberEmail(@PathVariable(name = "email") String email, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response
-    ,HttpServletRequest request) {
-
+    public Map<String, String> occupyMemberEmail(@PathVariable(name = "email") String email, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response) {
         Map<String, String> map = new HashMap<>();
         map.put("flag", "valid");
         try {
@@ -76,11 +74,9 @@ public class MemberController {
 
     @ResponseBody
     @GetMapping("/signup/checkNickName/{nickName}")
-    public Map<String, String> occupyMemberNickName(@PathVariable(name = "nickName") String nickName, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response,
-                                                    HttpServletRequest request) {
+    public Map<String, String> occupyMemberNickName(@PathVariable(name = "nickName") String nickName, @CookieValue(name = "signupCacheId", required = false) String cacheId, HttpServletResponse response) {
         Map<String, String> map = new HashMap<>();
         map.put("flag", "valid");
-        System.out.println(cacheId);
         try {
             String createdUuid = memberService.occupyNickName(nickName, cacheId);
             if (cacheId == null) {
@@ -219,7 +215,7 @@ public class MemberController {
     @ResponseBody
     @GetMapping("/follow")
     public String followMember(@RequestParam(value = "followee") Long followeeId,
-                             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember) {
+                             @SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto loginMember) {
         memberService.following(loginMember.getMemberId(), followeeId);
         return "ok";
     }
@@ -228,13 +224,12 @@ public class MemberController {
     @GetMapping("/unfollow")
     public String unfollowMember(@RequestParam(value = "followee", required = true) Long followeeId,
                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto loginMember) {
-        System.out.println("MemberController.unfollowMember");
         memberService.unFollowing(loginMember.getMemberId(), followeeId);
         return "ok";
     }
 
     @GetMapping("/mypage")
-    public String mypage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = true) MemberInfoDto loginMember, Model model) {
+    public String myPage(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = true) MemberInfoDto loginMember, Model model) {
         model.addAttribute("loginMember", memberService.searchMyInfo(loginMember.getMemberId()));
         return "mypage";
     }

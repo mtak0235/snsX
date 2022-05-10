@@ -1,9 +1,6 @@
 package kr.seoul.snsX.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -26,4 +23,11 @@ public class Follow {
 
     @Enumerated(EnumType.STRING)
     private Status bestFriend;
+
+    @Builder
+    public Follow(Member follower, Member followee, Status bestFriend) {
+        this.follower = follower;
+        this.followee = followee;
+        this.bestFriend = bestFriend;
+    }
 }

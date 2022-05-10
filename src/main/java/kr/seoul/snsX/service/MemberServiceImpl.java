@@ -37,21 +37,19 @@ public class MemberServiceImpl implements MemberService {
     private final SignupCache signupCache = new SignupCache();
 
     @Override
-    public String occupyEmail(String email, String uuid) throws AlreadyExistException {
-        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(email, uuid);
+    public String occupyEmail(String email, String cacheId) throws AlreadyExistException {
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(email, cacheId);
         if (memberSignupCacheDto.isFlag()) {
             if (memberSignupCacheDto.getUuid() == null) {
-                throw new AlreadyExistException("이미 존재하는 email입니다");
+                throw new AlreadyExistException("이미 사용중인 email입니다");
             } else {
                 return memberSignupCacheDto.getUuid();
             }
         }
-
         if (memberRepository.existsMemberByEmail(email)) {
-            throw new AlreadyExistException("이미 존재하는 email입니다");
+            throw new AlreadyExistException("이미 사용중인 email입니다");
         }
-
-        return signupCache.createEmailCache(email, uuid);
+        return signupCache.createEmailCache(email, cacheId);
     }
 
     @Override
@@ -170,18 +168,18 @@ public class MemberServiceImpl implements MemberService {
         Member follower = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 입니다."));
         Member followee = new Member();
         followee.setId(followeeId);
-        Follow follow = new Follow();
-        follow.setFollower(follower);
-        follow.setFollowee(followee);
-        follow.setBestFriend(Status.INACTIVE);
+        Follow follow = Follow.builder()
+                .follower(follower)
+                .followee(followee)
+                .bestFriend(Status.INACTIVE)
+                .build();
         followRepository.save(follow);
     }
 
     @Override
     @Transactional
     public void unFollowing(Long followerId, Long followeeId) {
-        Follow target = followRepository.findById(new FollowId(followerId, followeeId)).orElseThrow(() -> new EntityNotFoundException("팔로우 관계가 없습니다."));
-        System.out.println("target.getFollower() = " + target.getFollower());
+        Follow target = followRepository.findById(new FollowId(followerId, followeeId)).orElseThrow(() -> new EntityNotFoundException("언팔로우 중입니다."));
         followRepository.delete(target);
     }
 
