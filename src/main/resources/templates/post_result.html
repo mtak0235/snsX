@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -7,26 +8,7 @@
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/post/">snsX</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{/post/upload}">게시글 작성하기</a>
-                </li>
-            </ul>
-            <form class="d-flex" th:action="@{/post/search}">
-                <input name="tag" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <input class="btn btn-outline-success" type="submit"th:value="Search"/>
-            </form>
-        </div>
-    </div>
-</nav>
+<div th:insert="~{/header :: headerFragment (${loginMember})}"></div>
 <div class="container" th:object="${post}">
     <div class="card py-5" style="width: 25rem;">
         <img class="rounded card-img-top" th:each="imageFile : ${post.images}" th:src="|/post/images/${imageFile}|"
@@ -36,79 +18,78 @@
                 <li class="list-group-item">[[*{content}]]</li>
             </ul>
             <div class="card-footer">
-                <p class="card-text">@ [[*{author}]]</p>
+                <p class="card-text">@ [[*{member.nickName}]]</p>
             </div>
         </div>
     </div>
 
-    <div class="col-12 input-group-append">
-        <a role="button" th:href="@{/post/update/{identity} (identity=${post.id})}" class="btn btn-primary">글 수정</a>
+    <div class="col-12 input-group-append" th:if="${loginMember} != null and ${loginMember.memberId} == ${post.member.memberId}">
+        <a role="button" th:href="@{/post/update/{identity} (identity=${post.postId})}" class="btn btn-primary">글 수정</a>
         <form th:action="@{/post/delete}" method="post">
-            <input type="text" name="postId" th:value="${post.id}" th:hidden="true"/>
+            <input type="text" name="postId" th:value="${post.postId}" th:hidden="true"/>
             <button class="btn btn-primary" id="delete-btn">삭제</button>
         </form>
     </div>
 </div>
 
-<div class="container">
-    <form id="comment" th:action="@{/post/{identity}/save-comment (identity=${post.id})}" method="post">
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">@</span>
-            <input type="text" name="commenter" class="form-control" placeholder="Username" aria-label="Username"
-                   aria-describedby="basic-addon1">
-        </div>
+<div class="container" th:if="${loginMember != null}">
+    <form id="comment" th:action="@{/post/{identity}/save-comment (identity=${post.postId})}" method="post">
         <div class="input-group">
             <span class="input-group-text">content</span>
             <textarea name="content" class="form-control" aria-label="With textarea"
-                      placeholder="댓글을 입력해주세요.."></textarea>
+                      placeholder="댓글을 입력해주세요.." id="prev-comment-content"></textarea>
         </div>
         <br/>
-        <input type="text" name="id" th:value="${post.id}" th:hidden="true">
+        <input type="text" name="id" th:value="${post.postId}" th:hidden="true">
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="submit">등록</button>
         </div>
     </form>
-
-    <!--    <div class="card">-->
-    <!--        <div class="card-body">-->
-    <!--            <div class="input-group mb-3" >-->
-    <!--                <form id="comment" th:action="@{/post/{identity}/save-comment (identity=${post.id})}" method="post" >-->
-    <!--                            <div class="input-group mb-3">-->
-    <!--                                <span class="input-group-text" id="basic-addon1">@</span>-->
-    <!--                                <input type="text" name="commenter" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">-->
-    <!--                            </div>-->
-    <!--&lt;!&ndash;                    <input type="text" name="commenter" class="form-control" placeholder="너의 이름은?" >&ndash;&gt;-->
-    <!--                    <input type="text" name="content" class="form-control" placeholder="댓글을 입력해주세요.." >-->
-    <!--                    <input type="text" name="id" th:value="${post.id}" th:hidden="true">-->
-    <!--                    <div class="input-group-append">-->
-    <!--                        <button class="btn btn-outline-secondary" type="submit">등록</button>-->
-    <!--                    </div>-->
-    <!--                </form>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-
 </div>
-<div class="container" th:each="comment : ${comments}">
+
+<div class="container" th:each="comment : ${post.comments}">
     <div class="card py-5" style="width: 25rem;">
         <div class="card card-body" style="width: 25rem;">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">[[${comment.comment}]]</li>
             </ul>
             <div class="card-footer">
-                <p class="card-text">@ [[${comment.author}]]</p>
+                <p class="card-text">@ [[${comment.user.nickName}]]</p>
             </div>
         </div>
     </div>
 
     <div class="input-group-append">
         <form th:action="@{/post/remove-comment}" method="post">
-            <input type="text" name="postId" th:value="${post.id}" th:hidden="true"/>
+            <input type="text" name="postId" th:value="${post.postId}" th:hidden="true"/>
             <input type="text" name="commentId" th:value="${comment.id}" th:hidden="true"/>
             <button class="btn btn-primary">삭제</button>
         </form>
     </div>
 </div>
+<div th:insert="~{/footer :: footerFragment}"></div>
+
+<script th:inline="javascript">
+    const getCookieValue = (key) => {
+        let cookieKey = key + "=";
+        let result = "";
+        const cookieArr = document.cookie.split(";");
+
+        for(let i = 0; i < cookieArr.length; i++) {
+            if(cookieArr[i][0] === " ") {
+                cookieArr[i] = cookieArr[i].substring(1);
+            }
+
+            if(cookieArr[i].indexOf(cookieKey) === 0) {
+                result = cookieArr[i].slice(cookieKey.length, cookieArr[i].length);
+                return result;
+            }
+        }
+        return result;
+    }
+
+    let comment = document.querySelector("#prev-comment-content").textContent=getCookieValue([[${prev}]]);
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"

@@ -1,6 +1,7 @@
 package kr.seoul.snsX.service;
 
 import kr.seoul.snsX.dto.*;
+import kr.seoul.snsX.exception.InvalidException;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
@@ -15,14 +16,16 @@ public interface PostService {
 
     Long modifyPost(PostUpdateDto dto) throws IOException, EntityNotFoundException;
 
-    void removePost(Long pk) throws EntityNotFoundException, FileNotFoundException;
+    void removePost(Long pk, Long memberId) throws EntityNotFoundException, FileNotFoundException;
 
-    void addComment(Long postId, CommentRequestDto requestDto);
+    void addComment(Long postId,Long memberId, CommentRequestDto requestDto);
 
-    void removeComment(Long postId, Long commentId);
+    void removeComment(Long postId, Long commentId, Long memberId) throws EntityNotFoundException, InvalidException;
 
-    FeedResponseDto showPosts(Long offset, Long limit);
+    List<ThumbnailDto> showPosts(Long cursor, Long limit);
 
-    List<TagFeedResponseDto> getTagPosts(String tag);
+    List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit);
+
+    List<ThumbnailDto> findMemberPosts(Long memberId, Long offset, Long limit);
 
 }

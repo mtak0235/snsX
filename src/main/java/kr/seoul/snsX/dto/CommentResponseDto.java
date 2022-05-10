@@ -14,7 +14,7 @@ public class CommentResponseDto {
     private String createdDate;
     private String modifiedDate;
     private Long postId;
-    private String author;
+    private MemberInfoDto user;
 
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
@@ -22,6 +22,6 @@ public class CommentResponseDto {
         this.createdDate = comment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
         this.modifiedDate = comment.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
         this.postId = comment.getPost().getId();
-        this.author = comment.getAuthor();
+        this.user = new MemberInfoDto(comment.getMember());
     }
 }

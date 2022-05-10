@@ -11,7 +11,16 @@ public interface FileRepository {
 
     void deleteFiles(List<Image> files) throws IllegalArgumentException, FileNotFoundException;
 
-    List<Image> storeFiles(List<MultipartFile> multipartFiles) throws FailImgSaveException, FileNotFoundException;
+    void deleteFile(Image img) throws FileNotFoundException;
+
+    void deleteFileByName(String uploadedFileName) throws FileNotFoundException;
+
+
+    void storeFiles(List<MultipartFile> multipartFiles, List<Image> images) throws FailImgSaveException, FileNotFoundException;
+
+    void storeFile(MultipartFile file, String uploadName) throws FailImgSaveException;
 
     String getFileDir();
+
+    String createStoreFileName(String originalFilename);
 }

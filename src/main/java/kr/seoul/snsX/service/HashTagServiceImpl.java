@@ -1,5 +1,6 @@
 package kr.seoul.snsX.service;
 
+import kr.seoul.snsX.dto.TagResponseDto;
 import kr.seoul.snsX.entity.HashTag;
 import kr.seoul.snsX.entity.Post;
 import kr.seoul.snsX.entity.PostHashTag;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,6 +72,14 @@ public class HashTagServiceImpl implements HashTagService {
             storedPostHashTags.add(postHashTag);
         }
         return storedPostHashTags;
+    }
+
+    @Override
+    public TagResponseDto getTagByTagName(String tagName) throws EntityNotFoundException {
+        HashTag hashTag = hashTagRepository.findByName(tagName);
+        if (hashTag == null)
+            throw new EntityNotFoundException("게시물이 없습니다.");
+        return new TagResponseDto(hashTag);
     }
 
 }

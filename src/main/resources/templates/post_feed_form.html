@@ -17,30 +17,24 @@
         body {
             /* padding-bottom: 200px; */
         }
-        header {
-            margin: 1rem 3rem 3rem 3rem;
-        }
-        header h1 {
-            font-size: 3rem;
-            line-height: 1.2;
-            font-weight: 300;
-            color: #999;
-        }
-        header h2 {
-            font-size: 1.5rem;
-            line-height: 1.2;
-            font-weight: 300;
-            color: cornflowerblue;
-        }
         main {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-gap: 1rem;
             width: 80vw;
-            margin: 3rem 3rem;
-            grid-template-rows: auto;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
         }
         main figure {
+            /*width: 300px;*/
+            height: 300px;
+            width: 40%;
+            height: 40%;
+            margin: 10px auto;
+        }
+        main figure img {
+            width: 100%;
+            height: 100%;
         }
         main figcaption {
             font-size: 1rem;
@@ -62,24 +56,26 @@
     </style>
 </head>
 <body>
-<div th:insert="~{/header :: headerFragment (${loginMember})}"></div>
+    <div th:insert="~{/header :: headerFragment (${loginMember})}"></div>
 <main>
     <!-- images will be loaded here with figure and figcaption -->
 </main>
-<div th:insert="~{/footer :: footerFragment}"></div>
+    <div th:insert="~{/footer :: footerFragment}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
 
 <script th:inline="javascript">
-    let offset = 0;
+    let cursor = -1;
     let limit = 3;
     let isEnd = false;
+    let stackPoint = -1;
     let URL =
-        "http://localhost:8080/post/search/" + [[${tag.tagId}]] + "/" + offset + "/" + limit;
+        "http://localhost:8080/post/feed/" + cursor + "/" + limit;
     document.addEventListener("DOMContentLoaded", () => {
         //set up the IntersectionObserver to load more images if the footer is visible.
+        //URL - https://gist.githubusercontent.com/prof3ssorSt3v3/1944e7ba7ffb62fe771c51764f7977a4/raw/c58a342ab149fbbb9bb19c94e278d64702833270/infinite.json
         let options = {
             root: null,
             rootMargins: "0px",
@@ -88,13 +84,12 @@
         const observer = new IntersectionObserver(handleIntersect, options);
         observer.observe(document.querySelector("footer"));
         //an initial load of some data
-
         //getData();
     });
     function handleIntersect(entries) {
         if (entries[0].isIntersecting) {
             console.warn("something is intersecting with the viewport");
-            URL = "http://localhost:8080/post/search/" + [[${tag.tagId}]] + "/" + offset + "/" + limit;
+            URL = "http://localhost:8080/post/feed/" + cursor + "/" + limit;
             getData();
         }
     }
@@ -105,26 +100,24 @@
             fetch(URL)
                 .then(response => response.json())
                 .then(data => {
-                    // data.items[].img, data.items[].name
-                    // console.log(data);
                     data.forEach(item => {
                         let fig = document.createElement("figure");
                         let fc = document.createElement("figcaption");
                         let img = document.createElement("img");
                         let link=document.createElement("a");
                         link.href = "http://localhost:8080/post/" + item.postId;
-                        img.src = "http://localhost:8080/post/images/"+ item.thumbnailFileName;
+                        img.src = "http://localhost:8080/post/images/" + item.thumbnailFileName;
                         img.alt = item.postId;
-                        // fc.textContent = item.id;
+                        fc.textContent = item.content;
                         link.appendChild(img);
                         fig.appendChild(link);
                         fig.appendChild(fc);
                         main.appendChild(fig);
+                        cursor = item.postId - 1;
                     });
                     if (data.length === 0) {
                         isEnd = true;
                     }
-                    offset += data.lastPK;
                 });
         }
     }

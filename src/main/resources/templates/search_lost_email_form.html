@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div th:insert="~{/header :: headerFragment (null)}"></div>
+<div class="container">
+
+  <div class="py-5 text-center">
+    <h2>email 찾기</h2>
+  </div>
+
+  <form  th:action="@{/member/searchLostMemberEmail}" method="post">
+    <div>
+      <input type="text" name="nickName" placeholder="nickName">
+      <input type="text" name="phoneNumber" placeholder="phoneNumber">
+    </div>
+    <div class="row">
+      <div class="col">
+        <button class="w-100 btn btn-primary btn-lg" type="submit">확인</button>
+      </div>
+      <div class="col">
+        <button class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/member/login}'|"
+                type="button">취소</button>
+      </div>
+    </div>
+  </form>
+
+</div> <!-- /container -->
+<div th:insert="~{/footer :: footerFragment}"></div>
+</body>
+</html>

@@ -2,7 +2,11 @@ package kr.seoul.snsX.controller;
 
 import kr.seoul.snsX.dto.*;
 import kr.seoul.snsX.exception.ImageOverUploadedException;
+import kr.seoul.snsX.exception.InvalidException;
+import kr.seoul.snsX.service.HashTagService;
+import kr.seoul.snsX.service.MemberService;
 import kr.seoul.snsX.service.PostService;
+import kr.seoul.snsX.sessison.SessionConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,60 +31,67 @@ public class PostController {
     public String fileDir;
 
     private final PostService postService;
-
+    private final HashTagService hashTagService;
 
     @GetMapping("/upload")
-    public String savePostForm(@ModelAttribute PostSaveDto postSaveDto) {
+    public String savePostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto memberInfoDto, Model model) {
+        model.addAttribute("loginMember", memberInfoDto);
         return "post_form";
     }
 
     @PostMapping("/upload")
-    public String savePost(@ModelAttribute PostSaveDto postSaveDto) throws IOException, ImageOverUploadedException {
+    public String savePost(@ModelAttribute PostSaveDto postSaveDto,
+                           @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) throws IOException, ImageOverUploadedException {
+        postSaveDto.setMemberId(memberInfoDto.getMemberId());
         Long postId = postService.uploadPost(postSaveDto);
         return "redirect:/post/" + postId;
     }
 
     @GetMapping("/update/{postId}")
-    public String updatePostForm(@PathVariable Long postId, Model model) {
+    public String updatePostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable Long postId, Model model) {
 
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
+        model.addAttribute("loginMember", memberInfoDto);
         return "post_update_form";
     }
 
     @PostMapping("/update")
-    public String updatePost(@ModelAttribute PostUpdateDto postUpdateDto) throws EntityNotFoundException, IOException {
+    public String updatePost(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @ModelAttribute PostUpdateDto postUpdateDto, Model model) throws EntityNotFoundException, IOException {
         Long postId = postService.modifyPost(postUpdateDto);
+        model.addAttribute("loginMember", memberInfoDto);
         return "redirect:/post/" + postId;
     }
 
     @PostMapping("/delete")
-    public String deletePost(@RequestParam Long postId) throws EntityNotFoundException, FileNotFoundException {
-        postService.removePost(postId);
+    public String deletePost(@RequestParam Long postId,
+                             @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto
+    ) throws EntityNotFoundException, FileNotFoundException {
+        postService.removePost(postId, memberInfoDto.getMemberId());
         return "redirect:/post";
     }
 
     @GetMapping("/{postId}")
-    public String showPostForm(@PathVariable Long postId, Model model) {
+    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId, Model model) {
         PostResponseDto post = postService.getPost(postId);
-        List<CommentResponseDto> comments = post.getComments();
-        if (comments != null && !comments.isEmpty()) {
-            model.addAttribute("comments", comments);
-        }
-        model.addAttribute("user", post.getAuthor());
         model.addAttribute("post", post);
+        model.addAttribute("loginMember", memberInfoDto);
         return "post_result";
     }
 
+
     @PostMapping("/{postId}/save-comment")
-    public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto) {
-        postService.addComment(postId, requestDto);
+    public String saveComment(@PathVariable Long postId, @ModelAttribute CommentRequestDto requestDto,
+                              @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto) {
+        postService.addComment(postId, memberInfoDto.getMemberId(), requestDto);
         return "redirect:/post/" + postId;
     }
 
     @PostMapping("/remove-comment")
-    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId) {
-        postService.removeComment(postId, commentId);
+    public String removeComment(@RequestParam(name = "postId") Long postId, @RequestParam(name = "commentId") Long commentId,
+                                @SessionAttribute(name = SessionConst.LOGIN_MEMBER) MemberInfoDto memberInfoDto)
+    throws EntityNotFoundException, InvalidException {
+        postService.removeComment(postId, commentId, memberInfoDto.getMemberId());
         return "redirect:/post/" + postId;
     }
 
@@ -92,30 +102,53 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public String searchByTagForm(HttpServletRequest request, Model model) {
-        String tag = request.getParameter("tag");
+    public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo,
+                                  @RequestParam(name = "target") String tag,
+                                  Model model) throws EntityNotFoundException {
         System.out.println("tag = " + tag);
-        model.addAttribute("tag", "%23" + tag);
+        TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
+        model.addAttribute("tag", tagResponseDto);
+        model.addAttribute("loginMember", userInfo);
         return "tag_feed_form";
     }
 
     @ResponseBody
-    @GetMapping("/search/{tag}")
-    public List<TagFeedResponseDto> searchByTag(@PathVariable String tag) {
-        List<TagFeedResponseDto> result = postService.getTagPosts(tag);
+    @GetMapping("/search/{tagId}/{cursor}/{limit}")
+    public List<ThumbnailDto> searchByTag(@PathVariable("tagId") Long tagId, @PathVariable("cursor") Long cursor, @PathVariable Long limit) {
+        List<ThumbnailDto> result = postService.getTagPosts(tagId, cursor, limit);
         return result;
     }
 
     @GetMapping
-    public String showFeedForm() {
-        return "post_feed_list";
+    public String showFeedForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo, Model model) {
+        model.addAttribute("loginMember", userInfo);
+        return "post_feed_form";
     }
 
     @ResponseBody
-    @GetMapping("/feed/{offset}/{limit}")
-    public FeedResponseDto showFeed(@PathVariable Long offset, @PathVariable Long limit) {
-        FeedResponseDto result = postService.showPosts(offset, limit);
+    @GetMapping("/feed/{cursor}/{limit}")
+    public List<ThumbnailDto> showFeed (@PathVariable Long cursor, @PathVariable("limit") Long limit){
+        List<ThumbnailDto> result = postService.showPosts(cursor, limit);
         return result;
     }
 
+    @ResponseBody
+    @GetMapping("/search/member/{memberId}/{offset}/{limit}")
+    public List<ThumbnailDto> searchMemberPage(@PathVariable Long memberId, @PathVariable Long offset, @PathVariable Long limit) {
+        List<ThumbnailDto> result = postService.findMemberPosts(memberId, offset, limit);
+        return result;
+    }
+
+//    @GetMapping("/member_feed/{memberId}")
+//    public String memberFeedForm(HttpServletRequest request, @PathVariable Long memberId, Model model) {
+//        HttpSession session = request.getSession(false);
+//        MemberInfoDto memberInfo = (MemberInfoDto) session.getAttribute(SessionConst.LOGIN_MEMBER);
+//        model.addAttribute("loginMember", memberInfo);
+//        return "post_feed_form";
+
+//    @GetMapping("/{postId}/save-comment/{prev}")
+//    public String saveCommentForm(@PathVariable Long prev, @PathVariable Long postId) {
+//        return "redirect:/post/" + postId + "/" + prev;
+//    }
+//    }
 }
