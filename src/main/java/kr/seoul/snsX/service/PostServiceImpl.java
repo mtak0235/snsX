@@ -38,7 +38,6 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostResponseDto getPost(Long postId) throws EntityNotFoundException{
-        // 바로 get() 사용한 것 수정 요망
         Post post = postRepository.findById(postId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시물 입니다."));
         return new PostResponseDto(post);
     }
@@ -56,9 +55,9 @@ public class PostServiceImpl implements PostService {
         Post post = new Post();
         post.setContent(saveDto.getContent());
         post.setImages(storeImageFiles);
-        post.setPostHashTags(hashTagService.storePostHashTags(post));
         post.setThumbnailFileName(storeImageFiles.get(0).getUploadedFilename());
         post.setMember(memberRepository.getById(saveDto.getMemberId()));
+        post.setPostHashTags(hashTagService.storePostHashTags(post));
         postRepository.save(post);
         for (Image storeImageFile : storeImageFiles) {
             storeImageFile.setPost(post);
@@ -90,8 +89,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void removePost(Long pk, Long memberId) throws EntityNotFoundException, FileNotFoundException {
-        Post foundPost = postRepository.findById(pk)
+    public void removePost(Long postId, Long memberId) throws EntityNotFoundException, FileNotFoundException {
+        Post foundPost = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException());
         if (havePermission(memberId, foundPost.getMember().getId())) {
             fileRepository.deleteFiles(foundPost.getImages());
@@ -149,9 +148,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<ThumbnailDto> getTagPosts(Long tagId, Long offset, Long limit) throws EntityNotFoundException {
+    public List<ThumbnailDto> getTagPosts(Long tagId, Long cursor, Long limit) throws EntityNotFoundException {
 
-        List<Object[]> result = postRepository.findPostIdAndThumbnailFileNameByTagId(tagId, offset, limit);
+        List<Object[]> result = postRepository.findPostIdAndThumbnailFileNameByTagId(tagId, cursor, limit);
         List<ThumbnailDto> convertedResult = new ArrayList<>();
         for (Object[] r : result) {
             convertedResult.add(new ThumbnailDto(((BigInteger)r[0]).longValue(), (String)r[1]));

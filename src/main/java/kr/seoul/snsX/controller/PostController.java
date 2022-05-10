@@ -72,7 +72,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId, Model model) {
+    public String showPostForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto memberInfoDto, @PathVariable("postId") Long postId, Model model) throws EntityNotFoundException {
         PostResponseDto post = postService.getPost(postId);
         model.addAttribute("post", post);
         model.addAttribute("loginMember", memberInfoDto);
@@ -103,10 +103,9 @@ public class PostController {
 
     @GetMapping("/search")
     public String searchByTagForm(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) MemberInfoDto userInfo,
-                                  @RequestParam(name = "target") String tag,
+                                  @RequestParam(name = "target") String tagName,
                                   Model model) throws EntityNotFoundException {
-        System.out.println("tag = " + tag);
-        TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tag);
+        TagResponseDto tagResponseDto = hashTagService.getTagByTagName("#" + tagName);
         model.addAttribute("tag", tagResponseDto);
         model.addAttribute("loginMember", userInfo);
         return "tag_feed_form";
