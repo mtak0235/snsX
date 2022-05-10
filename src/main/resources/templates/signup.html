@@ -38,24 +38,23 @@
             <div class="input-group">
                 <input type="text" id="loginId" th:field="*{nickName}" class="form-control"
                        th:errorclass="field-error">
-                <div class="field-error" th:errors="*{nickName}"/>
                 <span class="input-group-btn">
                     <button class="btn btn-primary btn-lg" id="nbutton" type="button"
                             onclick="check('NickName', 'loginId', 'nbutton')">중복검사</button>
                 </span>
             </div>
-
+            <div class="field-error" th:errors="*{nickName}"/>
         </div>
         <div>
             <label for="name">이메일</label>
             <div class="input-group">
                 <input type="text" id="name" th:field="*{email}" class="form-control" th:errorclass="field-error">
-                <div class="field-error" th:errors="*{email}"/>
                 <span class="input-group-btn">
                     <button class="btn btn-primary btn-lg" id="ebutton" type="button"
                             onclick="check('Email', 'name', 'ebutton')">중복검사</button>
                 </span>
             </div>
+            <div class="field-error" th:errors="*{email}"/>
         </div>
         <div>
             <label for="phoneNumber">phone number</label>
