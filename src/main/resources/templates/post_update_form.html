@@ -20,7 +20,7 @@
         <input type="text" name="postId" th:value="${post.postId} " th:hidden="true">
         <br/>
 
-        <input type="text" class="form-control" id="content" name="postContent" th:placeholder="${post.content}">
+        <input type="text" class="form-control" id="content" name="postContent" th:value="${post.content}">
         <div class="col-12">
             <a href="/" role="button" class="btn btn-secondary">수정 취소</a>
             <button type="submit"  class="btn btn-primary">수정 완료</button>

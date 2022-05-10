@@ -28,18 +28,4 @@ public class HomeController {
         return "redirect:/member/search?" + "target=" + URLEncoder.encode(searchWord, "utf-8");
     }
 
-    @ResponseBody
-    @RequestMapping("/AAA")
-    public String AAA() {
-//        return "redirect:/BBB";
-        return BBB();
-    }
-
-
-    @ResponseBody
-    @RequestMapping("/BBB")
-    public String BBB() {
-        return "BBB";
-    }
-
 }

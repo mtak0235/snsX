@@ -71,13 +71,13 @@
             <div class="field-error" th:errors="*{pw}"/>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" th:onclick="'register()'">회원가입</button>
-            </div>
-        </div>
 
     </form>
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg" th:onclick="'register()'">회원가입</button>
+        </div>
+    </div>
 
 </div> <!-- /container -->
 <div th:insert="~{/footer :: footerFragment}"></div>
