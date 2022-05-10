@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @IdClass(FollowId.class)
 public class Follow {
 
