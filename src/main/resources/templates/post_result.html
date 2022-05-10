@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div class="input-group-append">
+    <div class="input-group-append" th:if="${loginMember.memberId} == ${comment.user.memberId}">
         <form th:action="@{/post/remove-comment}" method="post">
             <input type="text" name="postId" th:value="${post.postId}" th:hidden="true"/>
             <input type="text" name="commentId" th:value="${comment.id}" th:hidden="true"/>

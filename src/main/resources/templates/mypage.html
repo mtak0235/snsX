@@ -24,12 +24,17 @@
             height: auto;
             max-width: 100%;
         }
+        .container > img {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+        }
     </style>
 </head>
 <body>
 <div th:insert="~{/header :: headerFragment (${loginMember})}"></div>
 <div class="container">
-    <img class="rounded card-img-top" th:src="|/post/images/${loginMember.profileImage}|" width="50" height="300"/>
+    <img class="rounded card-img-top" th:src="|/post/images/${loginMember.profileImage}|"/>
     <p th:text="${loginMember.email}"></p>
     <p th:text="${loginMember.nickName}"></p>
     <p th:text="${loginMember.phoneNumber}"></p>
