@@ -72,8 +72,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid) throws AlreadyExistException {
-        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(memberSignupDto.getEmail(), uuid);
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String cacheId) throws AlreadyExistException {
+        MemberSignupCacheDto memberSignupCacheDto = signupCache.isUsableEmail(memberSignupDto.getEmail(), cacheId);
         if (memberSignupCacheDto.getUuid() == null && memberSignupCacheDto.isFlag()) {
             throw new AlreadyExistException("이미 존재하는 회원입니다");
         }

@@ -10,7 +10,7 @@ public interface MemberService {
 
     public String occupyNickName(String nickName, String uuid);
 
-    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String uuid);
+    public MemberInfoDto registerMember(MemberSignupDto memberSignupDto, String cacheId);
 
     public MemberInfoDto login(MemberLoginDto memberLoginDto) throws FailedLoginException;
 
