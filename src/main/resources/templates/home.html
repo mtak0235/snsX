@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <div th:replace="~{/fragments/header :: header (title ='snsX')}"></div>
 </head>
 <body>
-
+<div th:replace="~{/fragments/nav :: navigation_bar (loginMember ='hi')}"></div>
+<!--<div th:replace="~{/fragments/footer :: footer}"></div>-->
 </body>
 </html>
